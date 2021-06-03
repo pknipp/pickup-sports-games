@@ -39,8 +39,8 @@ class Signup extends Component {
     return (currentUserId && !update) ? <Redirect to="/" /> : (
       <main className="centered middled">
         <form className="auth" onSubmit={handleSubmit}>
-        <h1>{update ? null : "Welcome to my redux-fs template!"}</h1>
-        <h4>{update ? "Change your email and/or password?" : "I hope that you will either login or signup."}</h4>
+        <h1>{update ? null : "Welcome to volleyball meetup!"}</h1>
+        <h4>{update ? "Change your email and/or password?" : "We hope that you will either login or signup."}</h4>
           <span>Email address:</span>
           <input type="text" placeholder="Email" name="email" value={email} onChange={updateInput} />
           <span>Password:</span>
