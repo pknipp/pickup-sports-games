@@ -1,9 +1,9 @@
 import Cookies from "js-cookie";
 
-const SET_USER = "redux-fs/authentication/SET_USER";
-const SET_MESSAGE="redux-fs/authentication/SET_MESSAGE";
-const REMOVE_USER = "redux-fs/authentication/REMOVE_USER";
-const NEW_USER = "redux-fs/authentication/NEW_USER";
+const SET_USER = "volleyball/authentication/SET_USER";
+const SET_MESSAGE="volleyball/authentication/SET_MESSAGE";
+const REMOVE_USER = "volleyball/authentication/REMOVE_USER";
+const NEW_USER = "volleyball/authentication/NEW_USER";
 
 export const setUser    = user   => ({ type: SET_USER, user });
 export const setMessage = message=> ({type: SET_MESSAGE, message});
