@@ -14,13 +14,34 @@ module.exports = (sequelize, DataTypes) => {
         //   len: [3, 255],
         // },
       },
-      // lastName: {
-      //   allowNull: false,
-      //   type: DataTypes.STRING,
-      //   // validates: {
-      //   //   len: [1, 255],
-      //   // },
-      // },
+      nickName: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        unique: true
+        // validates: {
+        //   isEmail: true,
+        //   len: [3, 255],
+        // },
+      },
+      firstName: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      lastName: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      cell: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+      },
+      skill: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+      },
+      photo: {
+        type: DataTypes.TEXT,
+      },
       tokenId: {
         type: DataTypes.STRING
       },
@@ -56,6 +77,12 @@ module.exports = (sequelize, DataTypes) => {
     return {
       createdAt: this.createdAt,
       email: this.email,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      nickName: this.nickName,
+      photo: this.photo,
+      cell: this.cell,
+      skill: this.skill,
       id: this.id,
     };
   }

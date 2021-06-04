@@ -40,6 +40,8 @@ router.post('/', email, password,
 
 router.put('/', email, password,
   asyncHandler(async function (req, res, next) {
+  console.log("top of users/put route");
+  console.log("req.body = ", req.body);
   let user = await User.findByPk(req.body.id);
   const { jti, token } = generateToken(user);
   user.tokenId = jti;
@@ -63,10 +65,17 @@ router.put('/', email, password,
       message = "That email is taken.";
     } else {
       user.email = req.body.email;
+      user.firstName = req.body.firstName;
+      user.lastName = req.body.lastName;
+      user.nickName = req.body.nickName;
+      user.cell = req.body.cell;
+      user.skill = req.body.skill;
+      user.photo = req.body.photo;
       user = user.setPassword(req.body.password);
     }
   }
   await user.save();
+  console.log("user.toSafeObject() = ", user.toSafeObject());
   res.json({ token, user: {...user.toSafeObject(), message }});
 }));
 

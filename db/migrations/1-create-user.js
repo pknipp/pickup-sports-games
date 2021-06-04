@@ -13,6 +13,30 @@ module.exports = {
         type: Sequelize.STRING(255),
         unique: true,
       },
+      nickName: {
+        allowNull: false,
+        type: Sequelize.STRING(32),
+        unique: true
+      },
+      firstName: {
+        allowNull: false,
+        type: Sequelize.STRING(32),
+      },
+      lastName: {
+        allowNull: false,
+        type: Sequelize.STRING(32),
+      },
+      cell: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+      },
+      skill: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+      },
+      photo: {
+        type: Sequelize.TEXT,
+      },
       tokenId: {
         type: Sequelize.STRING(36),
       },

@@ -22,11 +22,11 @@ export const login = (email, password) => {
   };
 };
 
-export const signup = (email, password) => {
+export const signup = (email, password, firstName, lastName, nickName, cell, skill, photo) => {
   return async dispatch => {
     const res = await fetch(`/api/users`, { method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password, firstName, lastName, nickName, cell, skill, photo })
     });
     let user = (await res.json()).user;
     // dispatch(res.ok ? setUser(data.user) : setMessage(data.error.errors[0].msg));
@@ -34,11 +34,11 @@ export const signup = (email, password) => {
   };
 };
 
-export const editUser = (email, password, id) => {
+export const editUser = (email, password, firstName, lastName, nickName, cell, skill, photo, id) => {
   return async dispatch => {
     const res = await fetch(`/api/users`, { method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, id })
+      body: JSON.stringify({ email, password, firstName, lastName, nickName, cell, skill, photo, id })
     });
     let user = (await res.json()).user;
     // dispatch(res.ok ? setUser(data.user) : setMessage(data.error.errors[0].msg));
