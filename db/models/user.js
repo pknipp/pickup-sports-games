@@ -94,6 +94,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
+  // Do we ever use the following?
   User.signup = async function({ firstName, lastName, optStuff, email, wantsEmail, password }) {
     const hashedPassword = bcrypt.hashSync(password);
     const user = await User.create({email, hashedPassword});

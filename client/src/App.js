@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Login from './components/admin/Login';
-import Signup from './components/admin/Signup';
+import SignUp from './components/admin/SignUp';
 import Container from "./components/Container";
 // import { store } from './index';
 
@@ -18,7 +18,7 @@ class App extends React.Component {
       <BrowserRouter>
         <Switch>
           <Route path="/login" component={Login} />
-          <Route path="/signup" component={Signup} />
+          <Route path="/signup" component={SignUp} />
           <PrivateRoute path="/"
           // exact={true}
           needLogin={this.props.needLogin} component={Container} />

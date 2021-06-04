@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { signup, editUser, resetMessage, deleteUser } from './store/authentication';
 // import { Input, Button } from '@material-ui/core';
 
-class Signup extends Component {
+class SignUp extends Component {
   constructor(props) { super(props);
     this.state = {
       email: this.props.update ? this.props.currentUserEmail : "",
@@ -102,4 +102,4 @@ const mdp = dispatch => ({
   resetMessage: _ => dispatch(resetMessage()),
   deleteUser: id => dispatch(deleteUser(id)),
 })
-export default connect(msp, mdp)(Signup);
+export default connect(msp, mdp)(SignUp);
