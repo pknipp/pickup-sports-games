@@ -1,2 +1,8 @@
-duplicate this in order to create a version whose front-end does not use redux
-duplicate the latter one into separate front-end and back-end repos.
+remove usage of redux
+shift photo-stage from Signup to EditUser
+improve auth error-handling (on front AND back?)
+put validation stuff in several columns of Users table
+DRY up code associated with multiplicity of columns in Users table
+
+use React native?
+generalize to handle multiple sports (ie, not just volleyball)
