@@ -1,11 +1,5 @@
 'use strict';
 
-const bcrypt = require('bcryptjs');
-
-function createPassword() {
-  return bcrypt.hashSync('password');
-}
-
 function r(o) {
   o.createdAt = new Date();
   o.updatedAt = new Date();
@@ -14,31 +8,22 @@ function r(o) {
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert('Users', [
+    return queryInterface.bulkInsert('Games', [
       r({
-        email: 'volleyb@aol.com',
-        nickName: 'Volley B',
-        firstName: 'Volley',
-        lastName: 'Ball',
-        cell: 1234567890,
-        skill: 7,
-        photo: "Volley B's photoURL",
-        hashedPassword: await bcrypt.hash('password',10)
+        ownerId: 1,
+        address: "Long Beach, CA",
+        minSkill: 2,
+        maxSkill: 4,
       }),
       r({
-        email: 'jdoe@aol.com',
-        nickName: 'John D',
-        firstName: 'John',
-        lastName: 'Doe',
-        cell: 1345678901,
-        skill: 4,
-        photo: "John D's photoURL",
-        hashedPassword: await bcrypt.hash('password',10)
+        ownerId: 2,
+        address: "Ocean City, MD",
+        extraInfo: "Casual game",
       }),
     ]);
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('Users');
+    return queryInterface.bulkDelete('Games');
   }
 };

@@ -7,6 +7,7 @@ consolidate Account and Signup components
 change cell DataTypes from INTEGER to BIGINT
 in game model/migration file, change date to datetime?
 in model files insert associations between tables
+remove default value for game date, and require that allowNull be false
 
 use React native?
 generalize to handle multiple sports (ie, not just volleyball)

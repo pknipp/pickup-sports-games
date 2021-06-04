@@ -18,8 +18,9 @@ module.exports = {
         type: Sequelize.TEXT,
       },
       dateTime: {
-        allowNull: false,
+        // allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn("NOW"),
       },
       minSkill: {
         type: Sequelize.INTEGER,
