@@ -1,11 +1,10 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-  let bools = ['setter', 'middle', 'rightSide', 'outside', 'libero', 'twos', 'fours', 'sixes'];
-  const Game = sequelize.define(
-    "Game",
+  const Reservation = sequelize.define(
+    "Reservation",
     {
-      userId: {
+      playerId: {
         allowNull: false,
         type: DataTypes.INTEGER,
       },
@@ -13,11 +12,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.INTEGER,
       },
-      bools.reduce((pojo, bool) => {...pojo, bool: {type: DataTypes.BOOLEAN}})
+      ...['setter','middle','rightSide','outside','libero','twos','fours','sixes'].reduce((pojo, bool) => {
+        return ...pojo, [bool]: {type: DataTypes.BOOLEAN}})
     },
   );
 
-  Game.associate = function(models) {};
+  Reservation.associate = function(models) {};
 
-  return Game;
+  return Reservation;
 };
