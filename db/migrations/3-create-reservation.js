@@ -29,7 +29,7 @@ module.exports = {
         defaultValue: Sequelize.fn("NOW"),
       },
       ...['setter','middle','rightSide','outside','libero','twos','fours','sixes'].reduce((pojo, bool)=>{
-        return {...pojo, [bool]: {allowNull: false, type: Sequelize.BOOLEAN, defaultValue: false}};
+        return {...pojo, [bool]: {allowNull: true, type: Sequelize.BOOLEAN, defaultValue: false}};
       }, {}),
     });
   },
