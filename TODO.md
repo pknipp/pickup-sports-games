@@ -1,4 +1,5 @@
 remove usage of redux
+figure out why default values for boolean columns in Reservations table are not "taking" properly.
 shift photo-stage from Signup to EditUser
 improve auth error-handling (on front AND back?)
 put validation stuff in several columns of Users table
