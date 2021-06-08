@@ -18,14 +18,9 @@ module.exports = {
         type: Sequelize.STRING(32),
         unique: true
       },
-      firstName: {
-        allowNull: false,
-        type: Sequelize.STRING(32),
-      },
-      lastName: {
-        allowNull: false,
-        type: Sequelize.STRING(32),
-      },
+      ...['firstName', 'lastName'].reduce((pojo, key) => {
+        return {...pojo, [key]: {allowNull: false, type: Sequelize.STRING(32)}};
+      }, {}),
       cell: {
         allowNull: false,
         type: Sequelize.INTEGER,
@@ -44,19 +39,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING(60).BINARY,
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn("NOW"),
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn("NOW"),
-      },
+      ...['createdAt', 'updatedAt'].reduce((pojo, key) => {
+        return ({...pojo, [key]: {allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW")}});
+      }, {})
     });
   },
-  down: (queryInterface) => {
-    return queryInterface.dropTable('Users');
-  }
+  down: (queryInterface) => queryInterface.dropTable('Users')
 };

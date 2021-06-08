@@ -1,56 +1,26 @@
 'use strict';
+const {Model} = require('sequelize');
 const bcrypt = require('bcryptjs');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     "User",
     {
-      email: {
-        allowNull: false,
-        type: DataTypes.STRING,
-        unique: true
-        // validates: {
-        //   isEmail: true,
-        //   len: [3, 255],
-        // },
+      email: {allowNull: false, type: DataTypes.STRING, unique: true
+        // validates: {isEmail: true, len: [3, 255]},
       },
-      nickName: {
-        allowNull: false,
-        type: DataTypes.STRING,
-        unique: true
-        // validates: {
-        //   isEmail: true,
-        //   len: [3, 255],
-        // },
+      nickName: {allowNull: false, type: DataTypes.STRING, unique: true
+        // validates: {isEmail: true, len: [3, 255]},
       },
-      firstName: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      lastName: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      cell: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-      },
-      skill: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-      },
-      photo: {
-        type: DataTypes.TEXT,
-      },
-      tokenId: {
-        type: DataTypes.STRING
-      },
-      hashedPassword: {
-        allowNull: false,
-        type: DataTypes.STRING.BINARY,
-        validates: {
-          len: [60, 60],
-        },
+      ...['firstName', 'lastName'].reduce((pojo, key) => {
+        return ({...pojo, [key]: {allowNull: false, type: DataTypes.STRING}});
+      }, {}),
+      ...['cell', 'skill'].reduce((pojo, key) => {
+        return ({...pojo, [key]: {allowNull: false, type: DataTypes.INTEGER}});
+      }, {}),
+      photo: {type: DataTypes.TEXT},
+      tokenId: {type: DataTypes.STRING},
+      hashedPassword: {allowNull: false, type: DataTypes.STRING.BINARY, validates: {len: [60, 60]},
       },
     },
     {
@@ -71,7 +41,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  User.associate = function(models) {};
+  User.associate = function(models) {
+    User.hasMany(models.Game, {foreignKey: 'ownerId'});
+    User.hasMany(models.Reservation, {foreignKey: 'playerId'});
+    // insert a belongsToMany relationship between User and Game, via Reservations
+  };
 
   User.prototype.toSafeObject = function () {
     return ["createdAt", "email", "firstName", "lastName", "nickName", "photo", "cell", "skill", "id"].reduce((pojo, key) => {
