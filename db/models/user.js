@@ -47,17 +47,9 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   User.prototype.toSafeObject = function () {
-    return {
-      createdAt: this.createdAt,
-      email: this.email,
-      firstName: this.firstName,
-      lastName: this.lastName,
-      nickName: this.nickName,
-      photo: this.photo,
-      cell: this.cell,
-      skill: this.skill,
-      id: this.id,
-    };
+    return ["createdAt", "email", "firstName", "lastName", "nickName", "photo", "cell", "skill", "id"].reduce((pojo, key) => {
+      return {...pojo, [key]: this[key]}
+    }, {});
   }
 
   User.login = async function({ email, password }) {
