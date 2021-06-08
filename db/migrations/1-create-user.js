@@ -44,19 +44,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING(60).BINARY,
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn("NOW"),
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn("NOW"),
-      },
+      ...['createdAt', 'updatedAt'].reduce((pojo, key) => {
+        return ({...pojo, [key]: {allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW")}});
+      }, {})
     });
   },
-  down: (queryInterface) => {
-    return queryInterface.dropTable('Users');
-  }
+  down: (queryInterface) => queryInterface.dropTable('Users')
 };

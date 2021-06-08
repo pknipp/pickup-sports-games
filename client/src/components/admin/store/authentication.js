@@ -42,6 +42,7 @@ export const editUser = (email, password, firstName, lastName, nickName, cell, s
     });
     let user = (await res.json()).user;
     // dispatch(res.ok ? setUser(data.user) : setMessage(data.error.errors[0].msg));
+    // console.log(user);
     dispatch(setUser(user));
   };
 };
