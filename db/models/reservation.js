@@ -1,24 +1,22 @@
 'use strict';
+const {Model} = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  const Reservation = sequelize.define(
-    "Reservation",
+  const Reservation = sequelize.define("Reservation",
     {
-      playerId: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-      },
-      gameId: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-      },
+      ...['playerId','gameId'].reduce((pojo, fk) => {
+        return {...pojo, [fk]: {type: DataTypes.INTEGER, allowNull: false}};
+      }),
       ...['setter','middle','rightSide','outside','libero','twos','fours','sixes'].reduce((pojo, bool) => {
-        return {...pojo, [bool]: {type: DataTypes.BOOLEAN, allowNull: true}};
+        return {...pojo, [bool]: {type: DataTypes.BOOLEAN, defaultValue: false, allowNull: false}};
       })
     },
   );
 
-  Reservation.associate = function(models) {};
+  Reservation.associate = function(models) {
+    Reservation.belongsTo(models.Game);
+    Reservation.belongsTo(models.User, {as: 'player'});
+  };
 
   return Reservation;
 };
