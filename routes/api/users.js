@@ -67,7 +67,7 @@ router.put('/', email, password,
     let otherUser2 = await User.findOne({
       where: {
         [Sequelize.Op.and]: [
-          {email: req.body.nickName},
+          {nickName: req.body.nickName},
           {[Sequelize.Op.not]: {id: user.id }}
         ]
       }

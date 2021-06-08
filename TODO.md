@@ -1,5 +1,4 @@
 remove usage of redux
-improve auth error-handling (on front AND back?)
 put validation stuff in several columns of Users table
 DRY up code associated with multiplicity of columns in Users table
 change cell DataTypes from INTEGER to BIGINT
