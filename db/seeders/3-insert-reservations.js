@@ -1,8 +1,10 @@
 'use strict';
 
 function r(o) {
-  o.createdAt = new Date();
-  o.updatedAt = new Date();
+  [o.createdAt, o.updatedAt] = [new Date(), new Date()];
+  const bools = ['setter','middle','rightSide','outside','libero','twos','fours','sixes'];
+  // PAK does not know why following line is necessary, given use of defaultValue in model and migration files.
+  bools.forEach(bool => o[bool] = (o[bool] == null) ? false : o[bool]);
   return o;
 }
 
@@ -35,7 +37,5 @@ module.exports = {
     ]);
   },
 
-  down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('Reservations');
-  }
+  down: (queryInterface, Sequelize) => queryInterface.bulkDelete('Reservations')
 };

@@ -8,32 +8,16 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      playerId: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        references: {model: "Users"}
-      },
-      gameId: {
-          allowNull: false,
-          type: Sequelize.INTEGER,
-          references: {model: "Games"}
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn("NOW"),
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn("NOW"),
-      },
+      ...[['playerId', 'Users'], ['gameId', "Games"]].reduce((pojo, fk) => {
+        return {...pojo, [fk[0]]: {allowNull: false, type: Sequelize.INTEGER, references: {model: `${fk[1]}`}}};
+      }, {}),
+      ...['createdAt', 'updatedAt'].reduce((pojo, date) => {
+        return {...pojo, [date]: {type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW")}};
+      }, {}),
       ...['setter','middle','rightSide','outside','libero','twos','fours','sixes'].reduce((pojo, bool)=>{
-        return {...pojo, [bool]: {allowNull: true, type: Sequelize.BOOLEAN, defaultValue: false}};
+        return {...pojo, [bool]: {type: Sequelize.BOOLEAN, defaultValue: false}};
       }, {}),
     });
   },
-  down: (queryInterface) => {
-    return queryInterface.dropTable('Reservations');
-  }
+  down: (queryInterface) => queryInterface.dropTable('Reservations')
 };
