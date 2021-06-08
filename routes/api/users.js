@@ -89,7 +89,7 @@ router.put('/', email, password,
     }
   }
   // await user.save();
-  console.log("user.toSafeObject() = ", user.toSafeObject());
+  // console.log("user.toSafeObject() = ", user.toSafeObject());
   res.json({ token, user: {...user.toSafeObject(), message }});
 }));
 

@@ -18,14 +18,9 @@ module.exports = {
         type: Sequelize.STRING(32),
         unique: true
       },
-      firstName: {
-        allowNull: false,
-        type: Sequelize.STRING(32),
-      },
-      lastName: {
-        allowNull: false,
-        type: Sequelize.STRING(32),
-      },
+      ...['firstName', 'lastName'].reduce((pojo, key) => {
+        return {...pojo, [key]: {allowNull: false, type: Sequelize.STRING(32)}};
+      }, {}),
       cell: {
         allowNull: false,
         type: Sequelize.INTEGER,

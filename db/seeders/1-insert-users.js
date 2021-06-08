@@ -1,16 +1,8 @@
 'use strict';
 
 const bcrypt = require('bcryptjs');
-
-function createPassword() {
-  return bcrypt.hashSync('password');
-}
-
-function r(o) {
-  o.createdAt = new Date();
-  o.updatedAt = new Date();
-  return o;
-}
+const createPassword = () => bcrypt.hashSync('password');
+const r = o => ({...o, createdAt: new Date(), updatedAt: new Date()});
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -38,7 +30,5 @@ module.exports = {
     ]);
   },
 
-  down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('Users');
-  }
+  down: (queryInterface, Sequelize) => queryInterface.bulkDelete('Users')
 };
