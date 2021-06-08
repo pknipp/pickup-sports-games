@@ -36,14 +36,20 @@ router.post('/', async (req, res) => {
 })
 
 router.put('/:id', async (req, res) => {
-
+    const userId = req.body.id;
     const game = await Game.findOne({ id: req.params.id, })
 
-    const updates = Object.keys(req.body);
-
-    if (game.ownerId !== ownerId) {
+    if (game.ownerId !== userId) {
         res.status(401).send("Unauthorized Access");
     }
 
+    game.address = req.body.address;
+    game.dateTime = req.body.dateTime;
+    game.minSkill = req.body.minSkill;
+    game.maxSkill = req.body.maxSkill;
+    game.extraInfo = req.body.extraInfo;
+
+    await game.save();
+    res.status(400).json(game);
 
 })
