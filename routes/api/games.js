@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Game } = require("../../db/models");
 const { Op } = require('sequelize');
+const asyncHandler = require('express-async-handler');
 
 router.get('/:lat/:long/:radius', async (req, res) => {
     const games = await Game.findAll({
@@ -9,7 +10,7 @@ router.get('/:lat/:long/:radius', async (req, res) => {
     })
 });
 
-router.post('/', async (req, res) => {
+router.post('/', asyncHandler(async (req, res, next) => {
     const {
         ownerId,
         address,
@@ -18,7 +19,7 @@ router.post('/', async (req, res) => {
         maxSkill,
         extraInfo,
     } = req.body;
-
+    console.log(req.body)
     try {
         const game = await Game.create({
             ownerId,
@@ -33,11 +34,11 @@ router.post('/', async (req, res) => {
     } catch (e) {
         res.status(400).send(e)
     }
-})
+}));
 
 router.put('/:id', async (req, res) => {
     const userId = req.body.id;
-    const game = await Game.findOne({ id: req.params.id, })
+    const game = await Game.findOne({ id: req.params.id })
 
     if (game.ownerId !== userId) {
         res.status(401).send("Unauthorized Access");
@@ -53,3 +54,5 @@ router.put('/:id', async (req, res) => {
     res.status(400).json(game);
 
 })
+
+module.exports = router;
