@@ -8,7 +8,7 @@ import Home from "./admin/Home";
 import AuthContext from '../auth';
 
 const Container = () => {
-  const { fetchWithCSRF, currentUser, setCurrentUser } = useContext(AuthContext);
+  const { fetchWithCSRF, currentUser } = useContext(AuthContext);
 
   return (
     <BrowserRouter>
