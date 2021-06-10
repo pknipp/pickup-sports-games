@@ -47,5 +47,4 @@ const Container = () => {
   )
 }
 
-// const msp = state => ({ email: state.authentication.email, currentUserId: state.authentication.id, needLogin: !state.authentication.id});
 export default Container;

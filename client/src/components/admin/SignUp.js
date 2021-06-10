@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Redirect, NavLink, useHistory } from 'react-router-dom';
 
 import AuthContext from '../../auth';
-import { signup, editUser, deleteUser } from './store/authentication';
+import { deleteUser } from './store/authentication';
 // import { Input, Button } from '@material-ui/core';
 
 const SignUp = () => {
@@ -48,6 +48,17 @@ const SignUp = () => {
       // history.push('/');
     }
   };
+
+  const deleteUser = async id => {
+    const res = await fetch(`/api/users/${id}`, { method: 'DELETE'});
+    // if (res.ok) dispatch(removeUser());
+    let data = await res.json();
+    if (data.message) {
+      setMessage(data.message);
+    } else {
+      setCurrentUser(null);
+    }
+  }
 
   const handleSubmit = e => {
     e.preventDefault();
