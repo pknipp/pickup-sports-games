@@ -34,6 +34,21 @@ const SignUp = () => {
     }
   };
 
+  const editUser = async (email, password, firstName, lastName, nickName, cell, skill, photo, id) => {
+    const res = await fetch(`/api/users`, { method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, firstName, lastName, nickName, cell, skill, photo, id })
+    });
+    let user = (await res.json()).user;
+    // dispatch(res.ok ? setUser(data.user) : setMessage(data.error.errors[0].msg));
+    console.log(user);
+    setMessage(user.message);
+    if (!user.message && res.ok) {
+      setCurrentUser(user);
+      // history.push('/');
+    }
+  };
+
   const handleSubmit = e => {
     e.preventDefault();
     let message = !email ? "Email address is needed." :
