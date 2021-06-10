@@ -9,6 +9,7 @@ const LogOut = () => {
 
   const logout = async () => {
     const res = await fetch('/api/session', { method: "delete" });
+    console.log("res = ", res);
     if (res.ok) setCurrentUser(null);
   }
 

@@ -50,5 +50,5 @@ const App = () => {
     </AuthContext.Provider>
   );
 }
-// const msp = state => ({ currentUserId: state.authentication.id, needLogin: !state.authentication.id});
+
 export default App;

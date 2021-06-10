@@ -2,8 +2,6 @@ import React, { useState, useContext } from 'react';
 import { Redirect, NavLink, useHistory } from 'react-router-dom';
 
 import AuthContext from '../../auth';
-import { deleteUser } from './store/authentication';
-// import { Input, Button } from '@material-ui/core';
 
 const SignUp = () => {
   const { fetchWithCSRF, currentUser, setCurrentUser } = useContext(AuthContext);

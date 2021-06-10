@@ -1,4 +1,3 @@
-remove usage of redux
 put validation stuff in several columns of Users table
 DRY up code associated with multiplicity of columns in Users table
 change cell DataTypes from INTEGER to BIGINT
@@ -10,6 +9,8 @@ Have users login w/nickName rather than email, and NOT require that email be uni
 
 use React native?
 generalize to handle multiple sports (ie, not just volleyball)
+
+add address column to Users table?
 
 Aaron: modify DrawSQL schema to reflect any changes:
     skillLevel -> skill
