@@ -11,7 +11,7 @@ const SignUp = () => {
   const [firstName, setFirstName] = useState(currentUser ? currentUser.firstName : '');
   const [lastName, setLastName] = useState(currentUser ? currentUser.lastName : '');
   const [nickName, setNickName] = useState(currentUser ? currentUser.nickName : '');
-  const [cell, setCell] = useState(currentUser ? currentUser.nickName : null);
+  const [cell, setCell] = useState(currentUser ? currentUser.cell : null);
   const [skill, setSkill] = useState(currentUser ? currentUser.skill : null);
   const [photo, setPhoto] = useState(currentUser ? currentUser.photo : '');
   const [password, setPassword] = useState('');
@@ -27,7 +27,6 @@ const SignUp = () => {
     });
     let user = (await res.json()).user;
     // dispatch(res.ok ? setUser(data.user) : setMessage(data.error.errors[0].msg));
-    console.log("user = ", user);
     setMessage(user.message);
     if (!user.message && res.ok) {
       setCurrentUser(user);
