@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 
 import AuthContext from '../../auth';
 
-const Logout = () => {
+const LogOut = () => {
 
   const { fetchWithCSRF, currentUser, setCurrentUser } = useContext(AuthContext);
 
@@ -24,4 +24,4 @@ const Logout = () => {
   );
 }
 
-export default Logout;
+export default LogOut;

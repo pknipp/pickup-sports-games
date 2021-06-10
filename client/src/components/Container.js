@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { BrowserRouter, Switch, Route, NavLink } from 'react-router-dom';
 
-import Logout from "./admin/Logout";
+import LogOut from "./admin/LogOut";
 import Feature1 from "./feature1/index";
 import SignUp from "./admin/SignUp";
 import Home from "./admin/Home";
@@ -38,7 +38,7 @@ const Container = () => {
         </div>
       </nav>
       <Switch>
-        <Route path="/logout" component={Logout}/>
+        <Route path="/logout" component={LogOut}/>
         <Route path="/feature1" component={Feature1}/>
         <Route path="/manageuser" component={SignUp}/>
         <Route path="/" component={Home}/>

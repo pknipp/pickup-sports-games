@@ -15,7 +15,7 @@ const password = check('password').not().isEmpty().withMessage('Provide a passwo
 
 router.post('/', email, password,
   asyncHandler(async function (req, res, next) {
-    let message = "Success!";
+    let message = "";
     const errors = validationResult(req).errors;
     let response = { user: {} };
     if (errors.length) {

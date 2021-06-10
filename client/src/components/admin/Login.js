@@ -3,7 +3,7 @@ import { Redirect, NavLink } from 'react-router-dom';
 import AuthContext from '../../auth';
 // import { login } from './store/authentication';
 
-const Login = () => {
+const LogIn = () => {
   const [email, setEmail] = useState("volleyb@aol.com");
   const [password, setPassword] = useState("password");
   const [message, setMessage] = useState('');
@@ -58,4 +58,4 @@ const Login = () => {
 
 // const msp = state => ({ currentUserId: state.authentication.id, message: state.authentication.message });
 // const mdp = dispatch => ({ login: (email, password) => dispatch(login(email, password))})
-export default Login;
+export default LogIn;
