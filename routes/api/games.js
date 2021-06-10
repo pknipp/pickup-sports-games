@@ -51,7 +51,7 @@ router.put('/:id', async (req, res) => {
     game.extraInfo = req.body.extraInfo;
 
     await game.save();
-    res.status(400).json(game);
+    res.status(200).json(game);
 
 })
 

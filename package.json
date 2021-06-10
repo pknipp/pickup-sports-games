@@ -9,6 +9,7 @@
     "heroku-postbuild": "npm install --prefix client && npm run build --prefix client"
   },
   "dependencies": {
+    "aws-sdk": "^2.925.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "csurf": "^1.11.0",
@@ -26,7 +27,7 @@
     "pg": "^8.0.3",
     "sequelize": "^5.21.7",
     "sequelize-cli": "^5.5.1",
-    "uuid": "^8.0.0"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "debug": "~2.6.9",
