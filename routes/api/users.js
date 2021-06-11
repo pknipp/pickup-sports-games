@@ -41,11 +41,10 @@ router.post('', email, password,
     res.json(response);
 }));
 
-router.put('', email, password,
+router.put('', [authenticated], email, password,
   asyncHandler(async(req, res, next) => {
-  // console.log("top of users/put route");
-  // console.log("req.body = ", req.body);
-  let user = await User.findByPk(req.body.id);
+  let user = req.user;
+  // let user = await User.findByPk(req.body.id);
   const { jti, token } = generateToken(user);
   user.tokenId = jti;
   res.cookie("token", token);
@@ -96,12 +95,13 @@ router.get('', asyncHandler(async(req, res, next) => {
     res.json(users);
 }));
 
-router.get('/me', authenticated, function(req, res) {
-  res.json({ email: req.user.email });
-});
+// router.get('/me', authenticated, function(req, res) {
+//   res.json({ email: req.user.email });
+// });
 
-router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {
-  const user = await User.findByPk(Number(req.params.id));
+router.delete("", [authenticated], asyncHandler(async(req, res) => {
+  const user = req.user;
+  // const user = await User.findByPk(Number(req.params.id));
   if (user.id === 1) return res.json({ message: "You cannot delete my 'demo' user, because visitors to my site use that for testing purposes.  Create a new user via the 'Signup' route if you'd like to test out the deletion of a user." })
   user.tokenId = null;
   res.clearCookie('token');
