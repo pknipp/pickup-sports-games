@@ -1,12 +1,11 @@
-const express = require('express');
 const asyncHandler = require('express-async-handler');
 const { check, validationResult } = require('express-validator');
 const Sequelize = require('sequelize');
+const router = require('express').Router();
+
 const { create } = require("../../db/user-repository")
 const { User } = require('../../db/models');
 const { authenticated, generateToken } = require('./security-utils');
-
-const router = express.Router();
 
 const email = check('email').isEmail().withMessage('Give a valid email address').normalizeEmail();
 // const firstName = check('firstName').not().isEmpty().withMessage('Provide first name');
@@ -42,69 +41,57 @@ router.post('', email, password,
 
 router.put('', [authenticated], email, password,
   asyncHandler(async(req, res, next) => {
-  let user = req.user;
-  // const { jti, token } = generateToken(user);
-  // user.tokenId = jti;
-  // res.cookie("token", token);
-  let message;
-  const errors = validationResult(req).errors;
-  if (user.id === 1) {
-    message = "You cannot edit our 'demo' user, whose details are needed in order to allow our site's visitors to login easily.  Feel free to use the 'Signup' route to create a new user if you'd like to test out the 'Manage Account' route.";
-  } else if (errors.length) {
-    message = errors[0].msg;
-  } else {
-    let otherUser1 = await User.findOne({
-      where: {
-        [Sequelize.Op.and]: [
-          {email: req.body.email},
-          {[Sequelize.Op.not]: {id: user.id }}
-        ]
-      }
-    });
-    let otherUser2 = await User.findOne({
-      where: {
-        [Sequelize.Op.and]: [
-          {nickName: req.body.nickName},
-          {[Sequelize.Op.not]: {id: user.id }}
-        ]
-      }
-    });
-    if (otherUser1) {
-      message = "That email is taken.";
-    } else if (otherUser2) {
-      message = "That nickname is taken.";
+    let user = req.user;
+    let message;
+    const errors = validationResult(req).errors;
+    if (user.id === 1) {
+      message = "You cannot edit our 'demo' user, whose details are needed in order to allow our site's visitors  to login easily.  Feel free to use the 'Signup' route to create a new user if you'd like to test out the   'Manage Account' route.";
+    } else if (errors.length) {
+      message = errors[0].msg;
     } else {
-      // DRY up following w/Object.entries(req.body) list comprehension
-      user.email = req.body.email;
-      user.firstName = req.body.firstName;
-      user.lastName = req.body.lastName;
-      user.nickName = req.body.nickName;
-      user.cell = req.body.cell;
-      user.skill = req.body.skill;
-      user.photo = req.body.photo;
-      user = user.setPassword(req.body.password);
-      const { jti, token } = generateToken(user);
-      user.tokenId = jti;
-      res.cookie("token", token);
-      await user.save();
-      message = "Success!";
+      let otherUser1 = await User.findOne({
+        where: {
+          [Sequelize.Op.and]: [
+            {email: req.body.email},
+            {[Sequelize.Op.not]: {id: user.id }}
+          ]
+        }
+      });
+      let otherUser2 = await User.findOne({
+        where: {
+          [Sequelize.Op.and]: [
+            {nickName: req.body.nickName},
+            {[Sequelize.Op.not]: {id: user.id }}
+          ]
+        }
+      });
+      if (otherUser1) {
+        message = "That email is taken.";
+      } else if (otherUser2) {
+        message = "That nickname is taken.";
+      } else {
+        Object.entries(req.body).filter(([key,]) => key !== 'password').forEach(([key, value]) => {
+          user[key] = value;
+        });
+        user = user.setPassword(req.body.password);
+        const { jti, token } = generateToken(user);
+        user.tokenId = jti;
+        res.cookie("token", token);
+        await user.save();
+        message = "Success!";
+      }
     }
-  }
-  res.json({ user: {...user.toSafeObject(), message }});
-}));
+    res.json({ user: {...user.toSafeObject(), message }});
+  })
+);
 
 router.get('', asyncHandler(async(req, res, next) => {
     const users = await User.findAll();
     res.json(users);
 }));
 
-// router.get('/me', authenticated, function(req, res) {
-//   res.json({ email: req.user.email });
-// });
-
 router.delete("", [authenticated], asyncHandler(async(req, res) => {
   const user = req.user;
-  // const user = await User.findByPk(Number(req.params.id));
   if (user.id === 1) return res.json({ message: "You cannot delete my 'demo' user, because visitors to my site use that for testing purposes.  Create a new user via the 'Signup' route if you'd like to test out the deletion of a user." })
   user.tokenId = null;
   res.clearCookie('token');
