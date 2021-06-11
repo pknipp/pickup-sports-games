@@ -4,7 +4,7 @@ const Sequelize = require('sequelize');
 const router = require('express').Router();
 
 const { create } = require("../../db/user-repository")
-const { User } = require('../../db/models');
+const { User, Game, Reservation } = require('../../db/models');
 const { authenticated, generateToken } = require('./security-utils');
 
 const email = check('email').isEmail().withMessage('Give a valid email address').normalizeEmail();
@@ -93,9 +93,22 @@ router.get('', asyncHandler(async(req, res, next) => {
 router.delete("", [authenticated], asyncHandler(async(req, res) => {
   const user = req.user;
   if (user.id === 1) return res.json({ message: "You cannot delete my 'demo' user, because visitors to my site use that for testing purposes.  Create a new user via the 'Signup' route if you'd like to test out the deletion of a user." })
+
+  // user's games must be found & deleted before user may be deleted
+  const games = await Game.findAll({where: {ownerId: user.id}});
+  games.forEach(async game => {
+    // reservations must be found & deleted before game may be deleted
+    const reservations = await Reservation.findAll({where: {gameId: game.id}});
+    reservations.forEach(async reservation => await reservation.destroy());
+    await game.destroy();
+  })
+  // reservations must be found and deleted before user may be deleted
+  const reservations = await Reservation.findAll({where: {playerId: user.id}})
+  reservations.forEach(async reservation => await reservation.destroy());
+  await user.destroy();
+
   user.tokenId = null;
   res.clearCookie('token');
-  await user.destroy();
   res.json({});
 }));
 
