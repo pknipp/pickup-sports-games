@@ -17,7 +17,7 @@ const LogIn = () => {
     if (response.ok) {
       setCurrentUser(data.user);
     } else {
-      setMessage(data.error.errors[0].msg || data.message);
+      setMessage(data.message || data.error.errors[0]);
     }
   };
 

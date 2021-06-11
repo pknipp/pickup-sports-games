@@ -32,26 +32,24 @@ const SignUp = () => {
     }
   };
 
-  const editUser = async (email, password, firstName, lastName, nickName, cell, skill, photo, id) => {
+  const editUser = async (email, password, firstName, lastName, nickName, cell, skill, photo) => {
     const res = await fetch(`/api/users`, { method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, firstName, lastName, nickName, cell, skill, photo, id })
+      body: JSON.stringify({ email, password, firstName, lastName, nickName, cell, skill, photo })
     });
     let user = (await res.json()).user;
     // dispatch(res.ok ? setUser(data.user) : setMessage(data.error.errors[0].msg));
-    console.log(user);
     setMessage(user.message);
     if (!user.message && res.ok) {
       setCurrentUser(user);
-      // history.push('/');
     }
   };
 
-  const deleteUser = async id => {
-    const res = await fetch(`/api/users/${id}`, { method: 'DELETE'});
+  const deleteUser = async () => {
+    const res = await fetch("/api/users", { method: 'DELETE'});
     // if (res.ok) dispatch(removeUser());
     let data = await res.json();
-    if (data.message) {
+    if (data.message || !res.ok) {
       setMessage(data.message);
     } else {
       setCurrentUser(null);
@@ -66,7 +64,7 @@ const SignUp = () => {
     setMessage(message);
     if (!message) {
       if (currentUser) {
-        editUser(email, password, firstName, lastName, nickName, cell, skill, photo, currentUser.id);
+        editUser(email, password, firstName, lastName, nickName, cell, skill, photo);
       } else {
         signup(email, password, firstName, lastName, nickName, cell, skill, photo);
       }
@@ -75,7 +73,7 @@ const SignUp = () => {
 
   const handleDelete = e => {
     e.preventDefault();
-    deleteUser(currentUser.id);
+    deleteUser();
   }
 
   return (
