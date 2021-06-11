@@ -32,7 +32,6 @@ router.post('', email, password,
         const { jti, token } = generateToken(user);
         user.tokenId = jti;
         res.cookie("token", token);
-        response.token = token;
         response.user = {...response.user, ...user.toSafeObject()}
         await user.save();
       }
@@ -44,11 +43,10 @@ router.post('', email, password,
 router.put('', [authenticated], email, password,
   asyncHandler(async(req, res, next) => {
   let user = req.user;
-  // let user = await User.findByPk(req.body.id);
-  const { jti, token } = generateToken(user);
-  user.tokenId = jti;
-  res.cookie("token", token);
-  let message = "Success!";
+  // const { jti, token } = generateToken(user);
+  // user.tokenId = jti;
+  // res.cookie("token", token);
+  let message;
   const errors = validationResult(req).errors;
   if (user.id === 1) {
     message = "You cannot edit our 'demo' user, whose details are needed in order to allow our site's visitors to login easily.  Feel free to use the 'Signup' route to create a new user if you'd like to test out the 'Manage Account' route.";
@@ -76,6 +74,7 @@ router.put('', [authenticated], email, password,
     } else if (otherUser2) {
       message = "That nickname is taken.";
     } else {
+      // DRY up following w/Object.entries(req.body) list comprehension
       user.email = req.body.email;
       user.firstName = req.body.firstName;
       user.lastName = req.body.lastName;
@@ -84,10 +83,14 @@ router.put('', [authenticated], email, password,
       user.skill = req.body.skill;
       user.photo = req.body.photo;
       user = user.setPassword(req.body.password);
+      const { jti, token } = generateToken(user);
+      user.tokenId = jti;
+      res.cookie("token", token);
       await user.save();
+      message = "Success!";
     }
   }
-  res.json({ token, user: {...user.toSafeObject(), message }});
+  res.json({ user: {...user.toSafeObject(), message }});
 }));
 
 router.get('', asyncHandler(async(req, res, next) => {

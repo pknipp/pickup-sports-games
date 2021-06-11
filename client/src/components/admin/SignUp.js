@@ -39,19 +39,17 @@ const SignUp = () => {
     });
     let user = (await res.json()).user;
     // dispatch(res.ok ? setUser(data.user) : setMessage(data.error.errors[0].msg));
-    // console.log(user);
     setMessage(user.message);
     if (!user.message && res.ok) {
       setCurrentUser(user);
-      // history.push('/');
     }
   };
 
-  const deleteUser = async id => {
+  const deleteUser = async () => {
     const res = await fetch("/api/users", { method: 'DELETE'});
     // if (res.ok) dispatch(removeUser());
     let data = await res.json();
-    if (data.message) {
+    if (data.message || !res.ok) {
       setMessage(data.message);
     } else {
       setCurrentUser(null);
