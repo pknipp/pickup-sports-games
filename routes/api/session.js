@@ -10,10 +10,10 @@ const router = express.Router();
 const email = check('email').isEmail().withMessage('Provide valid email').normalizeEmail();
 const password = check('password').not().isEmpty().withMessage('Provide password');
 
-router.get('/', asyncHandler(async function (req, res, next) {res.json({message: "Hello world"});}));
+router.get('/', asyncHandler(async(req, res, next) => {res.json({message: "Hello world"});}));
 
 router.put('/', [email, password],
-  asyncHandler(async (req, res, next) => {
+  asyncHandler(async(req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return next({ status: 422, errors: errors.array() });
   const { email, password } = req.body;
@@ -39,7 +39,7 @@ router.put('/', [email, password],
 }));
 
 router.delete('/', [authenticated],
-  asyncHandler(async (req, res) => {
+  asyncHandler(async(req, res) => {
   req.user.tokenId = null;
   await req.user.save();
   res.clearCookie('token');

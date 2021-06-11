@@ -14,7 +14,7 @@ const email = check('email').isEmail().withMessage('Give a valid email address')
 const password = check('password').not().isEmpty().withMessage('Provide a password');
 
 router.post('/', email, password,
-  asyncHandler(async function (req, res, next) {
+  asyncHandler(async(req, res, next) => {
     let message = "";
     const errors = validationResult(req).errors;
     let response = { user: {} };
@@ -42,7 +42,7 @@ router.post('/', email, password,
 }));
 
 router.put('/', email, password,
-  asyncHandler(async function (req, res, next) {
+  asyncHandler(async(req, res, next) => {
   // console.log("top of users/put route");
   // console.log("req.body = ", req.body);
   let user = await User.findByPk(req.body.id);
@@ -88,12 +88,10 @@ router.put('/', email, password,
       await user.save();
     }
   }
-  // await user.save();
-  // console.log("user.toSafeObject() = ", user.toSafeObject());
   res.json({ token, user: {...user.toSafeObject(), message }});
 }));
 
-router.get('/', asyncHandler(async function (req, res, next) {
+router.get('/', asyncHandler(async(req, res, next) => {
     const users = await User.findAll();
     res.json(users);
 }));
