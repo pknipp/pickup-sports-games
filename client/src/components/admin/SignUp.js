@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Redirect, NavLink, useHistory } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 
 import AuthContext from '../../auth';
 
@@ -18,7 +18,7 @@ const SignUp = () => {
   const [errors, setErrors] = useState([]);
   let history = useHistory();
 
-  const signup = async (email, password, firstName, lastName, nickName, cell, skill, photo) => {
+  const signUp = async (email, password, firstName, lastName, nickName, cell, skill, photo) => {
     const res = await fetch(`/api/users`, { method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, firstName, lastName, nickName, cell, skill, photo })
@@ -40,9 +40,7 @@ const SignUp = () => {
     let user = (await res.json()).user;
     // dispatch(res.ok ? setUser(data.user) : setMessage(data.error.errors[0].msg));
     setMessage(user.message);
-    if (!user.message && res.ok) {
-      setCurrentUser(user);
-    }
+    if (res.ok) setCurrentUser(user);
   };
 
   const deleteUser = async () => {
@@ -63,10 +61,11 @@ const SignUp = () => {
                   password !== password2 ? "Passwords must match" : "";
     setMessage(message);
     if (!message) {
+      // DRY up the following code (with a ternary?).
       if (currentUser) {
         editUser(email, password, firstName, lastName, nickName, cell, skill, photo);
       } else {
-        signup(email, password, firstName, lastName, nickName, cell, skill, photo);
+        signUp(email, password, firstName, lastName, nickName, cell, skill, photo);
       }
     }
   };

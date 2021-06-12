@@ -1,3 +1,4 @@
+enable the deletion of table rows upon which rows of other tables depend (w/FK)
 put validation stuff in several columns of Users table
 DRY up code associated with multiplicity of columns in Users table
 change cell DataTypes from INTEGER to BIGINT
@@ -5,7 +6,7 @@ in model files check associations between tables
 in model files insert a many-to-many relationship between Users and Games
 remove default value for game date, and require that allowNull be false
 allow any player to add a photo to a Game?
-Have users login w/nickName rather than email, and NOT require that email be unique
+Have users login w/nickName rather than email, and NOT require that email be unique? (White space'll prob be a problem).
 
 use React native?
 generalize to handle multiple sports (ie, not just volleyball)
