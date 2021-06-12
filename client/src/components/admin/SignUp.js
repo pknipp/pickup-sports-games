@@ -39,14 +39,20 @@ const SignUp = () => {
     });
     let user = (await res.json()).user;
     // dispatch(res.ok ? setUser(data.user) : setMessage(data.error.errors[0].msg));
+    console.log("user = ", user);
     setMessage(user.message);
-    if (res.ok) setCurrentUser(user);
+    if (res.ok) {
+      setCurrentUser(user);
+    } else {
+      setMessage(user.error.errors[0].msg);
+    }
   };
 
   const deleteUser = async () => {
     const res = await fetch("/api/users", { method: 'DELETE'});
     // if (res.ok) dispatch(removeUser());
     let data = await res.json();
+    console.log("data = ", data);
     if (data.message || !res.ok) {
       setMessage(data.message);
     } else {
