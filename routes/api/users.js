@@ -96,18 +96,18 @@ router.delete("", [authenticated], asyncHandler(async(req, res) => {
 
   // games owned by user must be found & deleted before user may be deleted
   try{
-    const games = await Game.findAll({where: {ownerId: user.id}});
-    const reservations = await Reservation.findAll({});
-    games.forEach(async game => {
-      // reservations for game must be found & deleted before game may be deleted
-      // const reservations = await Reservation.findAll({where: {gameId: game.id}});
-      // reservations.forEach(async reservation => await reservation.destroy());
-      // await game.destroy();
-    })
+    // const games = await Game.findAll({where: {ownerId: user.id}});
+    // const reservations = await Reservation.findAll({});
+    // games.forEach(async game => {
+    //   // reservations for game must be found & deleted before game may be deleted
+    //   // const reservations = await Reservation.findAll({where: {gameId: game.id}});
+    //   // reservations.forEach(async reservation => await reservation.destroy());
+    //   // await game.destroy();
+    // })
     // reservations must be found and deleted before player may be deleted
     // const reservations = await Reservation.findAll({where: {playerId: user.id}})
     // reservations.forEach(async reservation => await reservation.destroy());
-    // await user.destroy();
+    await user.destroy();
     user.tokenId = null;
     res.clearCookie('token');
     res.json({});

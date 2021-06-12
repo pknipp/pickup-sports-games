@@ -9,7 +9,12 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       ...[['playerId', 'Users'], ['gameId', "Games"]].reduce((pojo, fk) => {
-        return {...pojo, [fk[0]]: {allowNull: false, type: Sequelize.INTEGER, references: {model: `${fk[1]}`}}};
+        return {...pojo, [fk[0]]: {
+          allowNull: false,
+          type: Sequelize.INTEGER,
+          onDelete: 'CASCADE',
+          references: {model: `${fk[1]}`, key: 'id', as: `${fk[0]}`}
+        }}
       }, {}),
       ...['createdAt', 'updatedAt'].reduce((pojo, date) => {
         return {...pojo, [date]: {type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW")}};
