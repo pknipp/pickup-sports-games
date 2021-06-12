@@ -1,4 +1,3 @@
-enable the deletion of table rows upon which rows of other tables depend (w/FK)
 put validation stuff in several columns of Users table
 DRY up code associated with multiplicity of columns in Users table
 change cell DataTypes from INTEGER to BIGINT

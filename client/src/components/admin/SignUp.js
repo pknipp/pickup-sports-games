@@ -18,6 +18,7 @@ const SignUp = () => {
   const [errors, setErrors] = useState([]);
   let history = useHistory();
 
+  // Consolidate signUp & editUser into one function.
   const signUp = async (email, password, firstName, lastName, nickName, cell, skill, photo) => {
     const res = await fetch(`/api/users`, { method: 'POST',
       headers: { 'Content-Type': 'application/json' },
