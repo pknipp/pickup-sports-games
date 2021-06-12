@@ -13,7 +13,7 @@ module.exports = {
           allowNull: false,
           type: Sequelize.INTEGER,
           onDelete: 'CASCADE',
-          references: {model: `${fk[1]}`, key: 'id', as: `${fk[0]}`}
+          references: {model: `${fk[1]}`}
         }}
       }, {}),
       ...['createdAt', 'updatedAt'].reduce((pojo, date) => {
