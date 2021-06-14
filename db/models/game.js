@@ -16,8 +16,8 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Game.associate = function(models) {
-    Game.belongsTo(models.User, {as: 'owner'});
-    Game.hasMany(models.Reservation);
+    Game.belongsTo(models.User, {foreignKey: 'ownerId', onDelete: 'CASCADE'});
+    Game.hasMany(models.Reservation, {foreignKey: 'gameId'});
   };
 
   return Game;
