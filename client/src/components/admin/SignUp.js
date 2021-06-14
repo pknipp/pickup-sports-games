@@ -41,7 +41,11 @@ const SignUp = () => {
     let user = (await res.json()).user;
     // dispatch(res.ok ? setUser(data.user) : setMessage(data.error.errors[0].msg));
     setMessage(user.message);
-    if (res.ok) setCurrentUser(user);
+    if (res.ok) {
+      setCurrentUser(user);
+    } else {
+      setMessage(user.error.errors[0].msg);
+    }
   };
 
   const deleteUser = async () => {

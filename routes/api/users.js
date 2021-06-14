@@ -4,7 +4,7 @@ const Sequelize = require('sequelize');
 const router = require('express').Router();
 
 const { create } = require("../../db/user-repository")
-const { User } = require('../../db/models');
+const { User, Game, Reservation } = require('../../db/models');
 const { authenticated, generateToken } = require('./security-utils');
 
 const email = check('email').isEmail().withMessage('Give a valid email address').normalizeEmail();
@@ -93,10 +93,15 @@ router.get('', asyncHandler(async(req, res, next) => {
 router.delete("", [authenticated], asyncHandler(async(req, res) => {
   const user = req.user;
   if (user.id === 1) return res.json({ message: "You cannot delete my 'demo' user, because visitors to my site use that for testing purposes.  Create a new user via the 'Signup' route if you'd like to test out the deletion of a user." })
-  user.tokenId = null;
-  res.clearCookie('token');
-  await user.destroy();
-  res.json({});
+
+  try{
+    await user.destroy();
+    user.tokenId = null;
+    res.clearCookie('token');
+    res.json({});
+  } catch(e) {
+    res.status(400).send(e);
+  }
 }));
 
 module.exports = router;
