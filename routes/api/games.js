@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Game } = require("../../db/models");
+const { Game, Reservation, User } = require("../../db/models");
 const { Op } = require('sequelize');
 const asyncHandler = require('express-async-handler');
 const { authenticated } = require('./security-utils');
@@ -40,6 +40,8 @@ router.get('', [authenticated], async (req, res) => {
     games.forEach(game => {
         // here goes fetch call to determine distance/travel-time between user and game
         game.travelTime = travelTime;
+        const reservations = Reservation.findAll({where: {gameId: game.id}});
+        game.count = reservations.length;
     })
     res.json(games);
 });
