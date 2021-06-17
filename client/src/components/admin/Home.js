@@ -10,7 +10,7 @@ const Home = () => {
         (async () => {
             const response = await fetch(`/api/games`);
             let data = await response.json();
-            console.log("data = ", data);
+            // console.log("data = ", data);
             if (response.ok) {
               setGames(data.games);
             } else {

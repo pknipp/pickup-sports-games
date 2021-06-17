@@ -3,7 +3,7 @@ import { BrowserRouter, Switch, Route, NavLink } from 'react-router-dom';
 
 import LogOut from "./admin/LogOut";
 import Feature1 from "./feature1/index";
-import SignUp from "./admin/SignUp";
+import User from "./admin/User";
 import Home from "./admin/Home";
 import AuthContext from '../auth';
 
@@ -13,7 +13,7 @@ const Container = () => {
   return (
     <BrowserRouter>
       <nav>
-        <h1>{currentUser.email}: Welcome to volleyball-meetup!</h1>
+        <h1>{currentUser.nickName}: Welcome to volleyball-meetup!</h1>
         <div className="nav-bar">
           <span>
             <NavLink className="nav" exact to="/" activeClassName="active">
@@ -40,7 +40,7 @@ const Container = () => {
       <Switch>
         <Route path="/logout" component={LogOut}/>
         <Route path="/feature1" component={Feature1}/>
-        <Route path="/manageuser" component={SignUp}/>
+        <Route path="/manageuser" component={User}/>
         <Route path="/" component={Home}/>
       </Switch>
     </BrowserRouter>

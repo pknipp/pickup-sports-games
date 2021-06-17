@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import Cookies from "js-cookie";
 import LogIn from './components/admin/LogIn';
-import SignUp from './components/admin/SignUp';
+import User from './components/admin/User';
 import Container from "./components/Container";
 import AuthContext from './auth';
 
@@ -40,7 +40,7 @@ const App = () => {
         <BrowserRouter>
           <Switch>
             <Route path="/login" component={LogIn} />
-            <Route path="/signup" component={SignUp} />
+            <Route path="/signup" component={User} />
             <PrivateRoute path="/"
             // exact={true}
             needLogin={!currentUser} component={Container} />
