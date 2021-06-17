@@ -6,10 +6,10 @@ module.exports = (sequelize, DataTypes) => {
     {
       ...['playerId','gameId'].reduce((pojo, fk) => {
         return {...pojo, [fk]: {type: DataTypes.INTEGER, allowNull: false}};
-      }),
+      }, {}),
       ...['setter','middle','rightSide','outside','libero','twos','fours','sixes'].reduce((pojo, bool) => {
         return {...pojo, [bool]: {type: DataTypes.BOOLEAN, defaultValue: false, allowNull: false}};
-      })
+      }, {})
     },
   );
 

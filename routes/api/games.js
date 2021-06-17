@@ -35,14 +35,16 @@ router.post('/', asyncHandler(async (req, res, next) => {
 // router.get('/:lat/:long/:radius', async (req, res) => {
 router.get('', [authenticated], async (req, res) => {
     const user = req.user;
-    const games = await Game.findAll({});
-    let travelTime;
-    games.forEach(game => {
+    // transform Query return to a pojo, to enable us to attach properties to it
+    const games = (await Game.findAll({})).map(game => game.dataValues);
+    let travelTime = 0;
+    for (const game of games) {
         // here goes fetch call to determine distance/travel-time between user and game
         game.travelTime = travelTime;
-        // const reservations = Reservation.findAll({where: {gameId: game.id}});
-        // game.count = reservations.length;
-    })
+        // transform Query to a pojo, to enable us to compute its length
+        const reservations = (await Reservation.findAll({where: {gameId: game.id}})).map(reservation => reservation.dataValues);
+        game.count = reservations.length;
+    }
     res.json({games});
 });
 
@@ -59,7 +61,7 @@ router.get('/:id', async(req, res) => {
     res.json({...game, owner, players});
 })
 
-// Do we want to allow a game owner to transfer ownership to another user?
+// Do we want to allow a game owner to transfer game-"owner"ship to another user?
 router.put('/:id', async (req, res) => {
     const userId = req.body.id;
     // const game = await Game.findOne({ id: req.params.id })

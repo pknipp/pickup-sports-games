@@ -10,7 +10,7 @@ const Home = () => {
         (async () => {
             const response = await fetch(`/api/games`);
             let data = await response.json();
-            // console.log("data = ", data);
+            console.log("data = ", data);
             if (response.ok) {
               setGames(data.games);
             } else {
@@ -26,10 +26,13 @@ const Home = () => {
                     <p> Here goes a welcome message.</p>
                 </div>
             </div>
+            Upcoming games:
             <ul>
                 {!games.length ? null : games.map(game => (
                     <li key={game.id}>
-                        <div>{game.address} {game.dateTime}</div>
+                        <div>Game location: {game.address}</div>
+                        <div>Game dateTime: {game.dateTime}</div>
+                        <div>{game.count} player{game.count > 1 ? 's' : ''} registered thus far</div>
                     </li>
                 ))}
             </ul>

@@ -7,10 +7,10 @@ module.exports = (sequelize, DataTypes) => {
     {
       ...['ownerId', 'minSkill', 'maxSkill'].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: DataTypes.INTEGER}});
-      }, []),
+      }, {}),
       ...['address', 'extraInfo'].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: DataTypes.TEXT}});
-      }, []),
+      }, {}),
       dateTime: {allowNull: false, type: DataTypes.DATE}
     },
   );
