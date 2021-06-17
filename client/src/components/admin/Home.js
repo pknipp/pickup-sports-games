@@ -6,18 +6,18 @@ const Home = () => {
     const [games, setGames] = useState([]);
     const [message, setMessage] = useState('');
 
-    useEffect((async() => {
-        const response = await fetch(`/api/games`);
-        let data = await response.json();
-        console.log("data = ", data);
-        if (response.ok) {
-          setGames(data.games);
-        } else {
-          setMessage(data.message || data.error.errors[0]);
-        }
-    })());
-
-    // useEffect(getGames);
+    useEffect(() => {
+        (async () => {
+            const response = await fetch(`/api/games`);
+            let data = await response.json();
+            // console.log("data = ", data);
+            if (response.ok) {
+              setGames(data.games);
+            } else {
+              setMessage(data.message || data.error.errors[0]);
+            }
+        })()
+    }, []);
 
     return (
         <>
@@ -27,8 +27,8 @@ const Home = () => {
                 </div>
             </div>
             <ul>
-                {games.map(game => (
-                    <li>
+                {!games.length ? null : games.map(game => (
+                    <li key={game.id}>
                         <div>{game.address} {game.dateTime}</div>
                     </li>
                 ))}

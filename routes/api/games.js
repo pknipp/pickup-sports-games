@@ -40,10 +40,10 @@ router.get('', [authenticated], async (req, res) => {
     games.forEach(game => {
         // here goes fetch call to determine distance/travel-time between user and game
         game.travelTime = travelTime;
-        const reservations = Reservation.findAll({where: {gameId: game.id}});
-        game.count = reservations.length;
+        // const reservations = Reservation.findAll({where: {gameId: game.id}});
+        // game.count = reservations.length;
     })
-    res.json(games);
+    res.json({games});
 });
 
 router.get('/:id', async(req, res) => {
