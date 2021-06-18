@@ -5,12 +5,12 @@ module.exports = (sequelize, DataTypes) => {
   const Game = sequelize.define(
     "Game",
     {
-      ...['ownerId', 'minSkill', 'maxSkill'].reduce((pojo, key) => {
+      ownerId: {allowNull: false, type: DataTypes.INTEGER},
+      ...['minSkill', 'maxSkill'].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: DataTypes.INTEGER}});
       }, {}),
-      ...['address', 'extraInfo'].reduce((pojo, key) => {
-        return ({...pojo, [key]: {allowNull: false, type: DataTypes.TEXT}});
-      }, {}),
+      address: {allowNull: false, type: DataTypes.TEXT},
+      extraInfo: {allowNull: true, type: DataTypes.TEXT},
       dateTime: {allowNull: false, type: DataTypes.DATE}
     },
   );
