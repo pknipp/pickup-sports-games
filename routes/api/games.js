@@ -15,8 +15,8 @@ router.post('/', asyncHandler(async (req, res, next) => {
 }));
 
 // router.get('/:lat/:long/:radius', async (req, res) => {
-router.get('', [authenticated], async (req, res) => {
-    const user = req.id;
+router.get('', [authenticated], asyncHandler(async(req, res) => {
+    const user = req.user;
     // transform Query return to a pojo, to enable us to attach properties to it
     const games = (await Game.findAll({})).map(game => game.dataValues);
     let travelTime = 0;
@@ -26,9 +26,10 @@ router.get('', [authenticated], async (req, res) => {
         // transform Query to a pojo, to enable us to compute its length
         const reservations = (await Reservation.findAll({where: {gameId: game.id}})).map(reservation => reservation.dataValues);
         game.count = reservations.length;
+        game.reserved = reservations.some(reservation => reservation.playerId === user.id);
     }
     res.json({games});
-});
+}));
 
 router.get('/:id', async(req, res) => {
     const id = Number(req.params.id);

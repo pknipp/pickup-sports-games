@@ -13,7 +13,7 @@ const Home = () => {
         (async () => {
             const response = await fetch(`/api/games`);
             let data = await response.json();
-            // console.log("data = ", data);
+            console.log("data = ", data);
             if (response.ok) {
               setGames(data.games);
             } else {
@@ -29,21 +29,62 @@ const Home = () => {
                     <p> Here goes a welcome message.</p>
                 </div>
             </div>
-            Upcoming games:
-            <ul>
-                {!games.length ? null : games.map(game => (
-                    <div key={game.id}>
-                        <li >
-                            <div>Game location: {game.address}</div>
-                            <div>Game dateTime: {game.dateTime}</div>
-                            <div>{game.count} player{game.count > 1 ? 's' : ''} registered thus far</div>
-                        </li>
-                        {currentUser.id !== game.ownerId ? null :
-                            <button>Edit game details</button>
-                        }
+            Upcoming games ...
+            {!games.length ? null :
+                <>
+                    <div>
+                        ... owned by me:
+                        <ol>
+                            {games.filter(game => (game.ownerId === currentUser.id)).map(game => (
+                                <div key={game.id}>
+                                    <li>
+                                        <div>Game location: {game.address}</div>
+                                        <div>Game dateTime: {game.dateTime}</div>
+                                        <div>
+                                            {game.count} player{game.count > 1 ? 's' : ''} reserved thus far
+                                        </div>
+                                    </li>
+                                    {currentUser.id !== game.ownerId ? null :
+                                        <button>Edit game details</button>
+                                    }
+                                </div>
+                            ))}
+                        </ol>
                     </div>
-                ))}
-            </ul>
+                    <div>
+                        ... for which I have a reservation:
+                        <ol>
+                            {games.filter(game => game.reserved).map(game => (
+                                <div key={game.id}>
+                                    <li>
+                                        <div>Game location: {game.address}</div>
+                                        <div>Game dateTime: {game.dateTime}</div>
+                                        <div>
+                                            {game.count} player{game.count > 1 ? 's' : ''} reserved thus far
+                                        </div>
+                                    </li>
+                                </div>
+                            ))}
+                        </ol>
+                    </div>
+                    <div>
+                        ... neither owned by me nor for which I have a reservation:
+                        <ol>
+                            {games.filter(game => (game.ownerId !== currentUser.id && !game.reserved)).map(game => (
+                                <div key={game.id}>
+                                    <li>
+                                        <div>Game location: {game.address}</div>
+                                        <div>Game dateTime: {game.dateTime}</div>
+                                        <div>
+                                            {game.count} player{game.count > 1 ? 's' : ''} reserved thus far
+                                        </div>
+                                    </li>
+                                </div>
+                            ))}
+                        </ol>
+                    </div>
+                </>
+            }
         </>
     )
 }
