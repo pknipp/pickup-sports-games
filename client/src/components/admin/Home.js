@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
+
+import AuthContext from '../../auth';
 import info from "../info.png";
 import cancel from "../cancel.jpeg";
 const Home = () => {
+    const { currentUser } = useContext(AuthContext);
     const [games, setGames] = useState([]);
     const [message, setMessage] = useState('');
 
@@ -29,11 +32,16 @@ const Home = () => {
             Upcoming games:
             <ul>
                 {!games.length ? null : games.map(game => (
-                    <li key={game.id}>
-                        <div>Game location: {game.address}</div>
-                        <div>Game dateTime: {game.dateTime}</div>
-                        <div>{game.count} player{game.count > 1 ? 's' : ''} registered thus far</div>
-                    </li>
+                    <div key={game.id}>
+                        <li >
+                            <div>Game location: {game.address}</div>
+                            <div>Game dateTime: {game.dateTime}</div>
+                            <div>{game.count} player{game.count > 1 ? 's' : ''} registered thus far</div>
+                        </li>
+                        {currentUser.id !== game.ownerId ? null :
+                            <button>Edit game details</button>
+                        }
+                    </div>
                 ))}
             </ul>
         </>

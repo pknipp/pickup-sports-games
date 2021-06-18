@@ -6,26 +6,8 @@ const asyncHandler = require('express-async-handler');
 const { authenticated } = require('./security-utils');
 
 router.post('/', asyncHandler(async (req, res, next) => {
-    // const {
-    //     ownerId,
-    //     address,
-    //     dateTime,
-    //     minSkill,
-    //     maxSkill,
-    //     extraInfo,
-    // } = req.body;
-    // console.log(req.body)
     try {
         const game = await Game.create(req.body);
-        // const game = await Game.create({
-        //     ownerId,
-        //     address,
-        //     dateTime,
-        //     minSkill,
-        //     maxSkill,
-        //     extraInfo
-        // })
-
         res.status(201).send(game)
     } catch (e) {
         res.status(400).send(e)
@@ -34,7 +16,7 @@ router.post('/', asyncHandler(async (req, res, next) => {
 
 // router.get('/:lat/:long/:radius', async (req, res) => {
 router.get('', [authenticated], async (req, res) => {
-    const user = req.user;
+    const user = req.id;
     // transform Query return to a pojo, to enable us to attach properties to it
     const games = (await Game.findAll({})).map(game => game.dataValues);
     let travelTime = 0;
@@ -71,13 +53,6 @@ router.put('/:id', async (req, res) => {
         res.status(401).send("Unauthorized Access");
     }
     game = {...game, ...req.body};
-
-    // game.address = req.body.address;
-    // game.dateTime = req.body.dateTime;
-    // game.minSkill = req.body.minSkill;
-    // game.maxSkill = req.body.maxSkill;
-    // game.extraInfo = req.body.extraInfo;
-
     await game.save();
     res.status(200).json(game);
 
