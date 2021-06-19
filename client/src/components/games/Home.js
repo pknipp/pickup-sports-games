@@ -13,7 +13,7 @@ const Home = () => {
         (async () => {
             const response = await fetch(`/api/games`);
             let data = await response.json();
-            console.log("data = ", data);
+            // console.log("data = ", data);
             if (response.ok) {
               setGames(data.games);
             } else {
@@ -33,7 +33,7 @@ const Home = () => {
             {!games.length ? null :
                 <>
                     <div>
-                        ... owned by me:
+                        ... owned by you:
                         <ol>
                             {games.filter(game => (game.ownerId === currentUser.id)).map(game => (
                                 <Game key={game.id} game={game} />
@@ -41,7 +41,7 @@ const Home = () => {
                         </ol>
                     </div>
                     <div>
-                        ... for which I have a reservation:
+                        ... for which you have a reservation:
                         <ol>
                             {games.filter(game => game.reserved).map(game => (
                                 <Game key={game.id} canEditReservation={true} game={game} />
@@ -49,7 +49,7 @@ const Home = () => {
                         </ol>
                     </div>
                     <div>
-                        ... neither owned by me nor for which I have a reservation:
+                        ... neither owned by you nor for which you have a reservation:
                         <ol>
                             {games.filter(game => (game.ownerId !== currentUser.id && !game.reserved)).map(game => (
                                 <Game key={game.id} game={game} />

@@ -2,8 +2,6 @@ import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 
 import AuthContext from '../../auth';
-import info from "../info.png";
-import cancel from "../cancel.jpeg";
 const Game = ({game, canEditReservation}) => {
     const { currentUser } = useContext(AuthContext);
 
@@ -17,9 +15,18 @@ const Game = ({game, canEditReservation}) => {
                 </div>
             </li>
             {canEditReservation ?
-                <button>Change or cancel reservation</button>
+                <NavLink exact to={`/reservations/${game.reservationId}`} className="nav" activeClassName="active">
+                    Change/cancel reservation
+                </NavLink>
             :
-                <button>{game.ownerId === currentUser.id ? "Edit game" : "Make reservation"}</button>
+                game.ownerId === currentUser.id ?
+                    <NavLink exact to={`/games/${game.id}`} className="nav" activeClassName="active">
+                        Edit game
+                    </NavLink>
+                :
+                    <NavLink exact to={`/reservations/${game.reservationId}`} className="nav" activeClassName="active">
+                        Make reservation
+                    </NavLink>
             }
         </div>
     )

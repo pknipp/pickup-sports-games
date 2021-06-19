@@ -3,10 +3,9 @@ import { NavLink, useHistory } from 'react-router-dom';
 
 import AuthContext from '../../auth';
 
-const Game = () => {
+const User = () => {
   const { fetchWithCSRF, currentUser, setCurrentUser } = useContext(AuthContext);
   const properties = [
-    'id',
     'email',
     'firstName',
     'lastName',
@@ -20,7 +19,7 @@ const Game = () => {
   const [params, setParams] = useState(currentUser ?
     {...currentUser, password: '', password2: ''}
       :
-    properties.reduce((pojo, prop) => ({[prop]: '', ...pojo}), {})
+    properties.reduce((pojo, prop) => ({[prop]: '', ...pojo}), {id: 0})
   );
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
@@ -33,10 +32,8 @@ const Game = () => {
       body: JSON.stringify(params)
     });
     let user = (await res.json()).user;
-    // dispatch(res.ok ? setUser(data.user) : setMessage(data.error.errors[0].msg));
-    // Can the following be DRY-ed somewhat?
     setMessage(user.message);
-    if (properties.id) {
+    if (params.id) {
       if (res.ok) {
         setCurrentUser(user);
       } else {
@@ -80,7 +77,7 @@ const Game = () => {
   return (
     <main className="centered middled">
       <form className="auth" onSubmit={handleSubmit}>
-        <h1>{currentUser ? null : "Welcome to volleyball meetup!"}</h1>
+        {/* <h1>{currentUser ? null : "Welcome to volleyball meetup!"}</h1> */}
         <h4>
           {currentUser ?
             "Change your account details?"
@@ -155,4 +152,4 @@ const Game = () => {
   );
 }
 
-export default Game;
+export default User;
