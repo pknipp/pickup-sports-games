@@ -34,6 +34,11 @@ const Home = () => {
                 <>
                     <div>
                         ... owned by you:
+                        <div>
+                            <NavLink exact to={"/games/0"} className="nav" activeClassName="active">
+                                Create game
+                            </NavLink>
+                        </div>
                         <ol>
                             {games.filter(game => (game.ownerId === currentUser.id)).map(game => (
                                 <Game key={game.id} game={game} />

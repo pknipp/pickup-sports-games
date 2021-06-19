@@ -8,7 +8,6 @@ const EditGame = ({ match }) => {
   const properties = [
     'address',
     'extraInfo',
-    'dateTime',
     'minSkill',
     'maxSkill'
   ];
@@ -16,7 +15,7 @@ const EditGame = ({ match }) => {
   // const [gameId, setGameId] = useState(Number(match.params.gameId));
   const [game, setGame] = useState(properties.reduce((pojo, prop) => {
     return {[prop]: '', ...pojo};
-  }, {id: match.params.gameId}));
+  }, {id: Number(match.params.gameId)}));
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
 
@@ -24,12 +23,14 @@ const EditGame = ({ match }) => {
 
   useEffect(() => {
     (async() => {
-      const res = await fetch(`/api/games/${game.id}`);
-      let fetchedGame = (await res.json()).game;
-      Object.keys(fetchedGame).forEach(key => {
-        if (fetchedGame[key] === null) fetchedGame[key] = '';
-      })
-      setGame(fetchedGame);
+      if (game.id) {
+        const res = await fetch(`/api/games/${game.id}`);
+        let fetchedGame = (await res.json()).game;
+        Object.keys(fetchedGame).forEach(key => {
+          if (fetchedGame[key] === null) fetchedGame[key] = '';
+        })
+        setGame(fetchedGame);
+      }
     })();
   }, [game.id]);
 
@@ -53,7 +54,10 @@ const EditGame = ({ match }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(game)
     });
-    let fetchedGame = (await res.json()).game;
+    let data = await res.json();
+    console.log("data = ", data);
+    let fetchedGame = data.game;
+    // let fetchedGame = (await res.json()).game;
     if (game.id) {
       setMessage("Success");
     } else {
@@ -73,7 +77,7 @@ const EditGame = ({ match }) => {
     <main className="centered middled">
       <form className="auth" onSubmit={handleSubmit}>
         <h4>
-          {game ?
+          {game.id ?
             "Change the Game details?"
           :
             "Choose the Game details."
@@ -89,11 +93,11 @@ const EditGame = ({ match }) => {
           type="text" placeholder="extraInfo" name="extraInfo" value={game.extraInfo}
           onChange={e => setGame({...newGame, extraInfo: e.target.value})}
         />
-        <span>Date and time:</span>
+        {/* <span>Date and time:</span>
         <input
           type="text" placeholder="dateTime" name="dateTime" value={game.dateTime}
           onChange={e => setGame({...newGame, dateTime: e.target.value})}
-        />
+        /> */}
         <span>Minimum skill-level allowed:</span>
         <input
           type="number" placeholder="minSkill" name="minSkill" value={game.minSkill}
@@ -106,7 +110,7 @@ const EditGame = ({ match }) => {
         />
 
         <button color="primary" variant="outlined" type="submit">
-          {game.id ? "Update resource" : "Create resource"}
+          {game.id ? "Update game" : "Create game"}
         </button>
         <span style={{color: "red", paddingLeft:"10px"}}>{message}</span>
       </form>
