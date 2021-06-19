@@ -5,7 +5,7 @@ import AuthContext from '../../auth';
 import Game from './Game';
 
 const Home = () => {
-    const { currentUser } = useContext(AuthContext);
+    const { currentUser, rerender } = useContext(AuthContext);
     const [games, setGames] = useState([]);
     const [message, setMessage] = useState('');
 
@@ -20,7 +20,7 @@ const Home = () => {
               setMessage(data.message || data.error.errors[0]);
             }
         })()
-    }, []);
+    }, [rerender]);
 
     return (
         <>

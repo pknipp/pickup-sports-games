@@ -4,7 +4,7 @@ import { NavLink, useHistory } from 'react-router-dom';
 import AuthContext from '../../auth';
 
 const EditGame = ({ match }) => {
-  const { fetchWithCSRF, currentUser } = useContext(AuthContext);
+  const { fetchWithCSRF, currentUser, rerender, setRerender } = useContext(AuthContext);
   const properties = [
     'address',
     'extraInfo',
@@ -41,6 +41,8 @@ const EditGame = ({ match }) => {
       }, {});
       [nullGame.id, nullGame.ownerId] = [0, 0];
       setGame(nullGame);
+      setRerender(rerender + 1);
+      history.push('/');
     }
   }
 
@@ -58,6 +60,7 @@ const EditGame = ({ match }) => {
       history.push('/');
     }
     setGame(fetchedGame);
+    setRerender(rerender + 1);
   };
 
   const handleDelete = e => {
