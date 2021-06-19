@@ -33,9 +33,9 @@ const EditReservation = ({ match }) => {
     const res = await fetch(`/api/reservations/${reservation.id}`, { method: 'DELETE'});
     if (res.ok) {
       let nullReservation = properties.reduce((pojo, prop) => {
-        return {[prop]: '', ...pojo};
-      }, {});
-      [nullReservation.id, nullReservation.gameId, nullReservation.playerId] = [0, 0, 0];
+        return {[prop]: false, ...pojo};
+      }, {id: 0, gameId: 0, playerId: 0, game: {address: null, dateTime: null}});
+      // [nullReservation.id, nullReservation.gameId, nullReservation.playerId] = [0, 0, 0];
       setReservation(nullReservation);
       setRerender(rerender + 1);
       history.push('/');

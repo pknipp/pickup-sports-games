@@ -6,6 +6,9 @@ shortcomings of games branch pushed and PR-ed by PK on 6/19:
     Front-end is presently hampered by its lack of inclusion of Reservation CUD.
     Lack of DRY-ness associated with the existence of TWO Route wrappers.
 
+In C for games, insert checkBox for owner to determine whether or not he/she'll play.
+Use faker for seeding addresses
+
 put validation stuff in several columns of Users table
 DRY up code associated with multiplicity of columns in Users table
 change cell DataTypes from INTEGER to BIGINT

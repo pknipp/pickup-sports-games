@@ -7,6 +7,7 @@ import User from './components/users/User';
 // import Container from "./components/Container";
 import NavBar from "./components/NavBar";
 import EditGame from "./components/games/EditGame";
+import EditReservation from "./components/reservations/EditReservation";
 import Home from "./components/games/Home";
 import AuthContext from './auth';
 
@@ -83,6 +84,7 @@ const App = () => {
             <ProtectedRoute exact path="/edituser" component={User}/>
             <ProtectedRoute path="/logout" component={LogOut}/>
             <Route exact path="/games/:gameId" component={EditGame} />
+            <Route exact path="/reservations/:resGameId" component={EditReservation} />
 
             {/* <PrivateRoute exact path="/"
             // exact={true}

@@ -5,10 +5,13 @@ const { Op } = require('sequelize');
 const asyncHandler = require('express-async-handler');
 const { authenticated } = require('./security-utils');
 
-router.post('/', [authenticated], asyncHandler(async (req, res, next) => {
+router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     try {
         req.body.ownerId = req.user.id;
-        const game = await Game.create(req.body);
+        //Transform query return to a pojo, so that we can attach properties
+        let game = (await Game.create(req.body)).dataValues;
+        // Should the following be done in a subsequent games/get fetch?
+        game = {...game, count: 0, travelTime: 0, reservationId: 0}
         res.status(201).send({game})
     } catch (e) {
         res.status(400).send(e)
@@ -18,19 +21,18 @@ router.post('/', [authenticated], asyncHandler(async (req, res, next) => {
 // router.get('/:lat/:long/:radius', async (req, res) => {
 router.get('', [authenticated], asyncHandler(async(req, res) => {
     const user = req.user;
-    // transform Query return to a pojo, to enable us to attach properties to it
+    // transform Query return to an array of pojos, to enable us to attach properties to each
     const games = (await Game.findAll({})).map(game => game.dataValues);
     let travelTime = 0;
     for (const game of games) {
         // here'll eventually be the fetch to get distance/travel-time between user and game
         game.travelTime = travelTime;
-        let reservations = (await Reservation.findAll({where: {gameId: game.id}}));
-        // transform Query to a pojo, to enable us to compute its length
-        reservations = reservations.map(reservation => reservation.dataValues);
-        game.count = reservations.length;
+        let reservations = await Reservation.findAll({where: {gameId: game.id}});
+        // transform Query to an array of pojos, to enable us to compute array's length
+        game.count = reservations.map(reservation => reservation.dataValues).length;
         // Set reservationId to zero if no reservation for this game has been made by this user.
         game.reservationId = reservations.reduce((reservationId, reservation) => {
-            return reservationId || (reservation.id === user.id ? reservation.id : reservationId);
+            return reservationId || (reservation.playerId === user.id ? reservation.id : reservationId);
         }, 0);
     }
     res.json({games});
@@ -38,6 +40,7 @@ router.get('', [authenticated], asyncHandler(async(req, res) => {
 
 router.get('/:id', async(req, res) => {
     const id = Number(req.params.id);
+    // Transform query return to a pojo, so that we can attach two properties.
     const game = (await Game.findByPk(id)).dataValues;
     let owner = await User.findByPk(game.ownerId);
     const reservations = await Reservation.findAll({where: {gameId: game.id}});
@@ -52,7 +55,9 @@ router.get('/:id', async(req, res) => {
 router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     const game = await Game.findByPk(Number(req.params.id));
     if (game.ownerId !== req.user.id) res.status(401).send("Unauthorized Access");
-    Object.keys(req.body).forEach(key => game[key] = req.body[key]);
+    Object.entries(req.body).forEach(([key, value]) => {
+        game[key] = value !== '' ? value : null;
+    });
     await game.save();
     res.status(200).json({game});
 }));
