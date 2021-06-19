@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 
 import AuthContext from '../../auth';
-const Game = ({game, canEditReservation}) => {
+const Game = ({game, type }) => {
     const { currentUser } = useContext(AuthContext);
 
     return (
@@ -14,19 +14,19 @@ const Game = ({game, canEditReservation}) => {
                     {game.count} player{game.count > 1 ? 's' : ''} reserved thus far
                 </div>
             </li>
-            {canEditReservation ?
-                <NavLink exact to={`/reservations/${game.reservationId}`} className="nav" activeClassName="active">
-                    Change/cancel reservation
+            {type === "Edit reservation" ?
+                <NavLink exact to={`/reservations/${game.reservationId}-${game.id}`} className="nav" activeClassName="active">
+                    {type}
                 </NavLink>
             :
-                game.ownerId === currentUser.id ?
+                type === "Edit game" ?
                     <NavLink exact to={`/games/${game.id}`} className="nav" activeClassName="active">
-                        Edit game
+                        {type}
                     </NavLink>
-                :
-                    <NavLink exact to={`/reservations/${game.reservationId}`} className="nav" activeClassName="active">
-                        Make reservation
-                    </NavLink>
+            :
+                <NavLink exact to={`/reservations/${game.reservationId}-${game.id}`} className="nav" activeClassName="active">
+                    {type}
+                </NavLink>
             }
         </div>
     )
