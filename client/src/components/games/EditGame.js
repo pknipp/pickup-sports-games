@@ -13,7 +13,7 @@ const EditGame = ({ match }) => {
     'maxSkill'
   ];
 
-  // const [gameId, setGameId] = useState(Number(match.params.gameId));
+
   const [game, setGame] = useState(properties.reduce((pojo, prop) => {
     return {[prop]: '', ...pojo};
   }, {id: Number(match.params.gameId)}));
@@ -26,11 +26,11 @@ const EditGame = ({ match }) => {
     (async() => {
       if (game.id) {
         const res = await fetch(`/api/games/${game.id}`);
-        let fetchedGame = (await res.json()).game;
-        Object.keys(fetchedGame).forEach(key => {
-          if (fetchedGame[key] === null) fetchedGame[key] = '';
+        let newGame = (await res.json()).game;
+        Object.keys(newGame).forEach(key => {
+          if (newGame[key] === null) newGame[key] = '';
         })
-        setGame(fetchedGame);
+        setGame(newGame);
       }
     })();
   }, [game.id]);
@@ -55,14 +55,17 @@ const EditGame = ({ match }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(game)
     });
-    let data = await res.json();
-    let fetchedGame = data.game;
+    let newGame = (await res.json()).game
+    // React likes '' but not null.
+    Object.entries(newGame).forEach(([key, value]) => {
+      if (value === null) newGame[key] = '';
+    });
     if (game.id) {
       setMessage("Success");
     } else {
       history.push('/');
     }
-    setGame(fetchedGame);
+    setGame(newGame);
     setRerender(rerender + 1);
   };
 
@@ -71,7 +74,6 @@ const EditGame = ({ match }) => {
     deleteGame();
   }
 
-  let newGame = {...game};
   return (
     <main className="centered middled">
       <form className="auth" onSubmit={handleSubmit}>
@@ -85,27 +87,27 @@ const EditGame = ({ match }) => {
         <span>Game address:</span>
         <input
           type="text" placeholder="address" name="address" value={game.address}
-          onChange={e => setGame({...newGame, address: e.target.value})}
+          onChange={e => setGame({...game, address: e.target.value})}
         />
         <span>Extra info (optional):</span>
         <input
           type="text" placeholder="extraInfo" name="extraInfo" value={game.extraInfo}
-          onChange={e => setGame({...newGame, extraInfo: e.target.value})}
+          onChange={e => setGame({...game, extraInfo: e.target.value})}
         />
         <span>Date and time:</span>
         <input
           type="text" placeholder="This'll be ignored." name="dateTime" value={game.dateTime}
-          onChange={e => setGame({...newGame, dateTime: e.target.value})}
+          onChange={e => setGame({...game, dateTime: e.target.value})}
         />
         <span>Minimum skill-level allowed:</span>
         <input
           type="number" placeholder="minSkill" name="minSkill" value={game.minSkill}
-          onChange={e => setGame({...newGame, minSkill: Number(e.target.value)})}
+          onChange={e => setGame({...game, minSkill: Number(e.target.value)})}
         />
         <span>Maximum skill-level allowed:</span>
         <input
           type="number" placeholder="maxSkill" name="maxSkill" value={game.maxSkill}
-          onChange={e => setGame({...newGame, maxSkill: Number(e.target.value)})}
+          onChange={e => setGame({...game, maxSkill: Number(e.target.value)})}
         />
 
         <button color="primary" variant="outlined" type="submit">
