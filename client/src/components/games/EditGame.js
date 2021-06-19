@@ -7,6 +7,7 @@ const EditGame = ({ match }) => {
   const { fetchWithCSRF, currentUser, rerender, setRerender } = useContext(AuthContext);
   const properties = [
     'address',
+    'dateTime',
     'extraInfo',
     'minSkill',
     'maxSkill'
@@ -49,15 +50,13 @@ const EditGame = ({ match }) => {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    console.log("top of handleSubmit says that game = ", game);
+    game.dateTime = new Date();
     const res = await fetch(`/api/games${game.id ? ('/' + game.id) : ''}`, { method: game.id ? 'PUT': 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(game)
     });
     let data = await res.json();
-    console.log("data = ", data);
     let fetchedGame = data.game;
-    // let fetchedGame = (await res.json()).game;
     if (game.id) {
       setMessage("Success");
     } else {
@@ -93,11 +92,11 @@ const EditGame = ({ match }) => {
           type="text" placeholder="extraInfo" name="extraInfo" value={game.extraInfo}
           onChange={e => setGame({...newGame, extraInfo: e.target.value})}
         />
-        {/* <span>Date and time:</span>
+        <span>Date and time:</span>
         <input
-          type="text" placeholder="dateTime" name="dateTime" value={game.dateTime}
+          type="text" placeholder="This'll be ignored." name="dateTime" value={game.dateTime}
           onChange={e => setGame({...newGame, dateTime: e.target.value})}
-        /> */}
+        />
         <span>Minimum skill-level allowed:</span>
         <input
           type="number" placeholder="minSkill" name="minSkill" value={game.minSkill}

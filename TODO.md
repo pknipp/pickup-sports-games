@@ -1,3 +1,11 @@
+shortcomings of games branch pushed and PR-ed by PK on 6/19:
+    game.dateTime inputs are overridden, using instead new Date() in CU and seeder
+    error handling is poor or nonexistent
+    front-end is very ugly
+    #skill should probably be handled with a dropdown rather than an integer, for various technical reasons
+    Front-end is presently hampered by its lack of inclusion of Reservation CUD.
+    Lack of DRY-ness associated with the existence of TWO Route wrappers.
+
 put validation stuff in several columns of Users table
 DRY up code associated with multiplicity of columns in Users table
 change cell DataTypes from INTEGER to BIGINT

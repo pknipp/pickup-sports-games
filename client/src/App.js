@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import Cookies from "js-cookie";
-import LogIn from './components/admin/LogIn';
-import User from './components/admin/User';
-import Container from "./components/Container";
+import LogIn from './components/session/LogIn';
+import LogOut from './components/session/LogOut';
+import User from './components/users/User';
+// import Container from "./components/Container";
+import NavBar from "./components/NavBar";
+import EditGame from "./components/games/EditGame";
+import Home from "./components/games/Home";
 import AuthContext from './auth';
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
@@ -12,11 +16,41 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   />
 )
 
+const ProtectedRoute = ({ component: Component, path, exact, ...rest}) => {
+  const { currentUser } = useContext(AuthContext)
+  return (
+      <Route
+          {...rest}
+          path={path}
+          exact={exact}
+          render={props => currentUser
+              ? <Component currentUser={currentUser} {...rest} />
+              : <Redirect to="/login" />
+          }
+      />
+  )
+}
+
+const AuthRoute = ({ component: Component, path, exact, ...rest }) => {
+  const { currentUser } = useContext(AuthContext);
+  return (
+      <Route
+          {...rest}
+          path={path}
+          exact={exact}
+          render={() => currentUser ? <Redirect to="/" />
+              : <Component {...rest} />
+          }
+      />
+  )
+}
+
 const App = () => {
   const [fetchWithCSRF] = useState(() => fetch);
   const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true)
-  const authContextValue = {fetchWithCSRF, currentUser, setCurrentUser};
+  const [loading, setLoading] = useState(true);
+  const [rerender, setRerender] = useState(0);
+  const authContextValue = {fetchWithCSRF, currentUser, setCurrentUser, rerender, setRerender};
 
   const loadUser = () => {
     const authToken = Cookies.get("token");
@@ -38,12 +72,21 @@ const App = () => {
         <h1>Loading</h1>
       :
         <BrowserRouter>
+          <NavBar />
           <Switch>
-            <Route path="/login" component={LogIn} />
-            <Route path="/signup" component={User} />
-            <PrivateRoute path="/"
+
+            <AuthRoute exact path="/login" component={LogIn} />
+            <AuthRoute exact path="/signup" component={User} />
+
+             {/* <Route path="/feature1" component={Feature1}/> */}
+             <ProtectedRoute exact path="/" component={Home}/>
+            <ProtectedRoute exact path="/edituser" component={User}/>
+            <ProtectedRoute path="/logout" component={LogOut}/>
+            <Route exact path="/games/:gameId" component={EditGame} />
+
+            {/* <PrivateRoute exact path="/"
             // exact={true}
-            needLogin={!currentUser} component={Container} />
+            needLogin={!currentUser} component={Container} /> */}
           </Switch>
         </BrowserRouter>
       }
