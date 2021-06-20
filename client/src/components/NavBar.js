@@ -1,11 +1,6 @@
 import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 
-import LogOut from "./session/LogOut";
-import User from "./users/User";
-import Home from "./games/Home";
-import EditGame from "./games/EditGame";
-
 import AuthContext from '../auth';
 
 const NavBar = () => {

@@ -1,16 +1,21 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { NavLink, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import AuthContext from '../../auth';
 
 const EditReservation = ({ match }) => {
-  const [reservationId, gameId] = match.params.resGameId.split('-').map(id => Number(id));
+  const resGameId = match.params.resGameId;
+  const [reservationId, gameId] = resGameId.split('-').map(id => Number(id));
   const { fetchWithCSRF, currentUser, rerender, setRerender } = useContext(AuthContext);
   const properties = ['setter','middle','rightSide','outside','libero','twos','fours','sixes'];
-
-  const [reservation, setReservation] = useState(properties.reduce((pojo, prop) => {
-    return {[prop]: false, ...pojo};
-  }, {id: reservationId, gameId: gameId, playerId: currentUser.id, game: {address: null, dateTime: null}}));
+  const nullReservation = properties.reduce((pojo, prop) => {
+    return {...pojo, [prop]: false};
+  }, {id: 0, playerId: 0, gameId: 0, game: {address: '', dateTime: ''}});
+  const [reservation, setReservation] = useState({...nullReservation,
+    playerId: currentUser.id,
+    id: reservationId,
+    gameId
+  });
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
 
@@ -18,25 +23,20 @@ const EditReservation = ({ match }) => {
 
   useEffect(() => {
     (async() => {
-      if (reservation.id) {
-        const res = await fetch(`/api/reservations/${reservation.id}`);
-        let newReservation = (await res.json()).reservation;
-        Object.keys(newReservation).forEach(key => {
-          if (newReservation[key] === null) newReservation[key] = false;
-        })
-        setReservation(newReservation);
-      }
+      const res = await fetch(`/api/reservations/${resGameId}`);
+      let newReservation = {...reservation, ...(await res.json()).reservation};
+      Object.keys(newReservation).forEach(key => {
+        if (newReservation[key] === null) newReservation[key] = false;
+      })
+      setReservation(newReservation);
     })();
   }, [reservation.id]);
 
   const deleteReservation = async () => {
     const res = await fetch(`/api/reservations/${reservation.id}`, { method: 'DELETE'});
     if (res.ok) {
-      let nullReservation = properties.reduce((pojo, prop) => {
-        return {[prop]: false, ...pojo};
-      }, {id: 0, gameId: 0, playerId: 0, game: {address: null, dateTime: null}});
-      // [nullReservation.id, nullReservation.gameId, nullReservation.playerId] = [0, 0, 0];
-      setReservation(nullReservation);
+      setReservation(JSON.parse(JSON.stringify(nullReservation)));
+      // Is the following unnecessary?
       setRerender(rerender + 1);
       history.push('/');
     }

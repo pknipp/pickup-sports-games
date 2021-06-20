@@ -21,10 +21,16 @@ router.get('', [authenticated], asyncHandler(async(req, res) => {
     res.json({reservations});
 }));
 
-router.get('/:id', async(req, res) => {
-    const id = Number(req.params.id);
-    const reservation = (await Reservation.findByPk(id)).dataValues;
-    reservation.game = (await Game.findByPk(reservation.gameId)).dataValues;
+router.get('/:resGameId', async(req, res) => {
+    const [reservationId, gameId] = req.params.resGameId.split('-').map(id => Number(id));
+    let reservation;
+    if (reservationId) {
+        reservation = (await Reservation.findByPk(reservationId)).dataValues;
+        const game = (await Game.findByPk(gameId)).dataValues;
+        reservation.game = game;
+    } else {
+        reservation = {game : (await Game.findByPk(gameId)).dataValues};
+    }
     res.json({reservation});
 })
 
