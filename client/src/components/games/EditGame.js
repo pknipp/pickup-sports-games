@@ -13,10 +13,10 @@ const EditGame = ({ match }) => {
     'maxSkill'
   ];
 
-
   const [game, setGame] = useState(properties.reduce((pojo, prop) => {
     return {[prop]: '', ...pojo};
   }, {id: Number(match.params.gameId)}));
+  const [wantsToPlay, setWantsToPlay] = useState(false);
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
 
@@ -40,7 +40,7 @@ const EditGame = ({ match }) => {
     if (res.ok) {
       let nullGame = properties.reduce((pojo, prop) => {
         return {[prop]: '', ...pojo};
-      }, {});
+      }, {wantsToPlay: false});
       [nullGame.id, nullGame.ownerId] = [0, 0];
       setGame(nullGame);
       setRerender(rerender + 1);
@@ -56,14 +56,14 @@ const EditGame = ({ match }) => {
       body: JSON.stringify(game)
     });
     let newGame = (await res.json()).game
-    // React likes '' but not null.
+    // React likes '' but does not like null.
     Object.entries(newGame).forEach(([key, value]) => {
       if (value === null) newGame[key] = '';
     });
     if (game.id) {
       setMessage("Success");
     } else {
-      history.push('/');
+      history.push(wantsToPlay ? `/reservations/0-${newGame.id}` : '/');
     }
     setGame(newGame);
     setRerender(rerender + 1);
@@ -86,17 +86,17 @@ const EditGame = ({ match }) => {
         </h4>
         <span>Game address:</span>
         <input
-          type="text" placeholder="address" name="address" value={game.address}
+          type="text" placeholder="Address" name="address" value={game.address}
           onChange={e => setGame({...game, address: e.target.value})}
         />
         <span>Extra info (optional):</span>
         <input
-          type="text" placeholder="extraInfo" name="extraInfo" value={game.extraInfo}
+          type="text" placeholder="Extra Info about event" name="extraInfo" value={game.extraInfo}
           onChange={e => setGame({...game, extraInfo: e.target.value})}
         />
         <span>Date and time:</span>
         <input
-          type="text" placeholder="This'll be ignored." name="dateTime" value={game.dateTime}
+          type="text" placeholder="This'll be overwritten by a random date/time." name="dateTime" value={game.dateTime}
           onChange={e => setGame({...game, dateTime: e.target.value})}
         />
         <span>Minimum skill-level allowed:</span>
@@ -109,6 +109,21 @@ const EditGame = ({ match }) => {
           type="number" placeholder="maxSkill" name="maxSkill" value={game.maxSkill}
           onChange={e => setGame({...game, maxSkill: Number(e.target.value)})}
         />
+
+        {game.id ? null :
+          <>
+          <br/>
+          <span>You want to play in this game.
+            <input
+              name="wantsToPlay"
+              type="checkbox"
+              checked={wantsToPlay}
+              onChange={e => setWantsToPlay(e.target.checked)}
+            />
+          </span>
+          <br/>
+          </>
+        }
 
         <button color="primary" variant="outlined" type="submit">
           {game.id ? "Update game" : "Create game"}

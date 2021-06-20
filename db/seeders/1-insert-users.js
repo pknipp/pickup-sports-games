@@ -19,7 +19,7 @@ for (const firstName of fNames.slice(0, numberOfUsers - 1)) {
 }
 
 users.forEach(user => {
-  user.cell = 10 ** 9 + Math.floor(Math.random() * 1.14 * 10 ** 9);
+  user.cell = 10 ** 9 + Math.floor(Math.random() * 9 * 10 ** 9);
   user.skill = 1 + Math.floor(Math.random() * 8);
   user.photo = `${user.firstName}'s photoURL`;
   user.hashedPassword = createPassword();

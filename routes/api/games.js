@@ -3,11 +3,13 @@ const router = express.Router();
 const { Game, Reservation, User } = require("../../db/models");
 const { Op } = require('sequelize');
 const asyncHandler = require('express-async-handler');
+const faker = require('faker');
 const { authenticated } = require('./security-utils');
 
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     try {
         req.body.ownerId = req.user.id;
+        req.body.dateTime = faker.date.future();
         //Transform query return to a pojo, so that we can attach properties
         let game = (await Game.create(req.body)).dataValues;
         // Should the following be done in a subsequent games/get fetch?

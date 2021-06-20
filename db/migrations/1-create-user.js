@@ -23,7 +23,7 @@ module.exports = {
       }, {}),
       cell: {
         allowNull: false,
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
       },
       skill: {
         allowNull: false,
