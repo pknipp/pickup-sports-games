@@ -24,7 +24,7 @@ const people = [
   ['Pete', 'Stratford'],
   ['Quincy', 'Memphis'],
   ['Rose', 'Palo Alto'],
-  ['Simon', 'Boston'],[
+  ['Simon', 'Boston'],
   ['Tyna', 'Miami Gardens'],
   ['Ugo', 'Chicago'],
   ['Vann', 'Hollywood'],
@@ -35,12 +35,13 @@ const people = [
 
 const users = [{email: 'volleyb@aol.com', address: 'Philadelphia', nickName: 'Volley B', firstName: 'Volley', lastName: 'Ball'}];
 
-for (const person of people.slice(0, numberOfUsers - 1)) {
+for (const person of people) {
+  let firstName = person[0];
   users.push({
-    email: person[0][0].toLowerCase() + 'doe@aol.com',
+    email: firstName[0].toLowerCase() + 'doe@aol.com',
     address: person[1],
     nickName: firstName + ' D',
-    firstName: firstName,
+    firstName,
     lastName: 'Doe'
   });
 }
