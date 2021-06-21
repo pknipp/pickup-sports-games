@@ -29,18 +29,12 @@ router.get('', [authenticated], asyncHandler(async(req, res) => {
     const user = req.user;
     // transform Query return to an array of pojos, to enable us to attach properties to each
     const games = (await Game.findAll({})).map(game => game.dataValues);
+    const venues = [];
     // replace for-loop w/forEach?
     for (let i = 0; i < games.length; i++) {
         let game = games[i];
+        venues.push(game.address.split(' ').join('+'));
         game.owner = (await User.findByPk(game.ownerId)).dataValues;
-        // fetch travel-Time between user and game
-        await(async () => {
-            const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${game.address.split(' ').join('+')}&destinations=${user.address.split(' ').join('+')}&key=${mapsApiKey}`);
-            let data = await response.json();
-            if (response.ok) {
-                games[i].duration = data.rows[0].elements[0].duration;
-            }
-        })()
         let reservations = await Reservation.findAll({where: {gameId: game.id}});
         // transform Query to an array of pojos, to enable us to compute array's length
         game.count = reservations.map(reservation => reservation.dataValues).length;
@@ -49,6 +43,16 @@ router.get('', [authenticated], asyncHandler(async(req, res) => {
             return (reservation.playerId === user.id ? reservation.id : reservationId);
         }, 0);
     }
+    // fetch travel-Time between user and array of addresses ("venues")
+    let elements;
+    await(async () => {
+        const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${user.address.split(' ').join('+')}&destinations=${venues.join('|')}&key=${mapsApiKey}`);
+        let data = await response.json();
+        if (response.ok) elements = data.rows[0].elements;
+    })()
+    elements.forEach((element, index) => {
+        games[index].duration = element.duration;
+    })
     res.json({games});
 }));
 
