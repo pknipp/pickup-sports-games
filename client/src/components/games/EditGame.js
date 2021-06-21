@@ -84,7 +84,7 @@ const EditGame = ({ match }) => {
             "Choose the Game details."
           }
         </h4>
-        <span>Game address:</span>
+        <span>(space separated) game address:</span>
         <input
           type="text" placeholder="Address" name="address" value={game.address}
           onChange={e => setGame({...game, address: e.target.value})}

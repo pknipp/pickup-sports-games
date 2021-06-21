@@ -1,6 +1,6 @@
 const fs = require('fs');
 const AWS = require('aws-sdk');
-const { S3 } = require('aws-sdk');
+// const { S3 } = require('aws-sdk');
 const { awsConfig: { accessKeyId, secretAccessKEY, region } } = require('./config/index')
 
 const S3 = new AWS.S3({

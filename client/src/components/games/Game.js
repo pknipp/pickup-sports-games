@@ -1,15 +1,16 @@
-import React, { useContext } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
 
-import AuthContext from '../../auth';
+// import AuthContext from '../../auth';
 const Game = ({game, type }) => {
-    // const { currentUser } = useContext(AuthContext);
 
     return (
         <div>
             <li>
                 <div>Game dateTime: {game.dateTime}</div>
-                <div>Organized by {game.owner.nickName}</div>
+                {type === "Edit game" ? null :
+                    <div>Organized by {game.owner.nickName}</div>
+                }
                 <div>Travel-time: {game.duration.text}</div>
                 <div>Game location: {game.address}</div>
                 <div>
