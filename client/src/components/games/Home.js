@@ -6,7 +6,7 @@ import Game from './Game';
 
 const Home = () => {
     const { currentUser, rerender } = useContext(AuthContext);
-    const [games, setGames] = useState([]);
+    // const [games, setGames] = useState([]);
     const [gamesOwned, setGamesOwned] = useState([]);
     const [gamesReserved, setGamesReserved] = useState([]);
     const [gamesOther, setGamesOther] = useState([]);
@@ -17,10 +17,16 @@ const Home = () => {
             const response = await fetch(`/api/games`);
             let data = await response.json();
             if (response.ok) {
-              setGames(data.games);
-              setGamesOwned(data.games.filter(game => game.ownerId === currentUser.id));
-              setGamesReserved(data.games.filter(game => !!game.reservationId));
-              setGamesOther(data.games.filter(game => !game.reservationId));
+            //   setGames(data.games);
+              setGamesOwned(data.games.filter(game => {
+                  return game.ownerId === currentUser.id;
+              }).sort((game1, game2) => new Date(game1.dateTime) - new Date(game2.dateTime)));
+              setGamesReserved(data.games.filter(game => {
+                  return !!game.reservationId;
+              }).sort((game1, game2) => game1.owner.nickName.localeCompare(game2.owner.nickName)));
+              setGamesOther(data.games.filter(game => {
+                  return !game.reservationId;
+              }).sort((game1, game2) => game1.duration.value - game2.duration.value));
             } else {
               setMessage(data.message || data.error.errors[0]);
             }
@@ -41,7 +47,7 @@ const Home = () => {
             </div>
             {!gamesOwned.length ? null :
                 <div>
-                    Game{gamesOwned.length > 1 ? "s" : ""} owned by you:
+                    Game{gamesOwned.length > 1 ? "s" : ""} owned by you (sorted chronologically):
                     <ul>
                         {gamesOwned.map(game => {
                         return <Game key={game.id} game={game} type={"Edit game"}/>;
@@ -51,7 +57,7 @@ const Home = () => {
             }
             {!gamesReserved.length ? null :
                 <div>
-                    Game{gamesReserved.length > 1 ? "s" : ""} for which you have a reservation:
+                    Game{gamesReserved.length > 1 ? "s" : ""} for which you have a reservation (sorted by game owner):
                     <ul>
                         {gamesReserved.map(game => {
                             return <Game key={game.id} type={"Edit reservation"} game={game} />;
@@ -61,7 +67,7 @@ const Home = () => {
             }
             {!gamesOther.length ? null :
                 <div>
-                    Game{gamesOther.length > 1 ? "s" : ""} for which you have not yet made a reservation:
+                    Game{gamesOther.length > 1 ? "s" : ""} for which you have not yet made a reservation (sorted geographically):
                     <ul>
                         {gamesOther.map(game => {
                             return <Game key={game.id} game={game} type={"Make reservation"} />;

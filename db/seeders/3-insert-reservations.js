@@ -1,5 +1,7 @@
 'use strict';
-const { numberOfUsers, numberOfGames, reservationProb, miscProb } = require('../seederNumbers');
+const { numberOfUsers } = require('../seederData/users');
+const { numberOfGames } = require('../seederData/games');
+const { reservationProb } = require('../seederData/reservations');
 
 const bools = ['setter','middle','rightSide','outside','libero','twos','fours','sixes'];
 let reservations = [];

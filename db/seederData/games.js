@@ -1,4 +1,8 @@
-﻿module.exports = [
+﻿module.exports = {
+    numberOfGames: 10,
+    skillProb: 0.5,
+    miscProb: 0.5,
+    cities: [
     'New York City NY',
     'Los Angeles CA',
     'Chicago IL',
@@ -199,4 +203,4 @@
     'Metairie LA',
     'Olathe KS',
     'Waco TX'
-]
+]};
