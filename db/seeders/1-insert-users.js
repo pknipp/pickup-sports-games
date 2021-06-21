@@ -2,13 +2,12 @@
 
 const bcrypt = require('bcryptjs');
 const { people, numberOfUsers } = require('../seederData/users');
-console.log("numberOfUsers = ", numberOfUsers)
 const createPassword = () => bcrypt.hashSync('password');
 const r = o => ({...o, createdAt: new Date(), updatedAt: new Date()});
 
 const users = [{email: 'volleyb@aol.com', address: 'Philadelphia PA', nickName: 'Volley B', firstName: 'Volley', lastName: 'Ball'}];
 
-for (const person of people.slice(numberOfUsers - 1)) {
+for (const person of people.slice(0, numberOfUsers - 1)) {
   let firstName = person[0];
   users.push({
     email: firstName[0].toLowerCase() + 'doe@aol.com',
@@ -26,8 +25,6 @@ users.forEach(user => {
   user.hashedPassword = createPassword();
   user = r(user);
 })
-
-console.log("users.length = ", users.length);
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
