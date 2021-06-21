@@ -2,6 +2,7 @@
 
 const bcrypt = require('bcryptjs');
 const { people, numberOfUsers } = require('../seederData/users');
+console.log("numberOfUsers = ", numberOfUsers)
 const createPassword = () => bcrypt.hashSync('password');
 const r = o => ({...o, createdAt: new Date(), updatedAt: new Date()});
 
@@ -25,6 +26,8 @@ users.forEach(user => {
   user.hashedPassword = createPassword();
   user = r(user);
 })
+
+console.log("users.length = ", users.length);
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
