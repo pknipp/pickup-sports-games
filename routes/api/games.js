@@ -1,58 +1,90 @@
 const express = require('express');
-const router = express.Router();
-const { Game } = require("../../db/models");
-const { Op } = require('sequelize');
 const asyncHandler = require('express-async-handler');
+const faker = require('faker');
+const { Op } = require('sequelize');
+const fetch = require('node-fetch');
 
-router.get('/:lat/:long/:radius', async (req, res) => {
-    const games = await Game.findAll({
+const { Game, Reservation, User } = require("../../db/models");
+const { authenticated } = require('./security-utils');
+const { mapsConfig: { mapsApiKey } } = require('../../config');
 
-    })
-});
+const router = express.Router();
 
-router.post('/', asyncHandler(async (req, res, next) => {
-    const {
-        ownerId,
-        address,
-        dateTime,
-        minSkill,
-        maxSkill,
-        extraInfo,
-    } = req.body;
-    console.log(req.body)
+router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     try {
-        const game = await Game.create({
-            ownerId,
-            address,
-            dateTime,
-            minSkill,
-            maxSkill,
-            extraInfo
-        })
-
-        res.status(201).send(game)
+        req.body.ownerId = req.user.id;
+        req.body.dateTime = faker.date.future();
+        //Transform query return to a pojo, so that we can attach properties
+        let game = (await Game.create(req.body)).dataValues;
+        // Should the following be done in a separate games/get fetch?
+        game = {...game, count: 0, travelTime: 0, reservationId: 0}
+        res.status(201).send({game})
     } catch (e) {
         res.status(400).send(e)
     }
 }));
 
-router.put('/:id', async (req, res) => {
-    const userId = req.body.id;
-    const game = await Game.findOne({ id: req.params.id })
-
-    if (game.ownerId !== userId) {
-        res.status(401).send("Unauthorized Access");
+// router.get('/:lat/:long/:radius', async (req, res) => {
+router.get('', [authenticated], asyncHandler(async(req, res) => {
+    const user = req.user;
+    // transform Query return to an array of pojos, to enable us to attach properties to each
+    const games = (await Game.findAll({})).map(game => game.dataValues);
+    // replace for-loop w/forEach?
+    for (let i = 0; i < games.length; i++) {
+        let game = games[i];
+        game.owner = (await User.findByPk(game.ownerId)).dataValues;
+        // fetch travel-Time between user and game
+        await(async () => {
+            const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${game.address.split(' ').join('+')}&destinations=${user.address.split(' ').join('+')}&key=${mapsApiKey}`);
+            let data = await response.json();
+            if (response.ok) {
+                games[i].duration = data.rows[0].elements[0].duration;
+            }
+        })()
+        let reservations = await Reservation.findAll({where: {gameId: game.id}});
+        // transform Query to an array of pojos, to enable us to compute array's length
+        game.count = reservations.map(reservation => reservation.dataValues).length;
+        // Set reservationId to zero if no reservation for this game has been made by this user.
+        game.reservationId = reservations.reduce((reservationId, reservation) => {
+            return (reservation.playerId === user.id ? reservation.id : reservationId);
+        }, 0);
     }
+    res.json({games});
+}));
 
-    game.address = req.body.address;
-    game.dateTime = req.body.dateTime;
-    game.minSkill = req.body.minSkill;
-    game.maxSkill = req.body.maxSkill;
-    game.extraInfo = req.body.extraInfo;
-
-    await game.save();
-    res.status(200).json(game);
-
+router.get('/:id', async(req, res) => {
+    const id = Number(req.params.id);
+    // Transform query return to a pojo, so that we can attach two properties.
+    const game = (await Game.findByPk(id)).dataValues;
+    let owner = await User.findByPk(game.ownerId);
+    const reservations = await Reservation.findAll({where: {gameId: game.id}});
+    let players = [];
+    reservations.forEach(async(reservation) => {
+        players.push(await User.findByPk(reservation.playerId));
+    });
+    res.json({game: {...game, owner, players}});
 })
+
+// Do we want to allow a game owner to transfer game-"owner"ship to another user?
+router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
+    const game = await Game.findByPk(Number(req.params.id));
+    if (game.ownerId !== req.user.id) res.status(401).send("Unauthorized Access");
+    Object.entries(req.body).forEach(([key, value]) => {
+        game[key] = value !== '' ? value : null;
+    });
+    await game.save();
+    res.status(200).json({game});
+}));
+
+router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {
+    const game = await Game.findByPk(Number(req.params.id))   ;
+    if (game.ownerId !== req.user.id) res.status(401).send("Unauthorized Access");
+    try{
+      await game.destroy();
+      res.json({});
+    } catch(e) {
+      res.status(400).send(e);
+    }
+}));
 
 module.exports = router;

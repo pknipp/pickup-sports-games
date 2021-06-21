@@ -17,7 +17,7 @@ const LogIn = () => {
     if (response.ok) {
       setCurrentUser(data.user);
     } else {
-      setMessage(data.error.errors[0].msg || data.message);
+      setMessage(data.message || data.error.errors[0]);
     }
   };
 
@@ -31,7 +31,7 @@ const LogIn = () => {
   return (currentUser) ? <Redirect to="/" /> : (
     <main className="centered middled">
       <form className="auth" onSubmit={handleSubmit}>
-      <h1>Welcome to volleyball meetup!</h1>
+      {/* <h1>Welcome to volleyball meetup!</h1> */}
       <h4>We hope that you will either login or signup.</h4>
         <span>Email address:</span>
         <input

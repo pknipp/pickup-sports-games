@@ -1,41 +1,24 @@
 'use strict';
+const { numberOfUsers } = require('../seederData/users');
+const { numberOfGames } = require('../seederData/games');
+const { reservationProb } = require('../seederData/reservations');
 
-function r(o) {
-  [o.createdAt, o.updatedAt] = [new Date(), new Date()];
-  const bools = ['setter','middle','rightSide','outside','libero','twos','fours','sixes'];
-  // PAK does not know why following line is necessary, given use of defaultValue in model and migration files.
-  bools.forEach(bool => o[bool] = (o[bool] == null) ? false : o[bool]);
-  return o;
+const bools = ['setter','middle','rightSide','outside','libero','twos','fours','sixes'];
+let reservations = [];
+for (let iUser = 0; iUser < numberOfUsers; iUser++) {
+  for (let iGame = 0; iGame < numberOfGames; iGame++) {
+    if (Math.random() < reservationProb) {
+      let reservation = {playerId: 1 + iUser, gameId: 1 + iGame};
+      bools.forEach(bool => reservation[bool] = Math.random() < 0.5);
+      [reservation.createdAt, reservation.updatedAt] = [new Date(), new Date()];
+      reservations.push(reservation);
+    }
+  }
 }
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert('Reservations', [
-      r({
-        playerId: 1,
-        gameId: 1,
-        setter: true,
-        libero: false,
-        twos: true,
-        fours: false
-      }),
-      r({
-        playerId: 1,
-        gameId: 2,
-        rightSide: true,
-        outside: false,
-        fours: true,
-        sixes: false
-      }),
-      r({
-        playerId: 2,
-        gameId: 1,
-        middle: true,
-        twos: true,
-        sixes: true
-      }),
-    ]);
+    return queryInterface.bulkInsert('Reservations', reservations);
   },
-
   down: (queryInterface, Sequelize) => queryInterface.bulkDelete('Reservations')
 };
