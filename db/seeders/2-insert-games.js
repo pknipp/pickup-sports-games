@@ -1,6 +1,7 @@
 'use strict';
 const faker = require('faker');
 const { numberOfUsers, numberOfGames, reservationProb, skillProb, miscProb } = require('../seederNumbers');
+const { cities } = require('../cities');
 const r = o => ({...o, createdAt: new Date(), updatedAt: new Date()});
 
 const games = [];
