@@ -1,10 +1,14 @@
 const express = require('express');
-const router = express.Router();
-const { Game, Reservation, User } = require("../../db/models");
-const { Op } = require('sequelize');
 const asyncHandler = require('express-async-handler');
 const faker = require('faker');
+const { Op } = require('sequelize');
+const fetch = require('node-fetch');
+
+const { Game, Reservation, User } = require("../../db/models");
 const { authenticated } = require('./security-utils');
+const { mapsConfig: { mapsApiKey } } = require('../../config');
+
+const router = express.Router();
 
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     try {
@@ -12,7 +16,7 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
         req.body.dateTime = faker.date.future();
         //Transform query return to a pojo, so that we can attach properties
         let game = (await Game.create(req.body)).dataValues;
-        // Should the following be done in a subsequent games/get fetch?
+        // Should the following be done in a separate games/get fetch?
         game = {...game, count: 0, travelTime: 0, reservationId: 0}
         res.status(201).send({game})
     } catch (e) {
@@ -25,16 +29,24 @@ router.get('', [authenticated], asyncHandler(async(req, res) => {
     const user = req.user;
     // transform Query return to an array of pojos, to enable us to attach properties to each
     const games = (await Game.findAll({})).map(game => game.dataValues);
-    let travelTime = 0;
-    for (const game of games) {
-        // here'll eventually be the fetch to get distance/travel-time between user and game
-        game.travelTime = travelTime;
+    // replace for-loop w/forEach?
+    for (let i = 0; i < games.length; i++) {
+        let game = games[i];
+        game.owner = (await User.findByPk(game.ownerId)).dataValues;
+        // fetch travel-Time between user and game
+        await(async () => {
+            const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${game.address.split(' ').join('+')}&destinations=${user.address.split(' ').join('+')}&key=${mapsApiKey}`);
+            let data = await response.json();
+            if (response.ok) {
+                games[i].duration = data.rows[0].elements[0].duration;
+            }
+        })()
         let reservations = await Reservation.findAll({where: {gameId: game.id}});
         // transform Query to an array of pojos, to enable us to compute array's length
         game.count = reservations.map(reservation => reservation.dataValues).length;
         // Set reservationId to zero if no reservation for this game has been made by this user.
         game.reservationId = reservations.reduce((reservationId, reservation) => {
-            return reservationId || (reservation.playerId === user.id ? reservation.id : reservationId);
+            return (reservation.playerId === user.id ? reservation.id : reservationId);
         }, 0);
     }
     res.json({games});

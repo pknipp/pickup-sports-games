@@ -1,19 +1,19 @@
 'use strict';
 
 const bcrypt = require('bcryptjs');
-const { numberOfUsers } = require('../seederNumbers');
+const { people, numberOfUsers } = require('../seederData/users');
 const createPassword = () => bcrypt.hashSync('password');
 const r = o => ({...o, createdAt: new Date(), updatedAt: new Date()});
 
-const fNames = ['Aaron', 'Ben', 'Curtis', 'Darius', 'Ed', 'Fred', 'Geoffrey', 'Hal', 'Ian', 'Javier', 'Krisna', 'Lauren', 'Mylo', 'Nick', 'Olive', 'Pete', 'Quincy', 'Rose', 'Simon', 'Tyna', 'Ugo', 'Vann', 'Warren', 'Yul', 'Zachery'];
+const users = [{email: 'volleyb@aol.com', address: 'Philadelphia PA', nickName: 'Volley B', firstName: 'Volley', lastName: 'Ball'}];
 
-const users = [{email: 'volleyb@aol.com', nickName: 'Volley B', firstName: 'Volley', lastName: 'Ball'}];
-
-for (const firstName of fNames.slice(0, numberOfUsers - 1)) {
+for (const person of people.slice(numberOfUsers - 1)) {
+  let firstName = person[0];
   users.push({
     email: firstName[0].toLowerCase() + 'doe@aol.com',
+    address: person[1],
     nickName: firstName + ' D',
-    firstName: firstName,
+    firstName,
     lastName: 'Doe'
   });
 }

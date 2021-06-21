@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { NavLink, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import AuthContext from '../../auth';
 
 const EditGame = ({ match }) => {
-  const { fetchWithCSRF, currentUser, rerender, setRerender } = useContext(AuthContext);
+  const { fetchWithCSRF, rerender, setRerender } = useContext(AuthContext);
   const properties = [
     'address',
     'dateTime',
