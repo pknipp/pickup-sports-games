@@ -5,13 +5,40 @@ const { numberOfUsers } = require('../seederNumbers');
 const createPassword = () => bcrypt.hashSync('password');
 const r = o => ({...o, createdAt: new Date(), updatedAt: new Date()});
 
-const fNames = ['Aaron', 'Ben', 'Curtis', 'Darius', 'Ed', 'Fred', 'Geoffrey', 'Hal', 'Ian', 'Javier', 'Krisna', 'Lauren', 'Mylo', 'Nick', 'Olive', 'Pete', 'Quincy', 'Rose', 'Simon', 'Tyna', 'Ugo', 'Vann', 'Warren', 'Yul', 'Zachery'];
+const people = [
+  ['Aaron', 'Pittsburgh'],
+  ['Ben', 'Denver'],
+  ['Curtis', 'San Francisco'],
+  ['Darius', 'Muscle Shoals'],
+  ['Ed', 'Scranton'],
+  ['Fred', 'Glen Rock'],
+  ['Geoffrey', 'Sacramento'],
+  ['Hal', 'Annapolis'],
+  ['Ian', 'Brooklyn'],
+  ['Javier', 'San Diego'],
+  ['Krisna', 'Las Vegas'],
+  ['Lauren', 'Seattle'],
+  ['Mylo', 'Los Angeles'],
+  ['Nick', 'Houston'],
+  ['Olive', 'Baltimore'],
+  ['Pete', 'Stratford'],
+  ['Quincy', 'Memphis'],
+  ['Rose', 'Palo Alto'],
+  ['Simon', 'Boston'],[
+  ['Tyna', 'Miami Gardens'],
+  ['Ugo', 'Chicago'],
+  ['Vann', 'Hollywood'],
+  ['Warren', 'Portland Oregon'],
+  ['Yul', 'Severna Park'],
+  ['Zachery', 'Little Rock']
+];
 
-const users = [{email: 'volleyb@aol.com', nickName: 'Volley B', firstName: 'Volley', lastName: 'Ball'}];
+const users = [{email: 'volleyb@aol.com', address: 'Philadelphia', nickName: 'Volley B', firstName: 'Volley', lastName: 'Ball'}];
 
-for (const firstName of fNames.slice(0, numberOfUsers - 1)) {
+for (const person of people.slice(0, numberOfUsers - 1)) {
   users.push({
-    email: firstName[0].toLowerCase() + 'doe@aol.com',
+    email: person[0][0].toLowerCase() + 'doe@aol.com',
+    address: person[1],
     nickName: firstName + ' D',
     firstName: firstName,
     lastName: 'Doe'

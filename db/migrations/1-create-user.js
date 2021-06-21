@@ -18,8 +18,8 @@ module.exports = {
         type: Sequelize.STRING(32),
         unique: true
       },
-      ...['firstName', 'lastName'].reduce((pojo, key) => {
-        return {...pojo, [key]: {allowNull: false, type: Sequelize.STRING(32)}};
+      ...['firstName', 'lastName', 'address'].reduce((pojo, key) => {
+        return {...pojo, [key]: {allowNull: false, type: Sequelize.STRING(63)}};
       }, {}),
       cell: {
         allowNull: false,
