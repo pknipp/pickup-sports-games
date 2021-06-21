@@ -31,7 +31,7 @@ const LogIn = () => {
   return (currentUser) ? <Redirect to="/" /> : (
     <main className="centered middled">
       <form className="auth" onSubmit={handleSubmit}>
-      <h1>Welcome to volleyball meetup!</h1>
+      {/* <h1>Welcome to volleyball meetup!</h1> */}
       <h4>We hope that you will either login or signup.</h4>
         <span>Email address:</span>
         <input
