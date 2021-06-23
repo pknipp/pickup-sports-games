@@ -2,21 +2,40 @@ const asyncHandler = require('express-async-handler');
 const { check, validationResult } = require('express-validator');
 const Sequelize = require('sequelize');
 const router = require('express').Router();
-
-const { create } = require("../../db/user-repository")
+const multer = require('multer');
+const { create } = require("../../db/user-repository");
 const { User, Game, Reservation } = require('../../db/models');
 const { authenticated, generateToken } = require('./security-utils');
 const { uploadFile } = require('../../s3helper.js');
+const uuid = require('uuid');
+const { S3 } = require('aws-sdk');
 
 const BUCKET = 'volleyballbucket';
+
+const storage = multer.memoryStorage({
+  destination: function (req, file, callback) {
+    callback(null, '')
+  }
+})
 
 const email = check('email').isEmail().withMessage('Give a valid email address').normalizeEmail();
 // const firstName = check('firstName').not().isEmpty().withMessage('Provide first name');
 // const lastName = check('lastName').not().isEmpty().withMessage('Provide last name');
 const password = check('password').not().isEmpty().withMessage('Provide a password');
+const upload = multer({ storage }).single('image');
 
-router.post('', email, password,
+router.post('', upload, email, password,
   asyncHandler(async (req, res, next) => {
+
+    let myImage = req.file.originalname.split(".");
+    const fileType = myImage[myImage.length - 1];
+
+    const params = {
+      Bucket: BUCKET,
+      Key: `${uuid()}.${fileType}`,
+      Body: req.file.buffer,
+    }
+
     let message = "";
     const errors = validationResult(req).errors;
     let response = { user: {} };
@@ -30,12 +49,19 @@ router.post('', email, password,
       } else if (otherUser2) {
         message = "That nickname is taken.";
       } else {
+        S3.uploadFile(params, (error, data) => {
+          if (error) {
+            req.status(500).send(error)
+          }
+        })
+        req.body.photoUrl = params.Key;
+        console.log(params.Key)
         const user = await create(req.body);
         const { jti, token } = generateToken(user);
         user.tokenId = jti;
         res.cookie("token", token);
         response.user = { ...response.user, ...user.toSafeObject() }
-        await user.save();
+        //await user.save();
       }
     }
     response.user.message = message;

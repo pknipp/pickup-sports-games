@@ -12,22 +12,26 @@ const User = () => {
     'nickName',
     'cell',
     'skill',
-    'photo',
+    // 'photo',
     'password',
     'password2'
   ];
   const [params, setParams] = useState(currentUser ?
-    {...currentUser, password: '', password2: ''}
-      :
-    properties.reduce((pojo, prop) => ({[prop]: '', ...pojo}), {id: 0})
+    { ...currentUser, password: '', password2: '' }
+    :
+    properties.reduce((pojo, prop) => ({ [prop]: '', ...pojo }), { id: 0 })
   );
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
+  const [image, setImage] = useState(null);
+  const [imageLoading, setImageLoading] = useState(false);
+  const [url, setUrl] = useState(currentUser && currentUser.photo_url);
 
   let history = useHistory();
 
   const user = async () => {
-    const res = await fetch(`/api/users`, { method: params.id ? 'PUT': 'POST',
+    const res = await fetch(`/api/users`, {
+      method: params.id ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params)
     });
@@ -48,8 +52,19 @@ const User = () => {
     }
   };
 
+  const submitPhoto = async e => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("image", image);
+    setImageLoading(true);
+    const response = await fetch('/api/photos', { method: "POST", body: formData });
+    setImageLoading(false);
+    setImage(null);
+    return (response.ok) ? setUrl((await response.json()).photo_url) : console.log("error");
+  }
+
   const deleteUser = async () => {
-    const res = await fetch("/api/users", { method: 'DELETE'});
+    const res = await fetch("/api/users", { method: 'DELETE' });
     // if (res.ok) dispatch(removeUser());
     let data = await res.json();
     if (data.message || !res.ok) {
@@ -62,8 +77,8 @@ const User = () => {
   const handleSubmit = e => {
     e.preventDefault();
     let message = !params.email ? "Email address is needed." :
-                  !params.password?"Password is needed." :
-                  params.password !== params.password2 ? "Passwords must match" : "";
+      !params.password ? "Password is needed." :
+        params.password !== params.password2 ? "Passwords must match" : "";
     setMessage(message);
     if (!message) user();
   };
@@ -73,7 +88,7 @@ const User = () => {
     deleteUser();
   }
 
-  let newParams = {...params};
+  let newParams = { ...params };
   return (
     <main className="centered middled">
       <form className="auth" onSubmit={handleSubmit}>
@@ -81,58 +96,58 @@ const User = () => {
         <h4>
           {currentUser ?
             "Change your account details?"
-          :
+            :
             "We hope that you will either login or signup"
           }
         </h4>
         <span>Email address:</span>
         <input
           type="text" placeholder="Email" name="email" value={params.email}
-          onChange={e => setParams({...newParams, email: e.target.value})}
+          onChange={e => setParams({ ...newParams, email: e.target.value })}
         />
         <span>First name:</span>
         <input
           type="text" placeholder="First name" name="firstName" value={params.firstName}
-          onChange={e => setParams({...newParams, firstName: e.target.value})}
+          onChange={e => setParams({ ...newParams, firstName: e.target.value })}
         />
         <span>Last name:</span>
         <input
           type="text" placeholder="Last name" name="lastName" value={params.lastName}
-          onChange={e => setParams({...newParams, lastName: e.target.value})}
+          onChange={e => setParams({ ...newParams, lastName: e.target.value })}
         />
         <span>Nickname:</span>
         <input
           type="text" placeholder="Nickname" name="nickName" value={params.nickName}
-          onChange={e => setParams({...newParams, nickName: e.target.value})}
+          onChange={e => setParams({ ...newParams, nickName: e.target.value })}
         />
         <span>Cell number (10 digits):</span>
         <input
           type="number" placeholder="Cell" name="cell" value={params.cell}
-          onChange={e => setParams({...newParams, cell: Number(e.target.value)})}
+          onChange={e => setParams({ ...newParams, cell: Number(e.target.value) })}
         />
         <span>Skill (integer?):</span>
         <input
           type="number" placeholder="Skill" name="skill" value={params.skill}
-          onChange={e => setParams({...newParams, skill: Number(e.target.value)})}
+          onChange={e => setParams({ ...newParams, skill: Number(e.target.value) })}
         />
-        <span>Photo url:</span>
+        {/* <span>Photo url:</span>
         <input type="text" placeholder="Photo url" name="photo" value={params.photo}
-          onChange={e => setParams({...newParams, photo: e.target.value})}
-        />
+          onChange={e => setParams({ ...newParams, photo: e.target.value })}
+        /> */}
         <span>Password:</span>
         <input
           type="password" placeholder="Password" name="password" value={params.password}
-          onChange={e => setParams({...newParams, password: e.target.value})}
+          onChange={e => setParams({ ...newParams, password: e.target.value })}
         />
         <span>Confirm password:</span>
         <input
           type="password" placeholder="Confirm password" name="password2" value={params.password2}
-          onChange={e => setParams({...newParams, password2: e.target.value})}
+          onChange={e => setParams({ ...newParams, password2: e.target.value })}
         />
         <button color="primary" variant="outlined" type="submit">
           {currentUser ? "Update resource" : "Create resource"}
         </button>
-        <span style={{color: "red", paddingLeft:"10px"}}>{message}</span>
+        <span style={{ color: "red", paddingLeft: "10px" }}>{message}</span>
         {currentUser ? null :
           <span>
             <NavLink className="nav" to="/login" activeClassName="active">
@@ -141,14 +156,27 @@ const User = () => {
           </span>
         }
       </form>
+
       {!currentUser ? null :
-        <form className="auth" onSubmit={handleDelete}>
-          <button color="primary" variant="outlined" type="submit">
-            Delete resource
-          </button>
+        < form onSubmit={submitPhoto}>
+          <h2>{url ? "Would you like to update your photo?" : "Please upload a headshot below."}</h2>
+          <div>
+            <input type="file" accept="image/*" onChange={e => setImage(e.target.files[0])} />
+            {!image ? null : <button type="submit">Submit</button>}
+            {imageLoading && <span>Loading...</span>}
+          </div>
         </form>
       }
-    </main>
+
+      {
+        !currentUser ? null :
+          <form className="auth" onSubmit={handleDelete}>
+            <button color="primary" variant="outlined" type="submit">
+              Delete resource
+          </button>
+          </form>
+      }
+    </main >
   );
 }
 
