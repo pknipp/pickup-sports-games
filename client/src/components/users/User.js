@@ -10,6 +10,7 @@ const User = () => {
     'firstName',
     'lastName',
     'nickName',
+    'address',
     'cell',
     'skill',
     'photo',
@@ -104,6 +105,11 @@ const User = () => {
         <input
           type="text" placeholder="Nickname" name="nickName" value={params.nickName}
           onChange={e => setParams({...newParams, nickName: e.target.value})}
+        />
+        <span>Address:</span>
+        <input
+          type="text" placeholder="Address" name="address" value={params.address}
+          onChange={e => setParams({...newParams, address: e.target.value})}
         />
         <span>Cell number (10 digits):</span>
         <input

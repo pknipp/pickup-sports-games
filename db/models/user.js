@@ -49,7 +49,8 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   User.prototype.toSafeObject = function () {
-    return ["createdAt", "email", "firstName", "lastName", "nickName", "photo", "cell", "skill", "id"].reduce((pojo, key) => {
+    // DRY up the following, by simply deleting the hashedpassword property from the pojo
+    return ["createdAt", "email", "firstName", "lastName", "nickName", "address", "photo", "cell", "skill", "id"].reduce((pojo, key) => {
       return {...pojo, [key]: this[key]}
     }, {});
   }

@@ -1,12 +1,14 @@
 const asyncHandler = require('express-async-handler');
 const { check, validationResult } = require('express-validator');
 const Sequelize = require('sequelize');
+const fetch = require('node-fetch');
 const router = require('express').Router();
 
 const { create } = require("../../db/user-repository")
 const { User, Game, Reservation } = require('../../db/models');
 const { authenticated, generateToken } = require('./security-utils');
 const { uploadFile } = require('../../s3helper.js');
+const { mapsConfig: { mapsApiKey } } = require('../../config');
 
 const BUCKET = 'volleyballbucket';
 
@@ -23,6 +25,19 @@ router.post('', email, password,
     if (errors.length) {
       message = errors[0].msg;
     } else {
+      // confirm that Google Maps API can find a route between user's address & NYC
+      (await(async () => {
+          const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${req.body.address.split(' ').join('+')}&destinations="New York NY"&key=${mapsApiKey}`);
+          let data = await response.json();
+          if (response.ok) {
+            element = data.rows[0].elements[0];
+            if (element.status === "OK") {
+              req.body.address = data.origin_addresses[0];
+            } else {
+              message = "There is something wrong with your home address.";
+            }
+          }
+      }))()
       let otherUser1 = await User.findOne({ where: { email: req.body.email } });
       let otherUser2 = await User.findOne({ where: { nickName: req.body.nickName } });
       if (otherUser1) {
@@ -42,7 +57,8 @@ router.post('', email, password,
     res.json(response);
   }));
 
-router.put('', [authenticated], email, password,
+// router.put('', [authenticated], email, password,
+router.put('', [authenticated, email, password],
   asyncHandler(async (req, res, next) => {
     let user = req.user;
     let message;
@@ -73,6 +89,19 @@ router.put('', [authenticated], email, password,
       } else if (otherUser2) {
         message = "That nickname is taken.";
       } else {
+        // confirm that Google Maps API can find a route between user's address & NYC
+        await(async () => {
+            const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${req.body.address}&destinations=New+York+NY&key=${mapsApiKey}`);
+            let data = await response.json();
+            if (response.ok) {
+              if (data.status === "OK") {
+                console.log(data);
+                req.body.address = data.origin_addresses[0];
+              } else {
+                message = "There is something wrong with your home address.";
+              }
+            }
+        })()
         Object.entries(req.body).filter(([key,]) => key !== 'password').forEach(([key, value]) => {
           user[key] = value;
         });
@@ -81,7 +110,7 @@ router.put('', [authenticated], email, password,
         user.tokenId = jti;
         res.cookie("token", token);
         await user.save();
-        message = "Success!";
+        message = message || "Success!";
       }
     }
     res.json({ user: { ...user.toSafeObject(), message } });

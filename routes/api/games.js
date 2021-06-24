@@ -25,7 +25,8 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
 }));
 
 // router.get('/:lat/:long/:radius', async (req, res) => {
-router.get('', [authenticated], asyncHandler(async(req, res) => {
+// router.get('', [authenticated], asyncHandler(async(req, res) => {
+router.get('', authenticated, asyncHandler(async(req, res, next) => {
     const user = req.user;
     // transform Query return to an array of pojos, to enable us to attach properties to each
     const games = (await Game.findAll({})).map(game => game.dataValues);

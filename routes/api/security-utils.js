@@ -44,6 +44,6 @@ function restoreUser(req, res, next) {
   });
 }
 
-const authenticated = [restoreUser];
+const authenticated = restoreUser; //[restoreUser];
 
 module.exports = { generateToken, authenticated };
