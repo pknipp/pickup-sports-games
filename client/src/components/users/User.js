@@ -38,7 +38,7 @@ const User = () => {
       if (res.ok) {
         console.log("user =", user);
         setCurrentUser(user);
-        setParams(user);
+        setParams({...user, password: '', password2: ''});
       } else {
         setMessage(user.error.errors[0].msg);
       }

@@ -49,7 +49,7 @@ router.post('', email, password,
         const user = await create(req.body);
         const { jti, token } = generateToken(user);
         user.tokenId = jti;
-        //Additional save is needed, after adding the tokenId property
+        //Additional save (outside of #create) is needed, after adding the tokenId property
         await user.save();
         res.cookie("token", token);
         response.user = { ...response.user, ...user.toSafeObject() }
