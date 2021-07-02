@@ -36,14 +36,17 @@ const User = () => {
     setMessage(user.message);
     if (params.id) {
       if (res.ok) {
+        console.log("user =", user);
         setCurrentUser(user);
+        setParams(user);
       } else {
         setMessage(user.error.errors[0].msg);
       }
     } else {
-      if (res.ok && !user.message) {
+      if (res.ok) {
         setCurrentUser(user);
-        setMessage("Success")
+        setParams(user);
+        setMessage(user.message)
         history.push('/');
       }
     }
@@ -74,7 +77,6 @@ const User = () => {
     deleteUser();
   }
 
-  let newParams = {...params};
   return (
     <main className="centered middled">
       <form className="auth" onSubmit={handleSubmit}>
@@ -89,51 +91,51 @@ const User = () => {
         <span>Email address:</span>
         <input
           type="text" placeholder="Email" name="email" value={params.email}
-          onChange={e => setParams({...newParams, email: e.target.value})}
+          onChange={e => setParams({...params, email: e.target.value})}
         />
         <span>First name:</span>
         <input
           type="text" placeholder="First name" name="firstName" value={params.firstName}
-          onChange={e => setParams({...newParams, firstName: e.target.value})}
+          onChange={e => setParams({...params, firstName: e.target.value})}
         />
         <span>Last name:</span>
         <input
           type="text" placeholder="Last name" name="lastName" value={params.lastName}
-          onChange={e => setParams({...newParams, lastName: e.target.value})}
+          onChange={e => setParams({...params, lastName: e.target.value})}
         />
         <span>Nickname:</span>
         <input
           type="text" placeholder="Nickname" name="nickName" value={params.nickName}
-          onChange={e => setParams({...newParams, nickName: e.target.value})}
+          onChange={e => setParams({...params, nickName: e.target.value})}
         />
         <span>Address:</span>
         <input
           type="text" placeholder="Address" name="address" value={params.address}
-          onChange={e => setParams({...newParams, address: e.target.value})}
+          onChange={e => setParams({...params, address: e.target.value})}
         />
         <span>Cell number (10 digits):</span>
         <input
           type="number" placeholder="Cell" name="cell" value={params.cell}
-          onChange={e => setParams({...newParams, cell: Number(e.target.value)})}
+          onChange={e => setParams({...params, cell: Number(e.target.value)})}
         />
         <span>Skill (integer?):</span>
         <input
           type="number" placeholder="Skill" name="skill" value={params.skill}
-          onChange={e => setParams({...newParams, skill: Number(e.target.value)})}
+          onChange={e => setParams({...params, skill: Number(e.target.value)})}
         />
         <span>Photo url:</span>
         <input type="text" placeholder="Photo url" name="photo" value={params.photo}
-          onChange={e => setParams({...newParams, photo: e.target.value})}
+          onChange={e => setParams({...params, photo: e.target.value})}
         />
         <span>Password:</span>
         <input
           type="password" placeholder="Password" name="password" value={params.password}
-          onChange={e => setParams({...newParams, password: e.target.value})}
+          onChange={e => setParams({...params, password: e.target.value})}
         />
         <span>Confirm password:</span>
         <input
           type="password" placeholder="Confirm password" name="password2" value={params.password2}
-          onChange={e => setParams({...newParams, password2: e.target.value})}
+          onChange={e => setParams({...params, password2: e.target.value})}
         />
         <button color="primary" variant="outlined" type="submit">
           {currentUser ? "Update resource" : "Create resource"}

@@ -25,19 +25,6 @@ router.post('', email, password,
     if (errors.length) {
       message = errors[0].msg;
     } else {
-      // confirm that Google Maps API can find a route between user's address & NYC
-      (await(async () => {
-          const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${req.body.address.split(' ').join('+')}&destinations="New York NY"&key=${mapsApiKey}`);
-          let data = await response.json();
-          if (response.ok) {
-            element = data.rows[0].elements[0];
-            if (element.status === "OK") {
-              req.body.address = data.origin_addresses[0];
-            } else {
-              message = "There is something wrong with your home address.";
-            }
-          }
-      }))()
       let otherUser1 = await User.findOne({ where: { email: req.body.email } });
       let otherUser2 = await User.findOne({ where: { nickName: req.body.nickName } });
       if (otherUser1) {
@@ -45,12 +32,27 @@ router.post('', email, password,
       } else if (otherUser2) {
         message = "That nickname is taken.";
       } else {
+        // confirm that Google Maps API can find a route between user's address & NYC
+        await(async () => {
+          const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${req.body.address}&destinations=New+York+NY&key=${mapsApiKey}`);
+          let data = await response.json();
+          if (response.ok) {
+            if (data.status === "OK" && data.rows[0].elements[0].status === "OK") {
+              req.body.address = data.origin_addresses[0];
+              message = message || "Success!";
+            } else {
+              message = "There is something wrong with your home address.";
+              delete req.body.address;
+            }
+          }
+        })()
         const user = await create(req.body);
         const { jti, token } = generateToken(user);
         user.tokenId = jti;
+        //Additional save is needed, after adding the tokenId property
+        await user.save();
         res.cookie("token", token);
         response.user = { ...response.user, ...user.toSafeObject() }
-        await user.save();
       }
     }
     response.user.message = message;
