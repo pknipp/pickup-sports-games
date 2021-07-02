@@ -32,11 +32,14 @@ const User = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params)
     });
-    let user = (await res.json()).user;
+    let data = await res.json();
+    // console.log("data = ", data);
+    let user = data.user;
+    // let user = (await res.json()).user;
     setMessage(user.message);
     if (params.id) {
       if (res.ok) {
-        console.log("user =", user);
+        // console.log("user =", user);
         setCurrentUser(user);
         setParams({...user, password: '', password2: ''});
       } else {

@@ -4,7 +4,7 @@ const Sequelize = require('sequelize');
 const fetch = require('node-fetch');
 const router = require('express').Router();
 
-const { create } = require("../../db/user-repository")
+// const { create } = require("../../db/user-repository")
 const { User, Game, Reservation } = require('../../db/models');
 const { authenticated, generateToken } = require('./security-utils');
 const { uploadFile } = require('../../s3helper.js');
@@ -46,12 +46,12 @@ router.post('', email, password,
             }
           }
         })()
-        const user = await create(req.body);
+        let user = await User.build(req.body);
+        user = user.setPassword(req.body.password);
         const { jti, token } = generateToken(user);
         user.tokenId = jti;
-        //Additional save (outside of #create) is needed, after adding the tokenId property
-        await user.save();
         res.cookie("token", token);
+        await user.save();
         response.user = { ...response.user, ...user.toSafeObject() }
       }
     }
@@ -101,7 +101,7 @@ router.put('', [authenticated, email, password],
             console.log("data.rows[0].elements = ", data.rows[0].elements)
             if (response.ok) {
               if (data.status === "OK" && data.rows[0].elements[0].status === "OK") {
-                console.log(data);
+                // console.log(data);
                 req.body.address = data.origin_addresses[0];
               } else {
                 message = "There is something wrong with your home address.";
