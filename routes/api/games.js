@@ -73,12 +73,30 @@ router.get('/:id', async(req, res) => {
 
 // Do we want to allow a game owner to transfer game-"owner"ship to another user?
 router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
-    const game = await Game.findByPk(Number(req.params.id));
+    let game = await Game.findByPk(Number(req.params.id));
+    let message = '';
+    // console.log("game = ", game.dataValues);
     if (game.ownerId !== req.user.id) res.status(401).send("Unauthorized Access");
+    // confirm that Google Maps API can find a route between game's address & NYC
+    await(async () => {
+        const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins= ${req.body.address.split(" ").join("+")}&destinations=New+York+NY&key=${mapsApiKey}`);
+        let data = await response.json();
+        if (response.ok) {
+          if (data.status === "OK" && data.rows[0].elements[0].status === "OK") {
+            req.body.address = data.origin_addresses[0];
+            message = message || "Success!";
+          } else {
+            message = `There is something wrong with your game's address (${req.body.address}).`;
+            delete req.body.address;
+          }
+        }
+    })()
     Object.entries(req.body).forEach(([key, value]) => {
         game[key] = value !== '' ? value : null;
     });
     await game.save();
+    game = game.dataValues;
+    game.message = message;
     res.status(200).json({game});
 }));
 

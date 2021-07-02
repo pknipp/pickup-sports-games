@@ -55,13 +55,13 @@ const EditGame = ({ match }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(game)
     });
-    let newGame = (await res.json()).game
+    let newGame = (await res.json()).game;
     // React likes '' but does not like null.
     Object.entries(newGame).forEach(([key, value]) => {
       if (value === null) newGame[key] = '';
     });
     if (game.id) {
-      setMessage("Success");
+      setMessage(newGame.message || "Success");
     } else {
       history.push(wantsToPlay ? `/reservations/0-${newGame.id}` : '/');
     }
