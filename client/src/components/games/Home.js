@@ -16,6 +16,8 @@ const Home = () => {
         (async () => {
             const response = await fetch(`/api/games`);
             let data = await response.json();
+            console.log("response.ok = ", response.ok);
+            console.log("data = ", data);
             if (response.ok) {
             //   setGames(data.games);
               setGamesOwned(data.games.filter(game => {

@@ -49,6 +49,7 @@ router.get('', authenticated, asyncHandler(async(req, res, next) => {
     await(async () => {
         const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${user.address.split(' ').join('+')}&destinations=${venues.join('|')}&key=${mapsApiKey}`);
         let data = await response.json();
+        // console.log("data = ", data);
         if (response.ok) elements = data.rows[0].elements;
     })()
     elements.forEach((element, index) => {

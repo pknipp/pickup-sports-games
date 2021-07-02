@@ -86,19 +86,24 @@ router.put('', [authenticated, email, password],
       });
       if (otherUser1) {
         message = "That email is taken.";
+        delete req.body.email;
       } else if (otherUser2) {
         message = "That nickname is taken.";
+        delete req.body.nickName
       } else {
         // confirm that Google Maps API can find a route between user's address & NYC
         await(async () => {
             const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${req.body.address}&destinations=New+York+NY&key=${mapsApiKey}`);
             let data = await response.json();
+            console.log("data = ", data);
+            console.log("data.rows[0].elements = ", data.rows[0].elements)
             if (response.ok) {
-              if (data.status === "OK") {
+              if (data.status === "OK" && data.rows[0].elements[0].status === "OK") {
                 console.log(data);
                 req.body.address = data.origin_addresses[0];
               } else {
                 message = "There is something wrong with your home address.";
+                delete req.body.address;
               }
             }
         })()
