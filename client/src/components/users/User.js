@@ -27,30 +27,38 @@ const User = () => {
 
   let history = useHistory();
 
-  const user = async () => {
-    const res = await fetch(`/api/users`, { method: params.id ? 'PUT': 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(params)
-    });
-    let user = (await res.json()).user;
-    let message = user.message;
-    if (params.id) {
-      // PUT route
-      setCurrentUser(user);
-      setParams({...user, password: '', password2: ''});
-      message = (res.ok && !message) ? "Success" : message;
-    } else {
-      // POST route
-      if (res.ok && !message) {
-        setCurrentUser(user);
-        setParams(user);
-        history.push('/');
-      }
-    }
+  const handlePutPost = async e => {
+    e.preventDefault();
+    let message = !params.email ? "Email address is needed." :
+                  !params.password?"Password is needed." :
+                  params.password !== params.password2 ? "Passwords must match" : "";
     setMessage(message);
+    if (!message) {
+      const res = await fetch(`/api/users`, { method: currentUser ? 'PUT': 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params)
+      });
+      let user = (await res.json()).user;
+      let message = user.message;
+      if (currentUser) {
+        // PUT route
+        setCurrentUser(user);
+        setParams({...user, password: '', password2: ''});
+        message = (res.ok && !message) ? "Success" : message;
+      } else {
+        // POST route
+        if (res.ok && !message) {
+          setCurrentUser(user);
+          setParams(user);
+          history.push('/');
+        }
+      }
+      setMessage(message);
+    };
   };
 
-  const deleteUser = async () => {
+  const handleDelete = async e => {
+    e.preventDefault();
     const res = await fetch("/api/users", { method: 'DELETE'});
     let data = await res.json();
     if (data.message || !res.ok) {
@@ -60,29 +68,14 @@ const User = () => {
     }
   }
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    let message = !params.email ? "Email address is needed." :
-                  !params.password?"Password is needed." :
-                  params.password !== params.password2 ? "Passwords must match" : "";
-    setMessage(message);
-    if (!message) user();
-  };
-
-  const handleDelete = e => {
-    e.preventDefault();
-    deleteUser();
-  }
-
   return (
     <main className="centered middled">
-      <form className="auth" onSubmit={handleSubmit}>
-        {/* <h1>{currentUser ? null : "Welcome to volleyball meetup!"}</h1> */}
+      <form className="auth" onSubmit={handlePutPost}>
         <h4>
           {currentUser ?
-            "Change your account details?"
+            "Would you like to change your account details?"
           :
-            "We hope that you will either login or signup"
+            "We hope that you will either login or signup."
           }
         </h4>
         <span>Email address:</span>
