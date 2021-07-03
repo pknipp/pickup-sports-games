@@ -14,7 +14,7 @@ function generateToken(user) {
   };
 }
 
-function restoreUser(req, res, next) {
+function authenticated(req, res, next) {
   const { token } = req.cookies;
 
   if (!token) return next({ status: 401, message: 'no token in cookie' });
@@ -43,7 +43,5 @@ function restoreUser(req, res, next) {
     next();
   });
 }
-
-const authenticated = restoreUser; //[restoreUser];
 
 module.exports = { generateToken, authenticated };

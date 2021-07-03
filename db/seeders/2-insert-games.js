@@ -11,7 +11,6 @@ const games = [];
 for (let i = 0; i < numberOfGames; i++) {
   const game = r({
     ownerId: 1 + Math.floor(Math.random() * numberOfUsers),
-    // address: faker.address.streetAddress() + ', ' + faker.address.city() + ', ' + faker.address.stateAbbr(),
     address: cities[Math.floor(cities.length * Math.random())],
     dateTime: faker.date.future()
   });

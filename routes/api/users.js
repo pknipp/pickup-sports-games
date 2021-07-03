@@ -1,14 +1,11 @@
 const asyncHandler = require('express-async-handler');
 const { check, validationResult } = require('express-validator');
 const Sequelize = require('sequelize');
-// const fetch = require('node-fetch');
 const router = require('express').Router();
 
-// const { create } = require("../../db/user-repository")
 const { User, Game, Reservation } = require('../../db/models');
 const { authenticated, generateToken } = require('./security-utils');
 const { uploadFile } = require('../../s3helper.js');
-// const { mapsConfig: { mapsApiKey } } = require('../../config');
 const checkAddress = require('./checkAddress');
 
 const BUCKET = 'volleyballbucket';
@@ -18,7 +15,7 @@ const email = check('email').isEmail().withMessage('Give a valid email address')
 // const lastName = check('lastName').not().isEmpty().withMessage('Provide last name');
 const password = check('password').not().isEmpty().withMessage('Provide a password');
 
-router.post('', email, password,
+router.post('', [email, password],
   asyncHandler(async (req, res, next) => {
     let [user, message] = [{}, ''];
     const errors = validationResult(req).errors;
@@ -50,7 +47,6 @@ router.post('', email, password,
     res.json({user: {...user, message}});
   }));
 
-// router.put('', [authenticated], email, password,
 router.put('', [authenticated, email, password],
   asyncHandler(async (req, res, next) => {
     let user = req.user;

@@ -12,8 +12,7 @@ const checkAddress = require('./checkAddress');
 const router = express.Router();
 
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
-    let message = '';
-    let game = {};
+    let [game, message] = [{}, ''];
     try {
         req.body.ownerId = req.user.id;
         req.body.dateTime = faker.date.future();
