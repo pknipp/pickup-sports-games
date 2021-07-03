@@ -27,7 +27,7 @@ const EditGame = ({ match }) => {
       if (game.id) {
         const res = await fetch(`/api/games/${game.id}`);
         let newGame = (await res.json()).game;
-        // React does not like null value, which may be stored in db.
+        // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';
         })
@@ -36,20 +36,7 @@ const EditGame = ({ match }) => {
     })();
   }, [game.id]);
 
-  const deleteGame = async () => {
-    const res = await fetch(`/api/games/${game.id}`, { method: 'DELETE'});
-    if (res.ok) {
-      let nullGame = properties.reduce((pojo, prop) => {
-        return {[prop]: '', ...pojo};
-      }, {wantsToPlay: false});
-      [nullGame.id, nullGame.ownerId] = [0, 0];
-      setGame(nullGame);
-      setRerender(rerender + 1);
-      history.push('/');
-    }
-  }
-
-  const handleSubmit = async e => {
+  const handlePutPost = async e => {
     e.preventDefault();
     game.dateTime = new Date();
     const res = await fetch(`/api/games${game.id ? ('/' + game.id) : ''}`, { method: game.id ? 'PUT': 'POST',
@@ -63,21 +50,31 @@ const EditGame = ({ match }) => {
     });
     setMessage(newGame.message || "Success!");
     if (game.id) {
+      // PUT route
       setGame(newGame);
     } else {
+      // POST route
       if (!newGame.message) history.push(wantsToPlay ? `/reservations/0-${newGame.id}` : '/');
     }
     setRerender(rerender + 1);
   };
 
-  const handleDelete = e => {
-    e.preventDefault();
-    deleteGame();
+  const handleDelete = async e => {
+    const res = await fetch(`/api/games/${game.id}`, { method: 'DELETE'});
+    if (res.ok) {
+      let nullGame = properties.reduce((pojo, prop) => {
+        return {[prop]: '', ...pojo};
+      }, {wantsToPlay: false});
+      [nullGame.id, nullGame.ownerId] = [0, 0];
+      setGame(nullGame);
+      setRerender(rerender + 1);
+      history.push('/');
+    }
   }
 
   return (
     <main className="centered middled">
-      <form className="auth" onSubmit={handleSubmit}>
+      <form className="auth" onSubmit={handlePutPost}>
         <h4>
           {game.id ?
             "Change the Game details?"
