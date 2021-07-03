@@ -7,10 +7,10 @@
 
 
 1. Router: 'users', urlPrefix "api/users"
-    - GET /:id - get all user info
-    - POST / - create new user
-    - PUT /:id - edit user info
-    - DELETE /:id - delete user
+    - GET - get all user info
+    - POST - create new user
+    - PUT - edit user info
+    - DELETE - delete user
 2. Router: 'games', urlPrefix "api/games"
     - GET / - get all games (count for each game)
     - GET /:id - get single game (actual list of names)
@@ -22,5 +22,3 @@
     - POST /:gameId - sign a user up for a game
     - PUT /:id (might have to use combo of userId and gameId) - edit users sign up
     - DELETE /:id (might have to use combo of userId and gameId) - delete sign up
-
-

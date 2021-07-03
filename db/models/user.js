@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       email: {allowNull: false, type: DataTypes.STRING, unique: true
         // validates: {isEmail: true, len: [3, 255]},
       },
+      address: {allowNull: false, type: DataTypes.STRING},
       nickName: {allowNull: false, type: DataTypes.STRING, unique: true
         // validates: {isEmail: true, len: [3, 255]},
       },
@@ -44,10 +45,12 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = function(models) {
     User.hasMany(models.Game, {foreignKey: 'ownerId'});
     User.hasMany(models.Reservation, {foreignKey: 'playerId'});
+    // insert a belongsToMany relationship between User and Game, via Reservations
   };
 
   User.prototype.toSafeObject = function () {
-    return ["createdAt", "email", "firstName", "lastName", "nickName", "photo", "cell", "skill", "id"].reduce((pojo, key) => {
+    // DRY up the following, by simply deleting the hashedpassword property from the pojo
+    return ["createdAt", "email", "firstName", "lastName", "nickName", "address", "photo", "cell", "skill", "id"].reduce((pojo, key) => {
       return {...pojo, [key]: this[key]}
     }, {});
   }

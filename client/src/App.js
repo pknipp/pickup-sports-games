@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
-import Login from './components/admin/Login';
-import SignUp from './components/admin/SignUp';
-import Container from "./components/Container";
-// import { store } from './index';
+import Cookies from "js-cookie";
+import LogIn from './components/session/LogIn';
+import LogOut from './components/session/LogOut';
+import User from './components/users/User';
+// import Container from "./components/Container";
+import NavBar from "./components/NavBar";
+import EditGame from "./components/games/EditGame";
+import EditReservation from "./components/reservations/EditReservation";
+import Home from "./components/games/Home";
+import AuthContext from './auth';
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={(props) => (
@@ -12,20 +17,83 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   />
 )
 
-class App extends React.Component {
-  render() {
-    return (
-      <BrowserRouter>
-        <Switch>
-          <Route path="/login" component={Login} />
-          <Route path="/signup" component={SignUp} />
-          <PrivateRoute path="/"
-          // exact={true}
-          needLogin={this.props.needLogin} component={Container} />
-        </Switch>
-      </BrowserRouter>
-    );
-  }
+const ProtectedRoute = ({ component: Component, path, exact, ...rest}) => {
+  const { currentUser } = useContext(AuthContext)
+  return (
+      <Route
+          {...rest}
+          path={path}
+          exact={exact}
+          render={props => currentUser
+              ? <Component currentUser={currentUser} {...rest} />
+              : <Redirect to="/login" />
+          }
+      />
+  )
 }
-const msp = state => ({ currentUserId: state.authentication.id, needLogin: !state.authentication.id});
-export default connect(msp)(App);
+
+const AuthRoute = ({ component: Component, path, exact, ...rest }) => {
+  const { currentUser } = useContext(AuthContext);
+  return (
+      <Route
+          {...rest}
+          path={path}
+          exact={exact}
+          render={() => currentUser ? <Redirect to="/" />
+              : <Component {...rest} />
+          }
+      />
+  )
+}
+
+const App = () => {
+  const [fetchWithCSRF] = useState(() => fetch);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [rerender, setRerender] = useState(0);
+  const authContextValue = {fetchWithCSRF, currentUser, setCurrentUser, rerender, setRerender};
+
+  const loadUser = () => {
+    const authToken = Cookies.get("token");
+    if (authToken) {
+      try {
+        const payloadObj = JSON.parse(atob(authToken.split(".")[1]))
+        setCurrentUser(payloadObj.data);
+      } catch (e) {
+        Cookies.remove("token");
+      }
+    }
+    setLoading(false);
+  }
+  useEffect(loadUser, []);
+
+  return (
+    <AuthContext.Provider value={authContextValue}>
+      {loading ?
+        <h1>Loading</h1>
+      :
+        <BrowserRouter>
+          <NavBar />
+          <Switch>
+
+            <AuthRoute exact path="/login" component={LogIn} />
+            <AuthRoute exact path="/signup" component={User} />
+
+             {/* <Route path="/feature1" component={Feature1}/> */}
+             <ProtectedRoute exact path="/" component={Home}/>
+            <ProtectedRoute exact path="/edituser" component={User}/>
+            <ProtectedRoute path="/logout" component={LogOut}/>
+            <Route exact path="/games/:gameId" component={EditGame} />
+            <Route exact path="/reservations/:resGameId" component={EditReservation} />
+
+            {/* <PrivateRoute exact path="/"
+            // exact={true}
+            needLogin={!currentUser} component={Container} /> */}
+          </Switch>
+        </BrowserRouter>
+      }
+    </AuthContext.Provider>
+  );
+}
+
+export default App;

@@ -1,44 +1,53 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter, Switch, Route, NavLink } from 'react-router-dom';
-import { connect } from 'react-redux';
 
-import Logout from "./admin/Logout";
-import Feature1 from "./feature1/index";
-// import Account from "./admin/Account";
-import SignUp from "./admin/SignUp";
-import Home from "./admin/Home";
-import { store } from "../index";
+import LogOut from "./session/LogOut";
+// import Feature1 from "./feature1/index";
+import User from "./users/User";
+import Home from "./games/Home";
+import EditGame from "./games/EditGame";
 
-class Container extends React.Component {
-  componentDidMount() {this.unsubscribe = store.subscribe(() => this.forceUpdate())};
-  componentWillUnmount() {if (this.unsubscribe) this.unsubscribe()};
+import AuthContext from '../auth';
 
-  render() {
-    return (
-      <BrowserRouter>
-        <nav>
-          <h1>{this.props.email}: Welcome to volleyball-meetup!</h1>
+const Container = () => {
+  const { fetchWithCSRF, currentUser } = useContext(AuthContext);
 
-          <div className="nav-bar">
-            <span><NavLink className="nav" exact to="/"    activeClassName="active">Home          </NavLink></span>
-            <span><NavLink className="nav" to="/feature1"      activeClassName="active">Sample feature </NavLink></span>
-            {/* <span><NavLink className="nav" to="/account"   activeClassName="active">Account details</NavLink></span> */}
-            <span><NavLink className="nav" to="/manageuser"  activeClassName="active">Manage account</NavLink></span>
-            <span><NavLink className="nav" to="/logout"    activeClassName="active">Logout              </NavLink></span>
-          </div>
-        </nav>
-        <Switch>
-          <Route path="/logout"    component={Logout}   />
-          <Route path="/feature1"      component={Feature1}     />
-          {/* <Route path="/account"   component={Account} /> */}
-          <Route path="/manageuser"   render={() => <SignUp update={true}/>}/>
-          <Route path="/"          component={Home} />
-        </Switch>
-      </BrowserRouter>
-    )
-  }
+  return (
+    // <BrowserRouter>
+      <nav>
+        <h1>{currentUser.nickName}: Welcome to volleyball-meetup!</h1>
+        <div className="nav-bar">
+          <span>
+            <NavLink className="nav" exact to="/" activeClassName="active">
+              Home
+            </NavLink>
+          </span>
+          <span>
+            {/* <NavLink className="nav" to="/feature1" activeClassName="active">
+              Sample feature
+            </NavLink> */}
+          </span>
+          <span>
+            <NavLink className="nav" to="/manageuser" activeClassName="active">
+              Manage account
+            </NavLink>
+          </span>
+          <span>
+            <NavLink className="nav" to="/logout" activeClassName="active">
+              Logout
+            </NavLink>
+          </span>
+        </div>
+      </nav>
+      // {/* <Switch>
+      //   <Route path="/logout" component={LogOut}/>
+      //   {/* <Route path="/feature1" component={Feature1}/> */}
+      //   <Route path="/manageuser" component={User}/>
+      //   <Route path="/" component={Home}/>
+      //   {/* <Route exact path="/games/:gameId" component={EditGame} /> */}
+      // </Switch> */}
+    // </BrowserRouter>
+  )
 }
 
-const msp = state => ({ email: state.authentication.email, currentUserId: state.authentication.id, needLogin: !state.authentication.id});
-// const mdp = dispatch=>({ fetchClasses: () => dispatch(fetchClasses())})
-export default connect(msp)(Container);
+export default Container;
