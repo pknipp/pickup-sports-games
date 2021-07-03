@@ -32,34 +32,26 @@ const User = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params)
     });
-    let data = await res.json();
-    // console.log("data = ", data);
-    let user = data.user;
-    // let user = (await res.json()).user;
-    setMessage(user.message);
+    let user = (await res.json()).user;
+    let message = user.message;
     if (params.id) {
-      if (res.ok && !user.message) {
-        // console.log("user =", user);
-        setMessage("Success!");
-        setCurrentUser(user);
-        setParams({...user, password: '', password2: ''});
-      } else {
-        setMessage(user.message);
-      }
+      // PUT route
+      setCurrentUser(user);
+      setParams({...user, password: '', password2: ''});
+      message = (res.ok && !message) ? "Success" : message;
     } else {
-      setMessage(user.message);
-      if (res.ok && !user.message) {
-        // console.log("user = ", user);
+      // POST route
+      if (res.ok && !message) {
         setCurrentUser(user);
         setParams(user);
         history.push('/');
       }
     }
+    setMessage(message);
   };
 
   const deleteUser = async () => {
     const res = await fetch("/api/users", { method: 'DELETE'});
-    // if (res.ok) dispatch(removeUser());
     let data = await res.json();
     if (data.message || !res.ok) {
       setMessage(data.message);

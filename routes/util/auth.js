@@ -1,6 +1,3 @@
-//const jwt = require("jsonwebtoken");
-
-//const { jwtConfig: { secret, expiresIn }} = require("../../config");
 const { User } = require("../../db/models");
 
 class AuthenticationError extends Error {

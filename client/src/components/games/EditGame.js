@@ -26,9 +26,8 @@ const EditGame = ({ match }) => {
     (async() => {
       if (game.id) {
         const res = await fetch(`/api/games/${game.id}`);
-        let data = await res.json();
-        // console.log("data = ", data);
-        let newGame = data.game;
+        let newGame = (await res.json()).game;
+        // React does not like null value, which may be stored in db.
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';
         })
@@ -57,10 +56,7 @@ const EditGame = ({ match }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(game)
     });
-    // let data = await res.json();
-    // console.log("data = ", data);
     let newGame = (await res.json()).game;
-    // let newGame = data.game;
     // React likes '' but does not like null.
     Object.entries(newGame).forEach(([key, value]) => {
       if (value === null) newGame[key] = '';

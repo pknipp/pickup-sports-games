@@ -12,7 +12,7 @@ const checkAddress = require('./checkAddress');
 const router = express.Router();
 
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
-    let [game, message] = [{}, ''];
+    let [game, message, status] = [{}, '', 201];
     try {
         req.body.ownerId = req.user.id;
         req.body.dateTime = faker.date.future();
@@ -20,11 +20,12 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
         if (checked.success) {
           req.body.address = checked.address;
           game = (await Game.create(req.body)).dataValues;
-          game = {...game, count: 0, reservationId: 0}
+          game = {...game, count: 0, reservationId: 0};
         } else {
           game.message = `There is something wrong with your game's address (${req.body.address}).`
+          status = 400;
         }
-        res.status(201).json({game});
+        res.status(status).json({game});
     } catch (e) {
         res.status(400).send(e)
     }

@@ -6,7 +6,6 @@ import Game from './Game';
 
 const Home = () => {
     const { currentUser, rerender } = useContext(AuthContext);
-    // const [games, setGames] = useState([]);
     const [gamesOwned, setGamesOwned] = useState([]);
     const [gamesReserved, setGamesReserved] = useState([]);
     const [gamesOther, setGamesOther] = useState([]);
@@ -16,7 +15,6 @@ const Home = () => {
         (async () => {
             const response = await fetch(`/api/games`);
             let data = await response.json();
-            // console.log("Home.js says that data = ", data);
             if (response.ok) {
               setGamesOwned(data.games.filter(game => {
                   return game.ownerId === currentUser.id;

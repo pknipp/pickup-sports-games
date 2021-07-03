@@ -17,7 +17,7 @@ const password = check('password').not().isEmpty().withMessage('Provide a passwo
 
 router.post('', [email, password],
   asyncHandler(async (req, res, next) => {
-    let [user, message] = [{}, ''];
+    let [user, message, status] = [{}, '', 400];
     const errors = validationResult(req).errors;
     if (errors.length) {
       message = errors[0].msg;
@@ -39,23 +39,25 @@ router.post('', [email, password],
           res.cookie("token", token);
           await user.save();
           user = user.toSafeObject();
+          status = 201;
         } else {
           message = `There is something wrong with your address (${req.body.address}).`
         }
       }
     }
-    res.json({user: {...user, message}});
+    res.status(status).json({user: {...user, message}});
   }));
 
 router.put('', [authenticated, email, password],
   asyncHandler(async (req, res, next) => {
-    let user = req.user;
-    let message = '';
+    let [user, message, status] = [req.user, '', 200];
     const errors = validationResult(req).errors;
     if (user.id === 1) {
       message = "You cannot edit our 'demo' user, whose details are needed in order to allow our site's visitors  to login easily.  Feel free to use the 'Signup' route to create a new user if you'd like to test out the   'Manage Account' route.";
+      status = 400;
     } else if (errors.length) {
       message = errors[0].msg;
+      status = 400;
     } else {
       let otherUser1 = await User.findOne({
         where: {
@@ -74,10 +76,10 @@ router.put('', [authenticated, email, password],
         }
       });
       if (otherUser1) {
-        message = "That email is taken.";
+        message = `That email (${req.body.email}) is taken.`;
         delete req.body.email;
       } else if (otherUser2) {
-        message = "That nickname is taken.";
+        message = `That nickname (${req.body.nickName}) is taken.`;
         delete req.body.nickName
       } else {
         // confirm that Google Maps API can find a route between user's address & NYC
@@ -88,17 +90,17 @@ router.put('', [authenticated, email, password],
           message = `There is something wrong with your new home address (${req.body.address}).`
           delete req.body.address;
         }
-        Object.entries(req.body).filter(([key,]) => key !== 'password').forEach(([key, value]) => {
-          user[key] = value;
-        });
-        user = user.setPassword(req.body.password);
-        const { jti, token } = generateToken(user);
-        user.tokenId = jti;
-        res.cookie("token", token);
-        await user.save();
       }
+      Object.entries(req.body).filter(([key,]) => key !== 'password').forEach(([key, value]) => {
+        user[key] = value;
+      });
+      user = user.setPassword(req.body.password);
+      const { jti, token } = generateToken(user);
+      user.tokenId = jti;
+      res.cookie("token", token);
+      await user.save();
     }
-    res.json({ user: { ...user.toSafeObject(), message } });
+    res.status(status).json({ user: { ...user.toSafeObject(), message } });
   })
 );
 
