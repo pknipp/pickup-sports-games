@@ -1,14 +1,14 @@
 const asyncHandler = require('express-async-handler');
 const { check, validationResult } = require('express-validator');
 const Sequelize = require('sequelize');
-const fetch = require('node-fetch');
+// const fetch = require('node-fetch');
 const router = require('express').Router();
 
 // const { create } = require("../../db/user-repository")
 const { User, Game, Reservation } = require('../../db/models');
 const { authenticated, generateToken } = require('./security-utils');
 const { uploadFile } = require('../../s3helper.js');
-const { mapsConfig: { mapsApiKey } } = require('../../config');
+// const { mapsConfig: { mapsApiKey } } = require('../../config');
 const checkAddress = require('./checkAddress');
 
 const BUCKET = 'volleyballbucket';
@@ -54,7 +54,7 @@ router.post('', email, password,
 router.put('', [authenticated, email, password],
   asyncHandler(async (req, res, next) => {
     let user = req.user;
-    let message;
+    let message = '';
     const errors = validationResult(req).errors;
     if (user.id === 1) {
       message = "You cannot edit our 'demo' user, whose details are needed in order to allow our site's visitors  to login easily.  Feel free to use the 'Signup' route to create a new user if you'd like to test out the   'Manage Account' route.";
@@ -85,21 +85,13 @@ router.put('', [authenticated, email, password],
         delete req.body.nickName
       } else {
         // confirm that Google Maps API can find a route between user's address & NYC
-        await(async () => {
-            const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${req.body.address}&destinations=New+York+NY&key=${mapsApiKey}`);
-            let data = await response.json();
-            // console.log("data = ", data);
-            // console.log("data.rows[0].elements = ", data.rows[0].elements)
-            if (response.ok) {
-              if (data.status === "OK" && data.rows[0].elements[0].status === "OK") {
-                // console.log(data);
-                req.body.address = data.origin_addresses[0];
-              } else {
-                message = "There is something wrong with your home address.";
-                delete req.body.address;
-              }
-            }
-        })()
+        let checked = await checkAddress(req.body.address);
+        if (checked.success) {
+          req.body.address = checked.address;
+        } else {
+          message = `There is something wrong with your new home address (${req.body.address}).`
+          delete req.body.address;
+        }
         Object.entries(req.body).filter(([key,]) => key !== 'password').forEach(([key, value]) => {
           user[key] = value;
         });
@@ -108,7 +100,6 @@ router.put('', [authenticated, email, password],
         user.tokenId = jti;
         res.cookie("token", token);
         await user.save();
-        message = message || "Success!";
       }
     }
     res.json({ user: { ...user.toSafeObject(), message } });
@@ -117,7 +108,7 @@ router.put('', [authenticated, email, password],
 
 router.get('', asyncHandler(async (req, res, next) => {
   const users = await User.findAll();
-  res.json(users);
+  res.json({users});
 }));
 
 router.delete("", [authenticated], asyncHandler(async (req, res) => {

@@ -38,12 +38,13 @@ const User = () => {
     // let user = (await res.json()).user;
     setMessage(user.message);
     if (params.id) {
-      if (res.ok) {
+      if (res.ok && !user.message) {
         // console.log("user =", user);
+        setMessage("Success!");
         setCurrentUser(user);
         setParams({...user, password: '', password2: ''});
       } else {
-        setMessage(user.error.errors[0].msg);
+        setMessage(user.message);
       }
     } else {
       setMessage(user.message);
