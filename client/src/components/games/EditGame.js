@@ -26,7 +26,9 @@ const EditGame = ({ match }) => {
     (async() => {
       if (game.id) {
         const res = await fetch(`/api/games/${game.id}`);
-        let newGame = (await res.json()).game;
+        let data = await res.json();
+        // console.log("data = ", data);
+        let newGame = data.game;
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';
         })
@@ -55,17 +57,20 @@ const EditGame = ({ match }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(game)
     });
+    // let data = await res.json();
+    // console.log("data = ", data);
     let newGame = (await res.json()).game;
+    // let newGame = data.game;
     // React likes '' but does not like null.
     Object.entries(newGame).forEach(([key, value]) => {
       if (value === null) newGame[key] = '';
     });
+    setMessage(newGame.message || "Success!");
     if (game.id) {
-      setMessage(newGame.message || "Success");
+      setGame(newGame);
     } else {
-      history.push(wantsToPlay ? `/reservations/0-${newGame.id}` : '/');
+      if (!newGame.message) history.push(wantsToPlay ? `/reservations/0-${newGame.id}` : '/');
     }
-    setGame(newGame);
     setRerender(rerender + 1);
   };
 

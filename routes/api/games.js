@@ -7,25 +7,30 @@ const fetch = require('node-fetch');
 const { Game, Reservation, User } = require("../../db/models");
 const { authenticated } = require('./security-utils');
 const { mapsConfig: { mapsApiKey } } = require('../../config');
+const checkAddress = require('./checkAddress');
 
 const router = express.Router();
 
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
+    let message = '';
+    let game = {};
     try {
         req.body.ownerId = req.user.id;
         req.body.dateTime = faker.date.future();
-        //Transform query return to a pojo, so that we can attach properties
-        let game = (await Game.create(req.body)).dataValues;
-        // Should the following be done in a separate games/get fetch?
-        game = {...game, count: 0, travelTime: 0, reservationId: 0}
-        res.status(201).send({game})
+        let checked = await checkAddress(req.body.address);
+        if (checked.success) {
+          req.body.address = checked.address;
+          game = (await Game.create(req.body)).dataValues;
+          game = {...game, count: 0, reservationId: 0}
+        } else {
+          game.message = `There is something wrong with your game's address (${req.body.address}).`
+        }
+        res.json({game});
     } catch (e) {
         res.status(400).send(e)
     }
 }));
 
-// router.get('/:lat/:long/:radius', async (req, res) => {
-// router.get('', [authenticated], asyncHandler(async(req, res) => {
 router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     const user = req.user;
     // transform Query return to an array of pojos, to enable us to attach properties to each
@@ -49,7 +54,6 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     await(async () => {
         const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${user.address.split(' ').join('+')}&destinations=${venues.join('|')}&key=${mapsApiKey}`);
         let data = await response.json();
-        // console.log("data = ", data);
         if (response.ok) elements = data.rows[0].elements;
     })()
     elements.forEach((element, index) => {
@@ -75,28 +79,20 @@ router.get('/:id', async(req, res) => {
 router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     let game = await Game.findByPk(Number(req.params.id));
     let message = '';
-    // console.log("game = ", game.dataValues);
     if (game.ownerId !== req.user.id) res.status(401).send("Unauthorized Access");
     // confirm that Google Maps API can find a route between game's address & NYC
-    await(async () => {
-        const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins= ${req.body.address.split(" ").join("+")}&destinations=New+York+NY&key=${mapsApiKey}`);
-        let data = await response.json();
-        if (response.ok) {
-          if (data.status === "OK" && data.rows[0].elements[0].status === "OK") {
-            req.body.address = data.origin_addresses[0];
-            message = message || "Success!";
-          } else {
-            message = `There is something wrong with your game's address (${req.body.address}).`;
-            delete req.body.address;
-          }
-        }
-    })()
+    let checked = await checkAddress(req.body.address);
+    if (checked.success) {
+      req.body.address = checked.address;
+    } else {
+      message = `There is something wrong with your game's address (${req.body.address}).`
+      delete req.body.address;
+    }
     Object.entries(req.body).forEach(([key, value]) => {
         game[key] = value !== '' ? value : null;
     });
     await game.save();
-    game = game.dataValues;
-    game.message = message;
+    game = {...game.dataValues, message};
     res.status(200).json({game});
 }));
 

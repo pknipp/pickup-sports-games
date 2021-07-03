@@ -16,10 +16,8 @@ const Home = () => {
         (async () => {
             const response = await fetch(`/api/games`);
             let data = await response.json();
-            console.log("response.ok = ", response.ok);
-            console.log("data = ", data);
+            // console.log("Home.js says that data = ", data);
             if (response.ok) {
-            //   setGames(data.games);
               setGamesOwned(data.games.filter(game => {
                   return game.ownerId === currentUser.id;
               }).sort((game1, game2) => new Date(game1.dateTime) - new Date(game2.dateTime)));
