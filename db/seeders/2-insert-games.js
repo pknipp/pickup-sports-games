@@ -1,14 +1,17 @@
 'use strict';
 const faker = require('faker');
-const { numberOfUsers, numberOfGames, reservationProb, skillProb, miscProb } = require('../seederNumbers');
-const { cities } = require('../cities');
+
+const { numberOfUsers } = require('../seederData/users');
+const { numberOfGames, cities, skillProb, miscProb } = require('../seederData/games')
+const { reservationProb } = require('../seederData/reservations');
+
 const r = o => ({...o, createdAt: new Date(), updatedAt: new Date()});
 
 const games = [];
 for (let i = 0; i < numberOfGames; i++) {
   const game = r({
     ownerId: 1 + Math.floor(Math.random() * numberOfUsers),
-    address: faker.address.streetAddress() + ', ' + faker.address.city() + ', ' + faker.address.stateAbbr(),
+    address: cities[Math.floor(cities.length * Math.random())],
     dateTime: faker.date.future()
   });
   if (Math.random() < skillProb) game.minSkill = 1 + Math.floor(Math.random() * 5);

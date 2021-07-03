@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { NavLink, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import AuthContext from '../../auth';
 
 const EditGame = ({ match }) => {
-  const { fetchWithCSRF, currentUser, rerender, setRerender } = useContext(AuthContext);
+  const { fetchWithCSRF, rerender, setRerender } = useContext(AuthContext);
   const properties = [
     'address',
     'dateTime',
@@ -27,6 +27,7 @@ const EditGame = ({ match }) => {
       if (game.id) {
         const res = await fetch(`/api/games/${game.id}`);
         let newGame = (await res.json()).game;
+        // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';
         })
@@ -35,7 +36,30 @@ const EditGame = ({ match }) => {
     })();
   }, [game.id]);
 
-  const deleteGame = async () => {
+  const handlePutPost = async e => {
+    e.preventDefault();
+    game.dateTime = new Date();
+    const res = await fetch(`/api/games${game.id ? ('/' + game.id) : ''}`, { method: game.id ? 'PUT': 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(game)
+    });
+    let newGame = (await res.json()).game;
+    // React likes '' but does not like null.
+    Object.entries(newGame).forEach(([key, value]) => {
+      if (value === null) newGame[key] = '';
+    });
+    setMessage(newGame.message || "Success!");
+    if (game.id) {
+      // PUT route
+      setGame(newGame);
+    } else {
+      // POST route
+      if (!newGame.message) history.push(wantsToPlay ? `/reservations/0-${newGame.id}` : '/');
+    }
+    setRerender(rerender + 1);
+  };
+
+  const handleDelete = async e => {
     const res = await fetch(`/api/games/${game.id}`, { method: 'DELETE'});
     if (res.ok) {
       let nullGame = properties.reduce((pojo, prop) => {
@@ -48,35 +72,9 @@ const EditGame = ({ match }) => {
     }
   }
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    game.dateTime = new Date();
-    const res = await fetch(`/api/games${game.id ? ('/' + game.id) : ''}`, { method: game.id ? 'PUT': 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(game)
-    });
-    let newGame = (await res.json()).game
-    // React likes '' but does not like null.
-    Object.entries(newGame).forEach(([key, value]) => {
-      if (value === null) newGame[key] = '';
-    });
-    if (game.id) {
-      setMessage("Success");
-    } else {
-      history.push(wantsToPlay ? `/reservations/0-${newGame.id}` : '/');
-    }
-    setGame(newGame);
-    setRerender(rerender + 1);
-  };
-
-  const handleDelete = e => {
-    e.preventDefault();
-    deleteGame();
-  }
-
   return (
     <main className="centered middled">
-      <form className="auth" onSubmit={handleSubmit}>
+      <form className="auth" onSubmit={handlePutPost}>
         <h4>
           {game.id ?
             "Change the Game details?"
@@ -84,7 +82,7 @@ const EditGame = ({ match }) => {
             "Choose the Game details."
           }
         </h4>
-        <span>Game address:</span>
+        <span>(space separated) game address:</span>
         <input
           type="text" placeholder="Address" name="address" value={game.address}
           onChange={e => setGame({...game, address: e.target.value})}

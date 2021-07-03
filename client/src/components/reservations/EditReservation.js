@@ -32,7 +32,29 @@ const EditReservation = ({ match }) => {
     })();
   }, [reservation.id]);
 
-  const deleteReservation = async () => {
+
+
+  const handlePutPost = async e => {
+    e.preventDefault();
+    const res = await fetch(`/api/reservations${reservation.id ? ('/' + reservation.id) : ''}`, { method: reservation.id ? 'PUT': 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reservation)
+    });
+    let newReservation = (await res.json()).reservation;
+    if (reservation.id) {
+      // PUT route
+      setMessage("Success");
+    } else {
+      // POST route
+      history.push('/');
+    }
+    setReservation(newReservation);
+    // Is the following line necessary?
+    setRerender(rerender + 1);
+  };
+
+  const handleDelete = async e => {
+    e.preventDefault();
     const res = await fetch(`/api/reservations/${reservation.id}`, { method: 'DELETE'});
     if (res.ok) {
       setReservation(JSON.parse(JSON.stringify(nullReservation)));
@@ -42,31 +64,9 @@ const EditReservation = ({ match }) => {
     }
   }
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    const res = await fetch(`/api/reservations${reservation.id ? ('/' + reservation.id) : ''}`, { method: reservation.id ? 'PUT': 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(reservation)
-    });
-    let newReservation = (await res.json()).reservation;
-    if (reservation.id) {
-      setMessage("Success");
-    } else {
-      history.push('/');
-    }
-    setReservation(newReservation);
-    // Is the following line necessary?
-    setRerender(rerender + 1);
-  };
-
-  const handleDelete = e => {
-    e.preventDefault();
-    deleteReservation();
-  }
-
   return (
     <main className="centered middled">
-      <form className="auth" onSubmit={handleSubmit}>
+      <form className="auth" onSubmit={handlePutPost}>
         <h4>
           {reservation.id ? "Change" : "Choose"} your reservation details for the game at {reservation.game.address} on {reservation.game.dateTime}.
         </h4>

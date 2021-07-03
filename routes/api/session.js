@@ -1,12 +1,9 @@
-// const express = require('express');
 const asyncHandler = require('express-async-handler');
 const { check, validationResult } = require('express-validator');
 const router = require('express').Router();
 
 const UserRepository = require('../../db/user-repository');
 const { authenticated, generateToken } = require('./security-utils');
-
-// const router = express.Router();
 
 const email = check('email').isEmail().withMessage('Provide valid email').normalizeEmail();
 const password = check('password').not().isEmpty().withMessage('Provide password');

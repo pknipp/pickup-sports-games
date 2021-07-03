@@ -1,15 +1,17 @@
-import React, { useContext } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
 
-import AuthContext from '../../auth';
 const Game = ({game, type }) => {
-    const { currentUser } = useContext(AuthContext);
 
     return (
         <div>
             <li>
-                <div>Game location: {game.address}</div>
                 <div>Game dateTime: {game.dateTime}</div>
+                {type === "Edit game" ? null :
+                    <div>Organized by {game.owner.nickName}</div>
+                }
+                <div>Travel-time: {game.duration.text}</div>
+                <div>Game location: {game.address}</div>
                 <div>
                     {game.count} player{game.count > 1 ? 's' : ''} reserved thus far
                 </div>
