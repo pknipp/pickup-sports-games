@@ -6,7 +6,6 @@ import Game from './Game';
 
 const Home = () => {
     const { currentUser, rerender } = useContext(AuthContext);
-    // const [games, setGames] = useState([]);
     const [gamesOwned, setGamesOwned] = useState([]);
     const [gamesReserved, setGamesReserved] = useState([]);
     const [gamesOther, setGamesOther] = useState([]);
@@ -17,7 +16,6 @@ const Home = () => {
             const response = await fetch(`/api/games`);
             let data = await response.json();
             if (response.ok) {
-            //   setGames(data.games);
               setGamesOwned(data.games.filter(game => {
                   return game.ownerId === currentUser.id;
               }).sort((game1, game2) => new Date(game1.dateTime) - new Date(game2.dateTime)));

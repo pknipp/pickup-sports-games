@@ -3,10 +3,10 @@ const { check, validationResult } = require('express-validator');
 const Sequelize = require('sequelize');
 const router = require('express').Router();
 
-const { create } = require("../../db/user-repository")
 const { User, Game, Reservation } = require('../../db/models');
 const { authenticated, generateToken } = require('./security-utils');
 const { uploadFile } = require('../../s3helper.js');
+const checkAddress = require('./checkAddress');
 
 const BUCKET = 'volleyballbucket';
 
@@ -15,11 +15,10 @@ const email = check('email').isEmail().withMessage('Give a valid email address')
 // const lastName = check('lastName').not().isEmpty().withMessage('Provide last name');
 const password = check('password').not().isEmpty().withMessage('Provide a password');
 
-router.post('', email, password,
+router.post('', [email, password],
   asyncHandler(async (req, res, next) => {
-    let message = "";
+    let [user, message, status] = [{}, '', 400];
     const errors = validationResult(req).errors;
-    let response = { user: {} };
     if (errors.length) {
       message = errors[0].msg;
     } else {
@@ -30,27 +29,35 @@ router.post('', email, password,
       } else if (otherUser2) {
         message = "That nickname is taken.";
       } else {
-        const user = await create(req.body);
-        const { jti, token } = generateToken(user);
-        user.tokenId = jti;
-        res.cookie("token", token);
-        response.user = { ...response.user, ...user.toSafeObject() }
-        await user.save();
+        // confirm that Google Maps API can find a route between user's address & NYC
+        let checked = await checkAddress(req.body.address);
+        if (checked.success) {
+          req.body.address = checked.address;
+          user = (await User.build(req.body)).setPassword(req.body.password);
+          const { jti, token } = generateToken(user);
+          user.tokenId = jti;
+          res.cookie("token", token);
+          await user.save();
+          user = user.toSafeObject();
+          status = 201;
+        } else {
+          message = `There is something wrong with your address (${req.body.address}).`
+        }
       }
     }
-    response.user.message = message;
-    res.json(response);
+    res.status(status).json({user: {...user, message}});
   }));
 
-router.put('', [authenticated], email, password,
+router.put('', [authenticated, email, password],
   asyncHandler(async (req, res, next) => {
-    let user = req.user;
-    let message;
+    let [user, message, status] = [req.user, '', 200];
     const errors = validationResult(req).errors;
     if (user.id === 1) {
       message = "You cannot edit our 'demo' user, whose details are needed in order to allow our site's visitors  to login easily.  Feel free to use the 'Signup' route to create a new user if you'd like to test out the   'Manage Account' route.";
+      status = 400;
     } else if (errors.length) {
       message = errors[0].msg;
+      status = 400;
     } else {
       let otherUser1 = await User.findOne({
         where: {
@@ -69,28 +76,37 @@ router.put('', [authenticated], email, password,
         }
       });
       if (otherUser1) {
-        message = "That email is taken.";
+        message = `That email (${req.body.email}) is taken.`;
+        delete req.body.email;
       } else if (otherUser2) {
-        message = "That nickname is taken.";
+        message = `That nickname (${req.body.nickName}) is taken.`;
+        delete req.body.nickName
       } else {
-        Object.entries(req.body).filter(([key,]) => key !== 'password').forEach(([key, value]) => {
-          user[key] = value;
-        });
-        user = user.setPassword(req.body.password);
-        const { jti, token } = generateToken(user);
-        user.tokenId = jti;
-        res.cookie("token", token);
-        await user.save();
-        message = "Success!";
+        // confirm that Google Maps API can find a route between user's address & NYC
+        let checked = await checkAddress(req.body.address);
+        if (checked.success) {
+          req.body.address = checked.address;
+        } else {
+          message = `There is something wrong with your new home address (${req.body.address}).`
+          delete req.body.address;
+        }
       }
+      Object.entries(req.body).filter(([key,]) => key !== 'password').forEach(([key, value]) => {
+        user[key] = value;
+      });
+      user = user.setPassword(req.body.password);
+      const { jti, token } = generateToken(user);
+      user.tokenId = jti;
+      res.cookie("token", token);
+      await user.save();
     }
-    res.json({ user: { ...user.toSafeObject(), message } });
+    res.status(status).json({ user: { ...user.toSafeObject(), message } });
   })
 );
 
 router.get('', asyncHandler(async (req, res, next) => {
   const users = await User.findAll();
-  res.json(users);
+  res.json({users});
 }));
 
 router.delete("", [authenticated], asyncHandler(async (req, res) => {
