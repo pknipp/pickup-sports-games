@@ -9,6 +9,7 @@ const { User, Game, Reservation } = require('../../db/models');
 const { authenticated, generateToken } = require('./security-utils');
 const { uploadFile } = require('../../s3helper.js');
 const { mapsConfig: { mapsApiKey } } = require('../../config');
+const checkAddress = require('./checkAddress');
 
 const BUCKET = 'volleyballbucket';
 
@@ -19,9 +20,8 @@ const password = check('password').not().isEmpty().withMessage('Provide a passwo
 
 router.post('', email, password,
   asyncHandler(async (req, res, next) => {
-    let message = "";
+    let [user, message] = [{}, ''];
     const errors = validationResult(req).errors;
-    let response = { user: {} };
     if (errors.length) {
       message = errors[0].msg;
     } else {
@@ -33,30 +33,21 @@ router.post('', email, password,
         message = "That nickname is taken.";
       } else {
         // confirm that Google Maps API can find a route between user's address & NYC
-        await(async () => {
-          const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${req.body.address}&destinations=New+York+NY&key=${mapsApiKey}`);
-          let data = await response.json();
-          if (response.ok) {
-            if (data.status === "OK" && data.rows[0].elements[0].status === "OK") {
-              req.body.address = data.origin_addresses[0];
-              message = message || "Success!";
-            } else {
-              message = "There is something wrong with your home address.";
-              delete req.body.address;
-            }
-          }
-        })()
-        let user = await User.build(req.body);
-        user = user.setPassword(req.body.password);
-        const { jti, token } = generateToken(user);
-        user.tokenId = jti;
-        res.cookie("token", token);
-        await user.save();
-        response.user = { ...response.user, ...user.toSafeObject() }
+        let checked = await checkAddress(req.body.address);
+        if (checked.success) {
+          req.body.address = checked.address;
+          user = (await User.build(req.body)).setPassword(req.body.password);
+          const { jti, token } = generateToken(user);
+          user.tokenId = jti;
+          res.cookie("token", token);
+          await user.save();
+          user = user.toSafeObject();
+        } else {
+          message = `There is something wrong with your address (${req.body.address}).`
+        }
       }
     }
-    response.user.message = message;
-    res.json(response);
+    res.json({user: {...user, message}});
   }));
 
 // router.put('', [authenticated], email, password,
@@ -97,8 +88,8 @@ router.put('', [authenticated, email, password],
         await(async () => {
             const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${req.body.address}&destinations=New+York+NY&key=${mapsApiKey}`);
             let data = await response.json();
-            console.log("data = ", data);
-            console.log("data.rows[0].elements = ", data.rows[0].elements)
+            // console.log("data = ", data);
+            // console.log("data.rows[0].elements = ", data.rows[0].elements)
             if (response.ok) {
               if (data.status === "OK" && data.rows[0].elements[0].status === "OK") {
                 // console.log(data);

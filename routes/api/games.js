@@ -25,7 +25,7 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
         } else {
           game.message = `There is something wrong with your game's address (${req.body.address}).`
         }
-        res.json({game});
+        res.status(201).json({game});
     } catch (e) {
         res.status(400).send(e)
     }
@@ -56,23 +56,19 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
         let data = await response.json();
         if (response.ok) elements = data.rows[0].elements;
     })()
-    elements.forEach((element, index) => {
-        games[index].duration = element.duration;
-    })
+    elements.forEach((element, index) => games[index].duration = element.duration);
     res.json({games});
 }));
 
 router.get('/:id', async(req, res) => {
-    const id = Number(req.params.id);
-    // Transform query return to a pojo, so that we can attach two properties.
-    const game = (await Game.findByPk(id)).dataValues;
+    const game = await Game.findByPk(Number(req.params.id));
     let owner = await User.findByPk(game.ownerId);
     const reservations = await Reservation.findAll({where: {gameId: game.id}});
     let players = [];
     reservations.forEach(async(reservation) => {
         players.push(await User.findByPk(reservation.playerId));
     });
-    res.json({game: {...game, owner, players}});
+    res.json({game: {...game.dataValues, owner, players}});
 })
 
 // Do we want to allow a game owner to transfer game-"owner"ship to another user?

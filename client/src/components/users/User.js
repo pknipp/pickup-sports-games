@@ -46,10 +46,11 @@ const User = () => {
         setMessage(user.error.errors[0].msg);
       }
     } else {
-      if (res.ok) {
+      setMessage(user.message);
+      if (res.ok && !user.message) {
+        // console.log("user = ", user);
         setCurrentUser(user);
         setParams(user);
-        setMessage(user.message)
         history.push('/');
       }
     }
@@ -141,7 +142,7 @@ const User = () => {
           onChange={e => setParams({...params, password2: e.target.value})}
         />
         <button color="primary" variant="outlined" type="submit">
-          {currentUser ? "Update resource" : "Create resource"}
+          {currentUser ? "Edit account" : "Signup"}
         </button>
         <span style={{color: "red", paddingLeft:"10px"}}>{message}</span>
         {currentUser ? null :
@@ -155,7 +156,7 @@ const User = () => {
       {!currentUser ? null :
         <form className="auth" onSubmit={handleDelete}>
           <button color="primary" variant="outlined" type="submit">
-            Delete resource
+            Delete account
           </button>
         </form>
       }
