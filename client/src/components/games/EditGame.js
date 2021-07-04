@@ -7,6 +7,8 @@ const EditGame = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender } = useContext(AuthContext);
   const properties = [
     'address',
+    'date',
+    'time',
     'dateTime',
     'extraInfo',
     'minSkill',
@@ -48,6 +50,7 @@ const EditGame = ({ match }) => {
     Object.entries(newGame).forEach(([key, value]) => {
       if (value === null) newGame[key] = '';
     });
+    [newGame.date, newGame.time] = newGame.dateTime.split("T");
     setMessage(newGame.message || "Success!");
     if (game.id) {
       // PUT route
@@ -92,10 +95,22 @@ const EditGame = ({ match }) => {
           type="text" placeholder="Extra Info about event" name="extraInfo" value={game.extraInfo}
           onChange={e => setGame({...game, extraInfo: e.target.value})}
         />
-        <span>Date and time:</span>
+        {/* <span>Date and time:</span>
         <input
           type="text" placeholder="This'll be overwritten by a random date/time." name="dateTime" value={game.dateTime}
           onChange={e => setGame({...game, dateTime: e.target.value})}
+        /> */}
+        <span>Date:</span>
+        <input
+          type="date"
+          value={game.date}
+          onChange={e => setGame({...game, date: e.target.value})}
+        />
+        <span>Time:</span>
+        <input
+          type="time"
+          value={game.time}
+          onChange={e => setGame({...game, time: e.target.value})}
         />
         <span>Minimum skill-level allowed:</span>
         <input
