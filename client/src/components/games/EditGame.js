@@ -8,8 +8,6 @@ const EditGame = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender } = useContext(AuthContext);
   const properties = [
     'address',
-    // 'date',
-    // 'time',
     'dateTime',
     'extraInfo',
     'minSkill',
@@ -97,7 +95,6 @@ const EditGame = ({ match }) => {
           onChange={e => setGame({...game, address: e.target.value})}
         />
         <span>Date/time:</span>
-        {/* <DateTimePicker */}
         <input
           type="datetime-local"
           value={game.dateTime}
