@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import moment from 'moment';
 
 import AuthContext from '../../auth';
 
@@ -7,8 +8,8 @@ const EditGame = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender } = useContext(AuthContext);
   const properties = [
     'address',
-    'date',
-    'time',
+    // 'date',
+    // 'time',
     'dateTime',
     'extraInfo',
     'minSkill',
@@ -24,6 +25,11 @@ const EditGame = ({ match }) => {
 
   let history = useHistory();
 
+  function convertUTCDTToLocalDT(dt) {
+    var newDt = (new Date(dt)).getTime() - (new Date(dt)).getTimezoneOffset()*60*1000;
+    return newDt;
+  }
+
   useEffect(() => {
     (async() => {
       if (game.id) {
@@ -33,19 +39,14 @@ const EditGame = ({ match }) => {
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';
         });
-        newGame.dateTime = new Date(newGame.dateTime);
-        console.log("newGame.dateTime = ", newGame.dateTime);
-        console.log("typeof(newGame.dateTime) = ", typeof(newGame.dateTime));
-        const [date, time] = newGame.dateTime.split("T");
-        setGame({...newGame, date, time: time.slice(0, 8)});
+        newGame.dateTime = moment(newGame.dateTime).local().format().slice(0,-6);
+        setGame(newGame)
       }
     })();
   }, [game.id]);
 
   const handlePutPost = async e => {
     e.preventDefault();
-    // game.dateTime = new Date();
-    game.dateTime = new Date(`${game.date}T${game.time}`);
     const res = await fetch(`/api/games${game.id ? ('/' + game.id) : ''}`, { method: game.id ? 'PUT': 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(game)
@@ -55,8 +56,7 @@ const EditGame = ({ match }) => {
     Object.entries(newGame).forEach(([key, value]) => {
       if (value === null) newGame[key] = '';
     });
-    const [date, time] = newGame.dateTime.split("T");
-    newGame = {...newGame, date, time: time.slice(0, 8)};
+    newGame.dateTime = moment(newGame.dateTime).local().format().slice(0,-6);
     setMessage(newGame.message || "Success!");
     if (game.id) {
       // PUT route
@@ -96,22 +96,12 @@ const EditGame = ({ match }) => {
           type="text" placeholder="Address" name="address" value={game.address}
           onChange={e => setGame({...game, address: e.target.value})}
         />
-        <span>Extra info (optional):</span>
+        <span>Date/time:</span>
+        {/* <DateTimePicker */}
         <input
-          type="text" placeholder="Extra Info about event" name="extraInfo" value={game.extraInfo}
-          onChange={e => setGame({...game, extraInfo: e.target.value})}
-        />
-        <span>Date:</span>
-        <input
-          type="date"
-          value={game.date}
-          onChange={e => setGame({...game, date: e.target.value})}
-        />
-        <span>Time:</span>
-        <input
-          type="time"
-          value={game.time}
-          onChange={e => setGame({...game, time: e.target.value})}
+          type="datetime-local"
+          value={game.dateTime}
+          onChange={e => setGame({...game, dateTime: e.target.value})}
         />
         <span>Minimum skill-level allowed:</span>
         <input
@@ -122,6 +112,11 @@ const EditGame = ({ match }) => {
         <input
           type="number" placeholder="maxSkill" name="maxSkill" value={game.maxSkill}
           onChange={e => setGame({...game, maxSkill: Number(e.target.value)})}
+        />
+        <span>Extra info (optional):</span>
+        <input
+          type="text" placeholder="Extra Info about event" name="extraInfo" value={game.extraInfo}
+          onChange={e => setGame({...game, extraInfo: e.target.value})}
         />
 
         {game.id ? null :
