@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import moment from 'moment';
 
 import AuthContext from '../../auth';
 
@@ -22,6 +23,11 @@ const EditGame = ({ match }) => {
 
   let history = useHistory();
 
+  function convertUTCDTToLocalDT(dt) {
+    var newDt = (new Date(dt)).getTime() - (new Date(dt)).getTimezoneOffset()*60*1000;
+    return newDt;
+  }
+
   useEffect(() => {
     (async() => {
       if (game.id) {
@@ -30,15 +36,15 @@ const EditGame = ({ match }) => {
         // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';
-        })
-        setGame(newGame);
+        });
+        newGame.dateTime = moment(newGame.dateTime).local().format().slice(0,-6);
+        setGame(newGame)
       }
     })();
   }, [game.id]);
 
   const handlePutPost = async e => {
     e.preventDefault();
-    game.dateTime = new Date();
     const res = await fetch(`/api/games${game.id ? ('/' + game.id) : ''}`, { method: game.id ? 'PUT': 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(game)
@@ -48,6 +54,7 @@ const EditGame = ({ match }) => {
     Object.entries(newGame).forEach(([key, value]) => {
       if (value === null) newGame[key] = '';
     });
+    newGame.dateTime = moment(newGame.dateTime).local().format().slice(0,-6);
     setMessage(newGame.message || "Success!");
     if (game.id) {
       // PUT route
@@ -82,19 +89,15 @@ const EditGame = ({ match }) => {
             "Choose the Game details."
           }
         </h4>
-        <span>(space separated) game address:</span>
+        <span>Game address:</span>
         <input
           type="text" placeholder="Address" name="address" value={game.address}
           onChange={e => setGame({...game, address: e.target.value})}
         />
-        <span>Extra info (optional):</span>
+        <span>Date/time:</span>
         <input
-          type="text" placeholder="Extra Info about event" name="extraInfo" value={game.extraInfo}
-          onChange={e => setGame({...game, extraInfo: e.target.value})}
-        />
-        <span>Date and time:</span>
-        <input
-          type="text" placeholder="This'll be overwritten by a random date/time." name="dateTime" value={game.dateTime}
+          type="datetime-local"
+          value={game.dateTime}
           onChange={e => setGame({...game, dateTime: e.target.value})}
         />
         <span>Minimum skill-level allowed:</span>
@@ -106,6 +109,11 @@ const EditGame = ({ match }) => {
         <input
           type="number" placeholder="maxSkill" name="maxSkill" value={game.maxSkill}
           onChange={e => setGame({...game, maxSkill: Number(e.target.value)})}
+        />
+        <span>Extra info (optional):</span>
+        <input
+          type="text" placeholder="Extra Info about event" name="extraInfo" value={game.extraInfo}
+          onChange={e => setGame({...game, extraInfo: e.target.value})}
         />
 
         {game.id ? null :

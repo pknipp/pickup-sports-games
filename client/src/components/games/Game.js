@@ -2,11 +2,12 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 const Game = ({game, type }) => {
-
+    const [date, time] = game.dateTime.split("T");
     return (
         <div>
             <li>
-                <div>Game dateTime: {game.dateTime}</div>
+                <div>Date: {date}</div>
+                <div>Starts: {time.slice(0, 5)}</div>
                 {type === "Edit game" ? null :
                     <div>Organized by {game.owner.nickName}</div>
                 }
