@@ -51,22 +51,7 @@ const Owned = () => {
         })()
     }, [rerender, currentUser.id]);
 
-    // const editGame = (
-    //     <NavLink exact to={`/games/${game.id}`} className="nav" activeClassName="active">
-    //         Edit game
-    //     </NavLink>
-    // );
-
-
-    // owned = {date: [], time: [], address: [], commute: [], count: [], editGame: []};
-
-    const columns = keys.map(key => ({dataField: key[0], text: key[1]}));
-
-    // const columns = [
-    //     {dataField: 'name', text: 'Project name', sort: true},
-    //     {dataField: 'proj_start_date', text: 'Start date', sort:true},
-    //     {dataField: 'button', text: ""}
-    // ];
+    const columns = keys.map(key => ({dataField: key[0], text: key[1], sort: true}));
 
     return (
         <>
