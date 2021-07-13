@@ -15,7 +15,7 @@ const Home = () => {
 
     const keys = [
         ['date', 'Game date'],
-        // ['time', 'Start time'],
+        ['time', 'Start time'],
         // ['address', 'Address'],
         // ['duration', 'Travel time (hr:min)'],
         // ['count', 'Player reservations'],
@@ -31,9 +31,10 @@ const Home = () => {
             if (response.ok) {
                 const newGames = [];
                 data.games.forEach(game => {
-                    const newGame = {};
-                    const [date, time] = game.dateTime.split("T");
-                    newGame.date = date;
+                    let newGame = {id: game.id};
+                    let [date, time] = game.dateTime.split("T");
+                    time = time.slice(0, 5);
+                    newGame = {...newGame, date, time};
                     let minutes = Math.round(game.duration.value / 60);
                     let hours = Math.floor(minutes / 60);
                     hours = (!hours ? "00" : hours < 10 ? "0" : "") + hours;
