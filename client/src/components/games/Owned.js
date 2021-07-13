@@ -17,7 +17,7 @@ const Owned = () => {
         ['date', 'Game date'],
         ['time', 'Start time'],
         ['address', 'Address'],
-        ['duration', 'Travel time'],
+        ['duration', 'Travel time (convert to ISO string)'],
         ['count', 'Player reservations'],
         ['editGame', '']
     ];
@@ -36,7 +36,7 @@ const Owned = () => {
                         date,
                         time: time.slice(0, -8),
                         address: game.address,
-                        duration: game.duration.text,
+                        duration: game.duration.value,
                         count: game.count,
                         editGame: (
                             <NavLink exact to={`/games/${game.id}`} className="nav" activeClassName="active">

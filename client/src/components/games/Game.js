@@ -1,8 +1,14 @@
+import { duration } from "moment";
 import React from "react";
 import { NavLink } from "react-router-dom";
 
 const Game = ({game, type }) => {
     const [date, time] = game.dateTime.split("T");
+    let minutes = Math.round(game.duration.value / 60);
+    let hours = Math.floor(minutes / 60);
+    hours = (!hours ? "00" : hours < 10 ? "0" : "") + hours;
+    minutes -= hours * 60;
+    minutes = (!minutes ? "00" : minutes < 10 ? "0" : "") + minutes;
     return (
         <div>
             <li>
@@ -11,7 +17,7 @@ const Game = ({game, type }) => {
                 {type === "Edit game" ? null :
                     <div>Organized by {game.owner.nickName}</div>
                 }
-                <div>Travel-time: {game.duration.text}</div>
+                <div>Travel-time: {hours + ":" + minutes}</div>
                 <div>Game location: {game.address}</div>
                 <div>
                     {game.count} player{game.count > 1 ? 's' : ''} reserved thus far
