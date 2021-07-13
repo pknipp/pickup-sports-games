@@ -9,6 +9,7 @@ const Game = ({game, type }) => {
     hours = (!hours ? "00" : hours < 10 ? "0" : "") + hours;
     minutes -= hours * 60;
     minutes = (!minutes ? "00" : minutes < 10 ? "0" : "") + minutes;
+    const duration = hours + ":" + minutes;
     return (
         <div>
             <li>
@@ -17,7 +18,7 @@ const Game = ({game, type }) => {
                 {type === "Edit game" ? null :
                     <div>Organized by {game.owner.nickName}</div>
                 }
-                <div>Travel-time: {hours + ":" + minutes}</div>
+                <div>Travel-time: {duration}</div>
                 <div>Game location: {game.address}</div>
                 <div>
                     {game.count} player{game.count > 1 ? 's' : ''} reserved thus far

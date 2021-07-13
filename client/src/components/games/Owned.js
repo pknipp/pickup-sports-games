@@ -19,7 +19,7 @@ const Owned = () => {
         ['address', 'Address'],
         ['duration', 'Travel time (convert to ISO string)'],
         ['count', 'Player reservations'],
-        ['editGame', '']
+        ['edit', '']
     ];
     let newOwned = keys.reduce((owned, key) => ({...owned, [key[0]]: []}), {});
 
@@ -39,7 +39,11 @@ const Owned = () => {
                         duration: game.duration.value,
                         count: game.count,
                         editGame: (
-                            <NavLink exact to={`/games/${game.id}`} className="nav" activeClassName="active">
+                            <NavLink
+                                exact to={`/games/${game.id}`}
+                                className="nav"
+                                activeClassName="active"
+                            >
                                 Edit game
                             </NavLink>
                         )

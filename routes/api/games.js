@@ -74,6 +74,7 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     let checked = await checkAddress(req.body.address);
     if (checked.success) {
       req.body.address = checked.address;
+      
     } else {
       message = `There is something wrong with your game's address (${req.body.address}).`
       delete req.body.address;

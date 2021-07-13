@@ -7,16 +7,42 @@ import Game from './Game';
 
 const Home = () => {
     const { currentUser, rerender } = useContext(AuthContext);
+    const [games, setGames] = useState([]);
     const [gamesOwned, setGamesOwned] = useState([]);
     const [gamesReserved, setGamesReserved] = useState([]);
     const [gamesOther, setGamesOther] = useState([]);
     const [message, setMessage] = useState('');
+
+    const keys = [
+        ['date', 'Game date'],
+        // ['time', 'Start time'],
+        // ['address', 'Address'],
+        // ['duration', 'Travel time (hr:min)'],
+        // ['count', 'Player reservations'],
+        // ['editGame', '']
+    ];
+    // let newGames = keys.reduce((owned, key) => ({...owned, [key[0]]: []}), {});
+    const columns = keys.map(key => ({dataField: key[0], text: key[1], sort: true}));
 
     useEffect(() => {
         (async () => {
             const response = await fetch(`/api/games`);
             let data = await response.json();
             if (response.ok) {
+                const newGames = [];
+                data.games.forEach(game => {
+                    const newGame = {};
+                    const [date, time] = game.dateTime.split("T");
+                    newGame.date = date;
+                    let minutes = Math.round(game.duration.value / 60);
+                    let hours = Math.floor(minutes / 60);
+                    hours = (!hours ? "00" : hours < 10 ? "0" : "") + hours;
+                    minutes -= hours * 60;
+                    minutes = (!minutes ? "00" : minutes < 10 ? "0" : "") + minutes;
+                    const duration = hours + ":" + minutes;
+                    newGames.push(newGame);
+                })
+                setGames(newGames);
               setGamesOwned(data.games.filter(game => {
                   return game.ownerId === currentUser.id;
               }).sort((game1, game2) => new Date(game1.dateTime) - new Date(game2.dateTime)));
@@ -32,6 +58,8 @@ const Home = () => {
         })()
     }, [rerender, currentUser.id]);
 
+
+
     return (
         <>
             <div>
@@ -44,6 +72,7 @@ const Home = () => {
                     Create new Game
                 </NavLink>
             </div>
+            <BootstrapTable keyField='id' data={ games } columns={ columns } />
 
             {!gamesOwned.length ? null :
                 <div>
