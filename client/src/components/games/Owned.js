@@ -5,7 +5,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import AuthContext from '../../auth';
 import Game from './Game';
 
-const Home = () => {
+const Owned = () => {
     const { currentUser, rerender } = useContext(AuthContext);
     const [gamesOwned, setGamesOwned] = useState([]);
     const [gamesReserved, setGamesReserved] = useState([]);
@@ -35,42 +35,16 @@ const Home = () => {
     return (
         <>
             <div>
-                <div className="welcome">
-                    <p>Here goes a welcome message.</p>
-                </div>
-            </div>
-            <div>
                 <NavLink exact to={"/games/0"} className="nav" activeClassName="active">
                     Create new Game
                 </NavLink>
             </div>
-
             {!gamesOwned.length ? null :
                 <div>
-                    Game{gamesOwned.length > 1 ? "s" : ""} owned by you (sorted    chronologically):
+                    {gamesOwned.length ? "" : "You own no games."}
                     <ul>
                         {gamesOwned.map(game => {
                         return <Game key={game.id} game={game} type={"Edit game"}/>;
-                        })}
-                    </ul>
-                </div>
-            }
-            {!gamesReserved.length ? null :
-                <div>
-                    Game{gamesReserved.length > 1 ? "s" : ""} for which you have a reservation (sorted by game owner):
-                    <ul>
-                        {gamesReserved.map(game => {
-                            return <Game key={game.id} type={"Edit reservation"} game={game} />;
-                        })}
-                    </ul>
-                </div>
-            }
-            {!gamesOther.length ? null :
-                <div>
-                    Game{gamesOther.length > 1 ? "s" : ""} for which you have not yetmade a reservation (sorted geographically):
-                    <ul>
-                        {gamesOther.map(game => {
-                            return <Game key={game.id} game={game} type={"Makereservation"}    />;
                         })}
                     </ul>
                 </div>
@@ -79,4 +53,4 @@ const Home = () => {
     )
 }
 
-export default Home;
+export default Owned;

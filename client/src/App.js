@@ -9,6 +9,7 @@ import NavBar from "./components/NavBar";
 import EditGame from "./components/games/EditGame";
 import EditReservation from "./components/reservations/EditReservation";
 import Home from "./components/games/Home";
+import Owned from "./components/games/Owned";
 import AuthContext from './auth';
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
@@ -79,8 +80,9 @@ const App = () => {
             <AuthRoute exact path="/login" component={LogIn} />
             <AuthRoute exact path="/signup" component={User} />
 
-             {/* <Route path="/feature1" component={Feature1}/> */}
-             <ProtectedRoute exact path="/" component={Home}/>
+            {/* <Route path="/feature1" component={Feature1}/> */}
+            <ProtectedRoute exact path="/" component={Home}/>
+            <ProtectedRoute exact path="/owned" component={Owned}/>
             <ProtectedRoute exact path="/edituser" component={User}/>
             <ProtectedRoute path="/logout" component={LogOut}/>
             <Route exact path="/games/:gameId" component={EditGame} />
