@@ -16,9 +16,10 @@ const Home = () => {
     const keys = [
         ['date', 'Game date'],
         ['time', 'Start time'],
-        // ['address', 'Address'],
-        // ['duration', 'Travel time (hr:min)'],
-        // ['count', 'Player reservations'],
+        ['address', 'Address'],
+        ['duration', 'Travel time (hr:min)'],
+        ['count', 'Player reservations'],
+        ['owner', 'Game organizer'],
         // ['editGame', '']
     ];
     // let newGames = keys.reduce((owned, key) => ({...owned, [key[0]]: []}), {});
@@ -29,18 +30,19 @@ const Home = () => {
             const response = await fetch(`/api/games`);
             let data = await response.json();
             if (response.ok) {
-                const newGames = [];
+                let newGames = [];
                 data.games.forEach(game => {
-                    let newGame = {id: game.id};
+                    let {id, dateTime, address, duration, count, owner} = game;
+                    let newGame = {id, address, count, owner: owner.nickName}
                     let [date, time] = game.dateTime.split("T");
                     time = time.slice(0, 5);
-                    newGame = {...newGame, date, time};
-                    let minutes = Math.round(game.duration.value / 60);
+                    let minutes = Math.round(duration.value / 60);
                     let hours = Math.floor(minutes / 60);
                     hours = (!hours ? "00" : hours < 10 ? "0" : "") + hours;
                     minutes -= hours * 60;
                     minutes = (!minutes ? "00" : minutes < 10 ? "0" : "") + minutes;
-                    const duration = hours + ":" + minutes;
+                    duration = hours + ":" + minutes;
+                    newGame = {...newGame, date, time, duration};
                     newGames.push(newGame);
                 })
                 setGames(newGames);

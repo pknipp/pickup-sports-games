@@ -39,6 +39,7 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     games.forEach(async game => {
         venues.push(game.address);
         game.owner = (await User.findByPk(game.ownerId)).dataValues;
+        delete game.owner.hashedPassword;
         let reservations = await Reservation.findAll({where: {gameId: game.id}});
         // transform Query to an array of pojos, to enable us to compute array's length
         game.count = reservations.map(reservation => reservation.dataValues).length;
@@ -74,7 +75,7 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     let checked = await checkAddress(req.body.address);
     if (checked.success) {
       req.body.address = checked.address;
-      
+
     } else {
       message = `There is something wrong with your game's address (${req.body.address}).`
       delete req.body.address;

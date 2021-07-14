@@ -31,13 +31,6 @@ const NavBar = () => {
                     Home
                 </NavLink>
                 <NavLink
-                    exact to="/owned"
-                    className="nav"
-                    activeClassName="active"
-                >
-                    Owned
-                </NavLink>
-                <NavLink
                     to="/edituser"
                     className="nav" activeClassName="active"
                 >
