@@ -20,7 +20,7 @@ const Home = () => {
         ['duration', 'Travel time (hr:min)'],
         ['count', 'Player reservations'],
         ['owner', 'Game organizer'],
-        // ['editGame', '']
+        ['edit', '']
     ];
     // let newGames = keys.reduce((owned, key) => ({...owned, [key[0]]: []}), {});
     const columns = keys.map(key => ({dataField: key[0], text: key[1], sort: true}));
@@ -43,6 +43,15 @@ const Home = () => {
                     minutes = (!minutes ? "00" : minutes < 10 ? "0" : "") + minutes;
                     duration = hours + ":" + minutes;
                     newGame = {...newGame, date, time, duration};
+                    newGame.edit = (
+                        <NavLink
+                            exact to={`/games/${id}`}
+                            className="nav"
+                            activeClassName="active"
+                        >
+                            Edit game details
+                        </NavLink>
+                    )
                     newGames.push(newGame);
                 })
                 setGames(newGames);
