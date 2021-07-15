@@ -55,6 +55,7 @@ const Home = () => {
     }, [currentUser.id]);
 
     useEffect(() => {
+        // Do not include the "game owner" column for the zeroth value of selectOption
         setKeys(allKeys.filter(key => selectedOption ? true : key[0] !== 'owner'));
         let bool;
         let newGames = allGames.filter((game, i) => {

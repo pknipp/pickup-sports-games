@@ -35,9 +35,9 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     const user = req.user;
     // transform Query return to an array of pojos, to enable us to attach properties to each
     const games = (await Game.findAll({})).map(game => game.dataValues);
-    const venues = [];
+    const allVenues = [];
     games.forEach(async game => {
-        venues.push(game.address);
+        allVenues.push(game.address);
         game.owner = (await User.findByPk(game.ownerId)).dataValues;
         delete game.owner.hashedPassword;
         let reservations = await Reservation.findAll({where: {gameId: game.id}});
@@ -48,10 +48,19 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
             return (reservation.playerId === user.id ? reservation.id : reservationId);
         }, 0);
     })
-    // fetch travel-Time between user and array of addresses ("venues")
-    const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${user.address}&destinations=${venues.join('|')}&key=${mapsApiKey}`);
-    let data = await response.json();
-    data.rows[0].elements.forEach((element, index) => games[index].duration = element.duration);
+    // fetch travel-Time between user and a bundled array of addresses ("venues")
+    // google restricts each bundle to contain no more than 25 addresses
+    const maxFetch = 25;
+    let nBundle = 0;
+    while (allVenues.length) {
+      let venues = allVenues.splice(0, Math.min(maxFetch, allVenues.length));
+      const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${user.address}&destinations=${venues.join('|')}&key=${mapsApiKey}`);
+      let data = await response.json();
+      data.rows[0].elements.forEach((element, index) => {
+        games[index + nBundle * maxFetch].duration = element.duration;
+      });
+      nBundle++;
+    }
     res.json({games});
 }));
 
