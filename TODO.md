@@ -9,7 +9,6 @@ put validation stuff in several columns of Users table
 DRY up code associated with multiplicity of columns in Users table
 in model files check associations between tables
 in model files insert a many-to-many relationship between Users and Games
-allow user to control the date of a new game (perhaps wait until we do this with RN?)
 allow any player to add a photo to a Game?
 Have users login w/nickName rather than email, and NOT require that email be unique? (White space'll prob be a problem).
 

@@ -1,5 +1,5 @@
 module.exports = {
-  numberOfUsers: 5, 
+  numberOfUsers: 27,
   people :[
     ['Aaron', 'Pittsburgh PA'],
     ['Ben', 'Denver CO'],
@@ -24,6 +24,7 @@ module.exports = {
     ['Ugo', 'Chicago IL'],
     ['Vann', 'Hollywood CA'],
     ['Warren', 'Portland OR'],
+    ['Xavier', 'St Louis, MO'],
     ['Yul', 'Severna Park MD'],
     ['Zachery', 'Little Rock AK']
   ]};

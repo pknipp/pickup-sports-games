@@ -78,9 +78,7 @@ const App = () => {
 
             <AuthRoute exact path="/login" component={LogIn} />
             <AuthRoute exact path="/signup" component={User} />
-
-             {/* <Route path="/feature1" component={Feature1}/> */}
-             <ProtectedRoute exact path="/" component={Home}/>
+            <ProtectedRoute exact path="/" component={Home}/>
             <ProtectedRoute exact path="/edituser" component={User}/>
             <ProtectedRoute path="/logout" component={LogOut}/>
             <Route exact path="/games/:gameId" component={EditGame} />

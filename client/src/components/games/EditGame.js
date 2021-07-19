@@ -23,11 +23,6 @@ const EditGame = ({ match }) => {
 
   let history = useHistory();
 
-  function convertUTCDTToLocalDT(dt) {
-    var newDt = (new Date(dt)).getTime() - (new Date(dt)).getTimezoneOffset()*60*1000;
-    return newDt;
-  }
-
   useEffect(() => {
     (async() => {
       if (game.id) {
