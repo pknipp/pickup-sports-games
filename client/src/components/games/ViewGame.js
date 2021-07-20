@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
+import BootstrapTable from 'react-bootstrap-table-next';
 
 import AuthContext from '../../auth';
 
@@ -13,6 +14,7 @@ const ViewGame = ({ match }) => {
     return {[prop]: '', ...pojo};
   }, {id: Number(match.params.gameId)}));
   const [players, setPlayers] = useState([]);
+  const [columns, setColumns] = useState([{}]);
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
 
@@ -21,34 +23,20 @@ const ViewGame = ({ match }) => {
   useEffect(() => {
     (async() => {
         const res = await fetch(`/api/games/${game.id}`);
-        let data = await res.json();
-        console.log("data = ", data);
-        let newGame = data.game;
-        console.log("newGame = ", newGame);
+        let newGame = (await res.json()).game;
         let newPlayers = newGame.players;
-        console.log("newPlayers = ", newPlayers);
+        let entries = Object.entries(newPlayers[0]);
+        let newColumns = entries.sort((a, b) => typeof(a[1]) < typeof(b[1]) ? 1 : typeof(a[1]) > typeof(b[1]) ? -1 : 0).map(([key]) => ({dataField: key, text: key, sort: true})).filter(key => key.text !== 'id');
+        setColumns(newColumns);
         setPlayers(newPlayers);
         // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';
         });
         newGame.dateTime = moment(newGame.dateTime).local().format().slice(0,-6);
-        setGame(newGame)
+        setGame(newGame);
     })();
   }, [game.id]);
-
-  const handleDelete = async e => {
-    const res = await fetch(`/api/games/${game.id}`, { method: 'DELETE'});
-    if (res.ok) {
-      let nullGame = gameProps.reduce((pojo, prop) => {
-        return {[prop]: '', ...pojo};
-      }, {wantsToPlay: false});
-      [nullGame.id, nullGame.ownerId] = [0, 0];
-      setGame(nullGame);
-      setRerender(rerender + 1);
-      history.push('/');
-    }
-  }
 
   return (
     <main className="centered middled">
@@ -58,6 +46,7 @@ const ViewGame = ({ match }) => {
         <div>Minimum skill-level allowed: {game.minSkill}</div>
         <div>Maximum skill-level allowed: {game.maxSkill}</div>
         <div>Extra info: {game.extraInfo || "nothing"} </div>
+        <BootstrapTable keyField='id' data={ players } columns={ columns } />
     </main>
   );
 }

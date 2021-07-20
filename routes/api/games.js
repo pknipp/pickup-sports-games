@@ -73,11 +73,11 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   const reservations = await Reservation.findAll({where: {gameId}});
   let players = [];
   for await (reservation of reservations) {
-    const player = (await User.findByPk(reservation.playerId)).dataValues;
+    let player = (await User.findByPk(reservation.playerId)).dataValues;
     reservation = reservation.dataValues;
     ['gameId', 'id', 'playerId', 'createdAt'].forEach(prop => delete reservation[prop]);
     ['firstName', 'lastName', 'address', 'tokenId', 'hashedPassword'].forEach(prop => delete player[prop]);
-    player.reservation = reservation;
+    player = {...player, ...reservation};
     players.push(player);
   };
   res.json({game: {...game.dataValues, owner: user, players}});
