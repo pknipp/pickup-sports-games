@@ -25,6 +25,7 @@ const Home = () => {
     const [games, setGames] = useState([]);
     const [keys, setKeys] = useState([...allKeys]);
     const [selectedOption, setSelectedOption] = useState(0);
+    const [columns, setColumns] = useState(allKeys.map(key => ({dataField: key[0], text: key[1], sort: true})));
     const [message, setMessage] = useState('');
 
     useEffect(() => {
@@ -57,9 +58,11 @@ const Home = () => {
 
     useEffect(() => {
         // Do not include the "game owner" column for the zeroth value of selectOption
-        setKeys(allKeys.filter(key => selectedOption ? true : key[0] !== 'owner'));
-        let bool;
+        let newKeys = allKeys.filter(key => key[0] !== (!selectedOption ? 'owner' : "view"));
+        setKeys(newKeys);
+        setColumns(newKeys.map((key, index) => ({dataField: key[0], text: key[1], sort: true})));
         let newGames = allGames.filter((game, i) => {
+            let bool;
             if (selectedOption) {
                 bool = (!(selectedOption - 1) !== !game.reservationId);
             } else {
@@ -97,28 +100,21 @@ const Home = () => {
         setGames(newGames);
     }, [allGames, selectedOption]);
 
-    const columns = keys.map((key, index) => {
-        if (index < keys.length - 1 || !selectedOption) {
-            return {dataField: key[0], text: key[1], sort: true};
-        }
-    });
-
     return (
         <>
             <div className="welcome">
                 <p>Here goes a welcome message.</p>
             </div>
             {options.map((option, i) => (
-                <>
+                <span key={i}>
                     <input
-                        key={i}
                         type="radio"
                         value={i}
                         checked={i === selectedOption}
                         onChange={e => setSelectedOption(Number(e.target.value))}
                     />
                     <span>{option[0]}</span>
-                </>
+                </span>
             ))}
             {selectedOption ? null :
                 <div>
