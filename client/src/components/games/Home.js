@@ -6,7 +6,7 @@ import AuthContext from '../../auth';
 
 const Home = () => {
     const options = [
-        ["games organized by you", "Edit game details"],
+        ["games organized by you", "Edit game details", "View game details"],
         ["games for which you are registered to play", "Edit reservation"],
         ["games for which you are not registered to play", "Make reservation"]
     ];
@@ -17,7 +17,8 @@ const Home = () => {
         ['duration', 'Travel time (hr:min)'],
         ['count', 'Player reservations'],
         ['owner', 'Game organizer'],
-        ['edit', '']
+        ['edit', ''],
+        ['view', '']
     ];
     const { currentUser } = useContext(AuthContext);
     const [allGames, setAllGames] = useState([]);
@@ -67,26 +68,40 @@ const Home = () => {
             return bool;
         });
         newGames.forEach(game => {
-            let path;
+            let editPath;
             if (selectedOption) {
-                path = `/reservations/${game.reservationId}-${game.id}`;
+                editPath = `/reservations/${game.reservationId}-${game.id}`;
             } else {
-                path = `/games/${game.id}`;
+                editPath = `/editGames/${game.id}`;
             }
+            let viewPath = `/viewGames/${game.id}`;
             game.edit = (
                 <NavLink
-                    exact to={path}
+                    exact to={editPath}
                     className="nav"
                     activeClassName="active"
                 >
                     {options[selectedOption][1]}
+                </NavLink>
+            );
+            game.view = (
+                <NavLink
+                    exact to={viewPath}
+                    className="nav"
+                    activeClassName="active"
+                >
+                    {options[selectedOption][2]}
                 </NavLink>
             )
         });
         setGames(newGames);
     }, [allGames, selectedOption]);
 
-    const columns = keys.map(key => ({dataField: key[0], text: key[1], sort: true}));
+    const columns = keys.map((key, index) => {
+        if (index < keys.length - 1 || !selectedOption) {
+            return {dataField: key[0], text: key[1], sort: true};
+        }
+    });
 
     return (
         <>
