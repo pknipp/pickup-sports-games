@@ -72,12 +72,14 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   if (game.ownerId !== user.id) return next({ status: 401, message: "You are not authorized." });
   const reservations = await Reservation.findAll({where: {gameId}});
   let players = [];
-  reservations.forEach(async(reservation) => {
-    let player = (await User.findByPk(reservation.playerId)).dataValues;
-    player.reservation = reservation.dataValues;
+  for await (reservation of reservations) {
+    const player = (await User.findByPk(reservation.playerId)).dataValues;
+    reservation = reservation.dataValues;
+    ['gameId', 'id', 'playerId', 'createdAt'].forEach(prop => delete reservation[prop]);
     ['firstName', 'lastName', 'address', 'tokenId', 'hashedPassword'].forEach(prop => delete player[prop]);
+    player.reservation = reservation;
     players.push(player);
-  });
+  };
   res.json({game: {...game.dataValues, owner: user, players}});
 }))
 

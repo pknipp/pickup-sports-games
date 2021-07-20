@@ -12,6 +12,7 @@ const ViewGame = ({ match }) => {
   const [game, setGame] = useState(gameProps.reduce((pojo, prop) => {
     return {[prop]: '', ...pojo};
   }, {id: Number(match.params.gameId)}));
+  const [players, setPlayers] = useState([]);
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
 
@@ -20,7 +21,13 @@ const ViewGame = ({ match }) => {
   useEffect(() => {
     (async() => {
         const res = await fetch(`/api/games/${game.id}`);
-        let newGame = (await res.json()).game;
+        let data = await res.json();
+        console.log("data = ", data);
+        let newGame = data.game;
+        console.log("newGame = ", newGame);
+        let newPlayers = newGame.players;
+        console.log("newPlayers = ", newPlayers);
+        setPlayers(newPlayers);
         // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';
