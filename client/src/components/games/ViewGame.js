@@ -25,9 +25,13 @@ const ViewGame = ({ match }) => {
         const res = await fetch(`/api/games/${game.id}`);
         let newGame = (await res.json()).game;
         let newPlayers = newGame.players;
-        let entries = Object.entries(newPlayers[0]);
-        let newColumns = entries.sort((a, b) => typeof(a[1]) < typeof(b[1]) ? 1 : typeof(a[1]) > typeof(b[1]) ? -1 : 0).map(([key]) => ({dataField: key, text: key, sort: true})).filter(key => key.text !== 'id');
+        let newColumns = Object.entries(newPlayers[0]).sort((a, b) => typeof(a[1]) < typeof(b[1]) ? 1 : typeof(a[1]) > typeof(b[1]) ? -1 : 0).map(([key]) => ({dataField: key, text: key, sort: true})).filter(key => key.text !== 'id');
         setColumns(newColumns);
+        newPlayers = newPlayers.map(player => {
+          return Object.entries(player).reduce((player, prop) => {
+            return {...player, [prop[0]]: prop[1] === true ? "x" : prop[1] === false ? "" : prop[1]};
+          })
+        })
         setPlayers(newPlayers);
         // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
