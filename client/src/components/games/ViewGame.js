@@ -49,9 +49,13 @@ const ViewGame = ({ match }) => {
         let newColumns = columns2.map((pair, index) => ({dataField: pair[0], text: pair[1], sort: true,
           headerStyle: {width: `${pair[1].length === 1 ? "5px" : "10px"}`},
           style: (cell, row) => ({color:
-            newGame.minSkill && row.skill < newGame.minSkill ? 'red' :
-            newGame.maxSkill && row.skill > newGame.maxSkill ? 'blue' : 'black'
+            newGame.minSkill && (!row.skill || row.skill < newGame.minSkill) ? 'red' :
+            newGame.maxSkill && (              row.skill > newGame.maxSkill) ? 'blue' : 'black'
           }),
+          sortFunc: (a, b, order, dataField) => {
+            let diff = a === 'unknown' ? -1 : b === 'unknown' ? 1 : a < b ? -1 : a > b ? 1 : 0;
+            return diff * (order === 'asc' ? 1 : -1);
+          },
           // The following pair of lines didn't work, when attempting to make headers diagonal.
           // text: MyComponent(pair[1]),
           // headerClasses: "rotate"
@@ -63,7 +67,8 @@ const ViewGame = ({ match }) => {
         setColumns(newColumns);
         newPlayers = newPlayers.map(player => {
           player = Object.entries(player).reduce((player, prop) => {
-            return {...player, [prop[0]]: prop[1] === true ? "x" : prop[1] === false ? "" : prop[1]};
+            return {...player,
+              [prop[0]]: prop[1] === true ? "x" : prop[1] === false ? "" : prop[1] === 0 ? "unknown" : prop[1]};
           });
           player.createdAt = player.createdAt.split('T')[0];
           let updatedAt = player.updatedAt.split('T');
@@ -86,9 +91,10 @@ const ViewGame = ({ match }) => {
         <h4>Game details</h4>
         <div>address: {game.address}</div>
         <div>Date/time: {game.dateTime}</div>
-        <div>Minimum skill-level allowed: {game.minSkill}</div>
-        <div>Maximum skill-level allowed: {game.maxSkill}</div>
+        <div>Lower limit of skill-level: {game.minSkill || 'none'}</div>
+        <div>Upper limit of skill-level: {game.maxSkill || 'none'}</div>
         <div>Extra info: {game.extraInfo || "nothing"} </div>
+        <br/>
         {game.minSkill || game.maxSkill ? <div>Color key:
           {game.minSkill ? <span style={{color: 'red'}}> insufficient </span> : null}
           {game.minSkill && game.maxSkill ? 'or ' : null}

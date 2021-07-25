@@ -14,8 +14,8 @@ for (let i = 0; i < numberOfGames; i++) {
     address: cities[Math.floor(cities.length * Math.random())],
     dateTime: faker.date.future()
   });
-  if (Math.random() < skillProb) game.minSkill = 1 + Math.floor(Math.random() * 5);
-  if (Math.random() < skillProb) game.maxSkill = 6 + Math.floor(Math.random() * 4);
+  game.minSkill = (Math.random() < skillProb) ? 1 + Math.floor(Math.random() * 4) : 0;
+  game.maxSkill = (Math.random() < skillProb) ? 5 + Math.floor(Math.random() * 5) : 0;
   if (Math.random() < miscProb)  game.extraInfo = faker.lorem.words();
   games.push(game);
 }

@@ -29,11 +29,13 @@ const EditGame = ({ match }) => {
       if (game.id) {
         const res = await fetch(`/api/games/${game.id}`);
         let newGame = (await res.json()).game;
+        console.log("newGame.dateTime = ", newGame.dateTime);
         // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';
         });
-        newGame.dateTime = moment(newGame.dateTime).local().format().slice(0,-6);
+        newGame.dateTime = moment(newGame.dateTime).local().format().slice(0, -6);
+        // newGame.dateTime = moment(newGame.dateTime).local().format().slice(0, -6);
         setGame(newGame)
       }
     })();
@@ -52,7 +54,7 @@ const EditGame = ({ match }) => {
     Object.entries(newGame).forEach(([key, value]) => {
       if (value === null) newGame[key] = '';
     });
-    newGame.dateTime = moment(newGame.dateTime).local().format().slice(0,-6);
+    newGame.dateTime = moment(newGame.dateTime).local().format().slice(0, -6);
     setMessage(newGame.message || "Success!");
     if (game.id) {
       // PUT route
@@ -98,6 +100,7 @@ const EditGame = ({ match }) => {
           value={game.dateTime}
           onChange={e => setGame({...game, dateTime: e.target.value})}
         />
+        
         <span>Lower limit of skill-level:</span>
 
         {/* <input
