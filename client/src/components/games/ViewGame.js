@@ -43,8 +43,27 @@ const ViewGame = ({ match }) => {
         let newGame = (await res.json()).game;
         let newPlayers = newGame.players;
         // let newColumns = Object.entries(newPlayers[0]).sort((a, b) => typeof(a[1]) < typeof(b[1]) ? 1 : typeof(a[1]) > typeof(b[1]) ? -1 : 0).map(([key]) => ({dataField: key, text: key, sort: true})).filter(key => key.text !== 'id');
-        setColumns(columns2.map(pair => ({dataField: pair[0], text: pair[1], sort: true})));
-        // including prop style: {'white-space': 'nowrap'} did not help
+        let newColumns = columns2.map(pair => ({dataField: pair[0], text: pair[1], sort: true,
+          style: {color: 'green', width: '10px'}, headerStyle: {width: '10px'}
+          // The following props did nothing:
+          // headerStyle: () => { return { minWidth: '20px' }; }
+          // condensed: true
+          // headerStyle: {'white-space': 'nowrap'}
+          // headerStyle: {whiteSpace: 'nowrap'}
+          // headerStyle: () => ({ width: "2%" })
+          // width: "20" or "20px"
+          // headerStyle: (colum, colIndex) => {return { width: '4%', textAlign: 'center' };}
+        }));
+        newColumns.forEach(column => {
+          if (column.text.length === 1) {
+            column.style = {color: 'blue', width: '3px'};
+            column.headerStyle = {width: '3px'};
+          }
+        });
+        setColumns(newColumns);
+
+
+        // style: {'white-space': 'nowrap'}
         newPlayers = newPlayers.map(player => {
           player = Object.entries(player).reduce((player, prop) => {
             return {...player, [prop[0]]: prop[1] === true ? "x" : prop[1] === false ? "" : prop[1]};
