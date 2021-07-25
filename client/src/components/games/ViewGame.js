@@ -49,8 +49,8 @@ const ViewGame = ({ match }) => {
         let newColumns = columns2.map((pair, index) => ({dataField: pair[0], text: pair[1], sort: true,
           headerStyle: {width: `${pair[1].length === 1 ? "5px" : "10px"}`},
           style: (cell, row) => ({color:
-            newGame.minSkill && (!row.skill || row.skill < newGame.minSkill) ? 'red' :
-            newGame.maxSkill && (              row.skill > newGame.maxSkill) ? 'blue' : 'black'
+            newGame.minSkill && (row.skill === "unknown" || row.skill < newGame.minSkill) ? 'red' :
+            newGame.maxSkill && row.skill !== "unknown" && row.skill > newGame.maxSkill ? 'blue' : 'black'
           }),
           sortFunc: (a, b, order, dataField) => {
             let diff = a === 'unknown' ? -1 : b === 'unknown' ? 1 : a < b ? -1 : a > b ? 1 : 0;
