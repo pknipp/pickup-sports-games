@@ -24,8 +24,8 @@ const ViewGame = ({ match }) => {
     ['nickName', 'Name'],
     ['photo', ''],
     ['email', 'Email'],
-    ['createdAt', `Member\n since`],
-    ['updatedAt', `Reservation\n date/time`],
+    ['createdAt', `Member since`],
+    ['updatedAt', `Reservation date/time`],
     ['skill', 'Skill'],
     ['setter', 'S'],
     ['middle', 'M'],
@@ -37,33 +37,30 @@ const ViewGame = ({ match }) => {
     ['sixes', '6']
   ];
 
+  // const createMarkup = header => ({__html: `<span>${header}</span>`});
+  // const MyComponent = header => <div dangerouslySetInnerHTML={createMarkup(header)} />;
+
   useEffect(() => {
     (async() => {
         const res = await fetch(`/api/games/${game.id}`);
         let newGame = (await res.json()).game;
         let newPlayers = newGame.players;
         // let newColumns = Object.entries(newPlayers[0]).sort((a, b) => typeof(a[1]) < typeof(b[1]) ? 1 : typeof(a[1]) > typeof(b[1]) ? -1 : 0).map(([key]) => ({dataField: key, text: key, sort: true})).filter(key => key.text !== 'id');
-        let newColumns = columns2.map(pair => ({dataField: pair[0], text: pair[1], sort: true,
-          style: {color: 'green', width: '10px'}, headerStyle: {width: '10px'}
+        let newColumns = columns2.map((pair, index) => ({dataField: pair[0], text: pair[1], sort: true,
+          headerStyle: {width: `${pair[1].length === 1 ? "5px" : "10px"}`},
+          style: (cell, row) => ({color:
+            newGame.minSkill && row.skill < newGame.minSkill ? 'red' :
+            newGame.maxSkill && row.skill > newGame.maxSkill ? 'blue' : 'black'
+          }),
+          // The following pair of lines didn't work, when attempting to make headers diagonal.
+          // text: MyComponent(pair[1]),
+          // headerClasses: "rotate"
           // The following props did nothing:
-          // headerStyle: () => { return { minWidth: '20px' }; }
           // condensed: true
           // headerStyle: {'white-space': 'nowrap'}
           // headerStyle: {whiteSpace: 'nowrap'}
-          // headerStyle: () => ({ width: "2%" })
-          // width: "20" or "20px"
-          // headerStyle: (colum, colIndex) => {return { width: '4%', textAlign: 'center' };}
         }));
-        newColumns.forEach(column => {
-          if (column.text.length === 1) {
-            column.style = {color: 'blue', width: '3px'};
-            column.headerStyle = {width: '3px'};
-          }
-        });
         setColumns(newColumns);
-
-
-        // style: {'white-space': 'nowrap'}
         newPlayers = newPlayers.map(player => {
           player = Object.entries(player).reduce((player, prop) => {
             return {...player, [prop[0]]: prop[1] === true ? "x" : prop[1] === false ? "" : prop[1]};
@@ -92,7 +89,17 @@ const ViewGame = ({ match }) => {
         <div>Minimum skill-level allowed: {game.minSkill}</div>
         <div>Maximum skill-level allowed: {game.maxSkill}</div>
         <div>Extra info: {game.extraInfo || "nothing"} </div>
-        <BootstrapTable keyField='id' data={ players } columns={ columns } />
+        <div>Key to colors:
+          <span style={{color: 'red'}}> insufficient</span> or
+          <span style={{color: 'blue'}}> excessive</span> skill
+        </div>
+        <BootstrapTable
+          keyField='id'
+          data={ players }
+          columns={ columns }
+          // classes="table-header-rotated"
+          // rowStyle={rowStyleSkill}
+        />
     </main>
   );
 }
