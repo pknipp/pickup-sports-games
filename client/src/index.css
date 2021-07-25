@@ -12,6 +12,37 @@
   font-size: 1.5em;
 }
 
+.simple {
+  display: flex;
+  justify-content: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+form.auth>input {
+  width: 200px;
+  border: 1px solid black;
+  padding: 10px;
+  margin: 10px;
+}
+
+input {
+  border: 1px solid black;
+}
+
+td>input {
+  width: 4em;
+}
+
+span input {
+  width: 3em;
+  margin-left: 10px;
+}
+
 .table-header-rotated {
   border-collapse: collapse;
 }

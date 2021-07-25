@@ -89,10 +89,12 @@ const ViewGame = ({ match }) => {
         <div>Minimum skill-level allowed: {game.minSkill}</div>
         <div>Maximum skill-level allowed: {game.maxSkill}</div>
         <div>Extra info: {game.extraInfo || "nothing"} </div>
-        <div>Key to colors:
-          <span style={{color: 'red'}}> insufficient</span> or
-          <span style={{color: 'blue'}}> excessive</span> skill
-        </div>
+        {game.minSkill || game.maxSkill ? <div>Color key:
+          {game.minSkill ? <span style={{color: 'red'}}> insufficient </span> : null}
+          {game.minSkill && game.maxSkill ? 'or ' : null}
+          {game.maxSkill ? <span style={{color: 'blue'}}> excessive </span> : null}
+          skill
+        </div> : null}
         <BootstrapTable
           keyField='id'
           data={ players }
