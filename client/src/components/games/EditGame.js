@@ -6,6 +6,7 @@ import AuthContext from '../../auth';
 
 const EditGame = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender } = useContext(AuthContext);
+  const skills = ['none', '1','2','3','4','5','6','7','8','9'];
   const properties = [
     'address',
     'dateTime',
@@ -40,6 +41,8 @@ const EditGame = ({ match }) => {
 
   const handlePutPost = async e => {
     e.preventDefault();
+    game.minSkill = isNaN(game.minSkill) ? 0 : Number(game.minSkill);
+    game.maxSkill = isNaN(game.maxSkill) ? 0 : Number(game.maxSkill);
     const res = await fetch(`/api/games${game.id ? ('/' + game.id) : ''}`, { method: game.id ? 'PUT': 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(game)
@@ -95,16 +98,48 @@ const EditGame = ({ match }) => {
           value={game.dateTime}
           onChange={e => setGame({...game, dateTime: e.target.value})}
         />
-        <span>Minimum skill-level allowed:</span>
-        <input
+        <span>Lower limit of skill-level:</span>
+
+        {/* <input
           type="number" placeholder="minSkill" name="minSkill" value={game.minSkill}
           onChange={e => setGame({...game, minSkill: Number(e.target.value)})}
-        />
-        <span>Maximum skill-level allowed:</span>
-        <input
+        /> */}
+
+        <select
+          onChange={e => setGame({...game, minSkill: !Number(e.target.value) ? 'none' : e.target.value})}
+          value={game.minSkill}
+        >
+          {skills.map((skill, index) => (
+              <option
+                  key={`${index}`}
+                  value={index || 'none'}
+              >
+                  {skill}
+              </option>
+          ))}
+        </select>
+
+        <span>Upper limit of skill-level:</span>
+
+        {/* <input
           type="number" placeholder="maxSkill" name="maxSkill" value={game.maxSkill}
           onChange={e => setGame({...game, maxSkill: Number(e.target.value)})}
-        />
+        /> */}
+
+        <select
+          onChange={e => setGame({...game, maxSkill: !Number(e.target.value) ? 'none' : e.target.value})}
+          value={Number(game.maxSkill)}
+        >
+          {skills.map((skill, index) => (
+              <option
+                  key={`${index}`}
+                  value={index || 'none'}
+              >
+                  {skill}
+              </option>
+          ))}
+        </select>
+
         <span>Extra info (optional):</span>
         <input
           type="text" placeholder="Extra Info about event" name="extraInfo" value={game.extraInfo}
