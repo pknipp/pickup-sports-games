@@ -1,8 +1,6 @@
 shortcomings of games branch pushed and PR-ed by PK on 6/19:
-    game.dateTime inputs are overridden by random future dates (Don't fix until using RN?)
     error handling is poor or nonexistent
     front-end is very ugly
-    #skill should probably be handled with a dropdown rather than an integer, for various technical reasons
     Lack of DRY-ness associated with the existence of TWO Route wrappers.
 
 put validation stuff in several columns of Users table
@@ -12,9 +10,6 @@ in model files insert a many-to-many relationship between Users and Games
 allow any player to add a photo to a Game?
 Have users login w/nickName rather than email, and NOT require that email be unique? (White space'll prob be a problem).
 
-use React native?
-generalize to handle multiple sports (ie, not just volleyball)
-
 Aaron: modify DrawSQL schema to reflect any changes:
     skillLevel -> skill
     nickName in Users table
@@ -22,3 +17,14 @@ Aaron: modify DrawSQL schema to reflect any changes:
     date & time -> dateTime
     Signup table -> Reservations?
     extraInformation -> extraInfo
+
+MVP goals:
+    On two skill inputs (User and EditGame components), make drop-down the same size as the other inputs.
+    Comment out all references to "photo".
+    Make front-end a bit prettier.
+
+stretch goals:
+    implement photo capability
+    code with react native
+    implement diagonal column headings for table in GameView component
+    generalize to handle multiple sports (ie, not just volleyball)

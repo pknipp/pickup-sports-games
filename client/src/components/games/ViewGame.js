@@ -90,17 +90,31 @@ const ViewGame = ({ match }) => {
     <main className="centered middled">
         <h4>Game details</h4>
         <div>address: {game.address}</div>
-        <div>Date/time: {game.dateTime}</div>
-        <div>Lower limit of skill-level: {game.minSkill || 'none'}</div>
-        <div>Upper limit of skill-level: {game.maxSkill || 'none'}</div>
-        <div>Extra info: {game.extraInfo || "nothing"} </div>
+        <div>date: {game.dateTime.split('T')[0]}</div>
+        <div>time: {game.dateTime.split('T')[1]}</div>
+        <div>lower limit of skill-level: {game.minSkill || 'none'}</div>
+        <div>upper limit of skill-level: {game.maxSkill || 'none'}</div>
+        <div>{game.extraInfo ? `extra info: ${game.extraInfo}` : ''}</div>
         <br/>
-        {game.minSkill || game.maxSkill ? <div>Color key:
-          {game.minSkill ? <span style={{color: 'red'}}> insufficient </span> : null}
-          {game.minSkill && game.maxSkill ? 'or ' : null}
-          {game.maxSkill ? <span style={{color: 'blue'}}> excessive </span> : null}
-          skill
-        </div> : null}
+        <div>Key:</div>
+        <ul>
+          {game.minSkill || game.maxSkill ? <li>Personnel skill:
+            {game.minSkill ? <span style={{color: 'red'}}> insufficient </span> : null}
+            {game.minSkill && game.maxSkill ? 'or ' : null}
+            {game.maxSkill ? <span style={{color: 'blue'}}> excessive </span> : null}
+          </li> : null}
+          <li>flexibility:
+            <ul>
+              {columns2.filter(pair => (pair[1].length === 1)).map(pair => {
+                return (
+                  <li>
+                    {`${pair[1]}: ${pair[0]}`}
+                  </li>
+                )
+              })}
+            </ul>
+          </li>
+        </ul>
         <BootstrapTable
           keyField='id'
           data={ players }
