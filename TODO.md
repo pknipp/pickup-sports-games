@@ -9,6 +9,7 @@ in model files check associations between tables
 in model files insert a many-to-many relationship between Users and Games
 allow any player to add a photo to a Game?
 Have users login w/nickName rather than email, and NOT require that email be unique? (White space'll prob be a problem).
+Include a "misc" column to the Reservations table.  This would require an additional input element on the EditReservation component, along with a method (tooltip?) for allowing the gameOwner to read the note.
 
 Aaron: modify DrawSQL schema to reflect any changes:
     skillLevel -> skill
