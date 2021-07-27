@@ -110,7 +110,7 @@ const User = () => {
           type="number" placeholder="Cell" name="cell" value={params.cell}
           onChange={e => setParams({...params, cell: Number(e.target.value)})}
         />
-        <span>Skill (integer?):</span>
+        <span>Skill:</span>
         {/* <input
           type="number" placeholder="Skill" name="skill" value={params.skill}
           onChange={e => setParams({...params, skill: "unknown" || Number(e.target.value)})}

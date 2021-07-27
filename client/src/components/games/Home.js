@@ -118,7 +118,7 @@ const Home = () => {
             ))}
             {selectedOption ? null :
                 <div>
-                    <NavLink exact to={"/games/0"} className="nav" activeClassName="active">
+                    <NavLink exact to={"/editGames/0"} className="nav" activeClassName="active">
                         <div>Create new Game</div>
                     </NavLink>
                 </div>

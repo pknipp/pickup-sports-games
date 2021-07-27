@@ -19,12 +19,11 @@ Aaron: modify DrawSQL schema to reflect any changes:
     extraInformation -> extraInfo
 
 MVP goals:
-    On two skill inputs (User and EditGame components), make drop-down the same size as the other inputs.
     Comment out all references to "photo".
     Make front-end a bit prettier.
 
 stretch goals:
     implement photo capability
     code with react native
-    implement diagonal column headings for table in GameView component
+    implement diagonal column headings for table in GameView component (see https://www.codeply.com/go/V8djT7SOzD/table-with-diagonal-headers-on-bootstrap)
     generalize to handle multiple sports (ie, not just volleyball)

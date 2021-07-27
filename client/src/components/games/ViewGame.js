@@ -69,13 +69,13 @@ const ViewGame = ({ match }) => {
           player = Object.entries(player).reduce((player, prop) => {
             return {...player,
               [prop[0]]: prop[1] === true ? "x" : prop[1] === false ? "" : prop[1] === 0 ? "unknown" : prop[1]};
-          });
+          }, {});
           player.createdAt = player.createdAt.split('T')[0];
           let updatedAt = player.updatedAt.split('T');
           player.updatedAt = updatedAt[0].slice(5) + ' ' + updatedAt[1].slice(0, -8);
           player.photo = 'photo';
           return player;
-        })
+        });
         setPlayers(newPlayers);
         // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
