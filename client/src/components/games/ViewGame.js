@@ -98,21 +98,17 @@ const ViewGame = ({ match }) => {
         <br/>
         <div>Key:</div>
         <ul>
-          {game.minSkill || game.maxSkill ? <li>Personnel skill:
+          {game.minSkill || game.maxSkill ? <li>player skill:
             {game.minSkill ? <span style={{color: 'red'}}> insufficient </span> : null}
             {game.minSkill && game.maxSkill ? 'or ' : null}
             {game.maxSkill ? <span style={{color: 'blue'}}> excessive </span> : null}
           </li> : null}
-          <li>flexibility:
-            <ul>
+          <li>player flexibility:
               {columns2.filter(pair => (pair[1].length === 1)).map(pair => {
                 return (
-                  <li>
-                    {`${pair[1]}: ${pair[0]}`}
-                  </li>
+                    ` "${pair[1]}" (${pair[0]})`
                 )
-              })}
-            </ul>
+              }).join(', ')}
           </li>
         </ul>
         <BootstrapTable
