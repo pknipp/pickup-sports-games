@@ -20,7 +20,7 @@ people.slice(0, numberOfUsers - 1).forEach(person => {
 
 users.forEach(user => {
   user.cell = 10 ** 9 + Math.floor(Math.random() * 9 * 10 ** 9);
-  user.skill = 1 + Math.floor(Math.random() * 8);
+  user.skill = Math.floor(Math.random() * 10);
   user.photo = `${user.firstName}'s photoURL`;
   user.hashedPassword = createPassword();
   user = r(user);

@@ -10,6 +10,7 @@ const { mapsConfig: { mapsApiKey } } = require('../../config');
 const checkAddress = require('./checkAddress');
 
 const router = express.Router();
+// const bools = ['setter','middle','rightSide','outside','libero','twos','fours','sixes'];
 
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     let [game, message, status] = [{}, '', 201];
@@ -64,16 +65,23 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     res.json({games});
 }));
 
-router.get('/:id', async(req, res) => {
-    const game = await Game.findByPk(Number(req.params.id));
-    let owner = await User.findByPk(game.ownerId);
-    const reservations = await Reservation.findAll({where: {gameId: game.id}});
-    let players = [];
-    reservations.forEach(async(reservation) => {
-        players.push(await User.findByPk(reservation.playerId));
-    });
-    res.json({game: {...game.dataValues, owner, players}});
-})
+router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
+  const user = req.user;
+  const gameId = Number(req.params.id);
+  const game = await Game.findByPk(gameId);
+  if (game.ownerId !== user.id) return next({ status: 401, message: "You are not authorized." });
+  const reservations = await Reservation.findAll({where: {gameId}});
+  let players = [];
+  for await (reservation of reservations) {
+    let player = (await User.findByPk(reservation.playerId)).dataValues;
+    reservation = reservation.dataValues;
+    ['gameId', 'id', 'playerId', 'createdAt'].forEach(prop => delete reservation[prop]);
+    ['firstName', 'lastName', 'address', 'tokenId', 'hashedPassword'].forEach(prop => delete player[prop]);
+    player = {...player, ...reservation};
+    players.push(player);
+  };
+  res.json({game: {...game.dataValues, owner: user, players}});
+}))
 
 // Do we want to allow a game owner to transfer game-"owner"ship to another user?
 router.put('/:id', [authenticated], asyncHandler(async(req, res) => {

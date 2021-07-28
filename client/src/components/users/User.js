@@ -17,6 +17,7 @@ const User = () => {
     'password',
     'password2'
   ];
+  const skills = ['unknown','1','2','3','4','5','6','7','8','9'];
   const [params, setParams] = useState(currentUser ?
     {...currentUser, password: '', password2: ''}
       :
@@ -34,6 +35,7 @@ const User = () => {
                   params.password !== params.password2 ? "Passwords must match" : "";
     setMessage(message);
     if (!message) {
+      params.skill = isNaN(params.skill) ? 0 : Number(params.skill);
       const res = await fetch(`/api/users`, { method: currentUser ? 'PUT': 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params)
@@ -108,11 +110,26 @@ const User = () => {
           type="number" placeholder="Cell" name="cell" value={params.cell}
           onChange={e => setParams({...params, cell: Number(e.target.value)})}
         />
-        <span>Skill (integer?):</span>
-        <input
+        <span>Skill:</span>
+        {/* <input
           type="number" placeholder="Skill" name="skill" value={params.skill}
-          onChange={e => setParams({...params, skill: Number(e.target.value)})}
-        />
+          onChange={e => setParams({...params, skill: "unknown" || Number(e.target.value)})}
+        /> */}
+
+        <select
+          onChange={e => setParams({...params, skill: !Number(e.target.value) ? 'unknown' : e.target.value})}
+          value={params.skill}
+        >
+          {skills.map((skill, index) => (
+              <option
+                  key={`${index}`}
+                  value={index || 'unknown'}
+              >
+                  {skill}
+              </option>
+          ))}
+        </select>
+
         <span>Photo url:</span>
         <input type="text" placeholder="Photo url" name="photo" value={params.photo}
           onChange={e => setParams({...params, photo: e.target.value})}
