@@ -20,8 +20,8 @@ Aaron: modify DrawSQL schema to reflect any changes:
     extraInformation -> extraInfo
 
 MVP goals:
-    Comment out all references to "photo".
     Make front-end a bit prettier.
+    Get carets to appear next to column headings, thereby indicating sortability
 
 stretch goals:
     implement photo capability

@@ -13,7 +13,7 @@ const User = () => {
     'address',
     'cell',
     'skill',
-    'photo',
+    // 'photo',
     'password',
     'password2'
   ];
@@ -130,10 +130,10 @@ const User = () => {
           ))}
         </select>
 
-        <span>Photo url:</span>
+        {/* <span>Photo url:</span>
         <input type="text" placeholder="Photo url" name="photo" value={params.photo}
           onChange={e => setParams({...params, photo: e.target.value})}
-        />
+        /> */}
         <span>Password:</span>
         <input
           type="password" placeholder="Password" name="password" value={params.password}

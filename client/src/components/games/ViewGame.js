@@ -9,7 +9,9 @@ import { time } from 'faker';
 const ViewGame = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender } = useContext(AuthContext);
   const gameProps = ['address', 'dateTime', 'extraInfo', 'minSkill', 'maxSkill'];
-  const userProps = ['email', 'nickName', 'cell', 'skill','photo'];
+  const userProps = ['email', 'nickName', 'cell', 'skill',
+  // 'photo'
+  ];
 
   const [game, setGame] = useState(gameProps.reduce((pojo, prop) => {
     return {[prop]: '', ...pojo};
@@ -22,7 +24,7 @@ const ViewGame = ({ match }) => {
   let history = useHistory();
   const columns2 = [
     ['nickName', 'Name'],
-    ['photo', ''],
+    // ['photo', ''],
     ['email', 'Email'],
     ['createdAt', `Member since`],
     ['updatedAt', `Reservation date/time`],
@@ -73,7 +75,7 @@ const ViewGame = ({ match }) => {
           player.createdAt = player.createdAt.split('T')[0];
           let updatedAt = player.updatedAt.split('T');
           player.updatedAt = updatedAt[0].slice(5) + ' ' + updatedAt[1].slice(0, -8);
-          player.photo = 'photo';
+          // player.photo = 'photo';
           return player;
         });
         setPlayers(newPlayers);
