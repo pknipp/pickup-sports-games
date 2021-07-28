@@ -45,6 +45,7 @@ span input {
 
 .table-header-rotated {
   border-collapse: collapse;
+  border: none;
 }
 .table-header-rotated td {
   width: 30px;
@@ -60,11 +61,12 @@ span input {
  .table-header-rotated th.rotate {
   height: 140px;
   white-space: nowrap;
+  border: none;
 }
  .table-header-rotated th.rotate > div {
   -webkit-transform: translate(25px, 51px) rotate(315deg);
       -ms-transform: translate(25px, 51px) rotate(315deg);
-          transform: translate(25px, 51px) rotate(315deg);
+          transform: translate(91px, 21px) rotate(315deg);
   width: 30px;
 }
  .table-header-rotated th.rotate > div > span {

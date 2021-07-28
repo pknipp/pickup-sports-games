@@ -26,5 +26,4 @@ MVP goals:
 stretch goals:
     implement photo capability
     code with react native
-    implement diagonal column headings for table in GameView component (see https://www.codeply.com/go/V8djT7SOzD/table-with-diagonal-headers-on-bootstrap)
     generalize to handle multiple sports (ie, not just volleyball)

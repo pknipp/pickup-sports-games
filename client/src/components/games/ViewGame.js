@@ -27,18 +27,18 @@ const ViewGame = ({ match }) => {
     ['createdAt', `Member since`],
     ['updatedAt', `Reservation date/time`],
     ['skill', 'Skill'],
-    ['setter', 'S'],
-    ['middle', 'M'],
-    ['rightSide', 'R'],
-    ['outside', 'O'],
-    ['libero', 'L'],
-    ['twos', '2'],
-    ['fours', '4'],
-    ['sixes', '6']
+    ['setter', 'setter'],
+    ['middle', 'middle'],
+    ['rightSide', 'right side'],
+    ['outside', 'outside'],
+    ['libero', 'libero'],
+    ['twos', 'twos'],
+    ['fours', 'fours'],
+    ['sixes', 'sixes']
   ];
 
-  // const createMarkup = header => ({__html: `<span>${header}</span>`});
-  // const MyComponent = header => <div dangerouslySetInnerHTML={createMarkup(header)} />;
+  const createMarkup = header => ({__html: `<span>${header}</span>`});
+  const MyComponent = header => <div dangerouslySetInnerHTML={createMarkup(header)} />;
 
   useEffect(() => {
     (async() => {
@@ -47,7 +47,7 @@ const ViewGame = ({ match }) => {
         let newPlayers = newGame.players;
         // let newColumns = Object.entries(newPlayers[0]).sort((a, b) => typeof(a[1]) < typeof(b[1]) ? 1 : typeof(a[1]) > typeof(b[1]) ? -1 : 0).map(([key]) => ({dataField: key, text: key, sort: true})).filter(key => key.text !== 'id');
         let newColumns = columns2.map((pair, index) => ({dataField: pair[0], text: pair[1], sort: true,
-          headerStyle: {width: `${pair[1].length === 1 ? "5px" : "10px"}`},
+          headerStyle: {width: `${index > 5 ? "7%" : "10%"}`},
           style: (cell, row) => ({color:
             newGame.minSkill && (row.skill === "unknown" || row.skill < newGame.minSkill) ? 'red' :
             newGame.maxSkill && row.skill !== "unknown" && row.skill > newGame.maxSkill ? 'blue' : 'black'
@@ -57,8 +57,8 @@ const ViewGame = ({ match }) => {
             return diff * (order === 'asc' ? 1 : -1);
           },
           // The following pair of lines didn't work, when attempting to make headers diagonal.
-          // text: MyComponent(pair[1]),
-          // headerClasses: "rotate"
+          text: MyComponent(pair[1]),
+          headerClasses: "rotate",
           // The following props did nothing:
           // condensed: true
           // headerStyle: {'white-space': 'nowrap'}
@@ -96,21 +96,13 @@ const ViewGame = ({ match }) => {
         <div>upper limit of skill-level: {game.maxSkill || 'none'}</div>
         <div>{game.extraInfo ? `extra info: ${game.extraInfo}` : ''}</div>
         <br/>
-        <div>Key:</div>
-        <ul>
-          {game.minSkill || game.maxSkill ? <li>player skill:
-            {game.minSkill ? <span style={{color: 'red'}}> insufficient </span> : null}
-            {game.minSkill && game.maxSkill ? 'or ' : null}
-            {game.maxSkill ? <span style={{color: 'blue'}}> excessive </span> : null}
-          </li> : null}
-          <li>player flexibility:
-              {columns2.filter(pair => (pair[1].length === 1)).map(pair => {
-                return (
-                    ` "${pair[1]}" (${pair[0]})`
-                )
-              }).join(', ')}
-          </li>
-        </ul>
+        {game.minSkill || game.maxSkill ? <div>Key for color of player:
+          {game.minSkill ? <span style={{color: 'red'}}> insufficiently </span> : null}
+          {game.minSkill && game.maxSkill ? 'or ' : null}
+          {game.maxSkill ? <span style={{color: 'blue'}}> excessively </span> : null}
+          skilled</div>
+        : null}
+        <br/>
         <BootstrapTable
           keyField='id'
           data={ players }
