@@ -21,6 +21,7 @@ const Home = () => {
         ['view', '']
     ];
     const { currentUser } = useContext(AuthContext);
+    const [loading, setLoading] = useState(true);
     const [allGames, setAllGames] = useState([]);
     const [games, setGames] = useState([]);
     const [keys, setKeys] = useState([...allKeys]);
@@ -55,6 +56,7 @@ const Home = () => {
             } else {
                 setMessage(data.message || data.error.errors[0]);
             }
+            setLoading(false);
         })()
     }, [currentUser.id]);
 
@@ -131,7 +133,9 @@ const Home = () => {
                     </NavLink>
                 </div>
             }
-            <BootstrapTable keyField='id' data={games} columns={columns} defaultSorted={defaultSorted}/>
+            {loading ? <h2>Loading data</h2> :
+                <BootstrapTable keyField='id' data={games} columns={columns} defaultSorted={defaultSorted}/>
+            }
         </div>
     )
 }
