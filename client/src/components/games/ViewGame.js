@@ -87,20 +87,22 @@ const ViewGame = ({ match }) => {
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';
         });
-        newGame.dateTime = moment(newGame.dateTime).local().format().slice(0,-6);
+        newGame.dateTime = moment(newGame.dateTime).local().format().slice(0,-9);
         setGame(newGame);
     })();
   }, [game.id]);
 
   return (
-    <main className="centered middled">
+    <div className="simple">
         <h4>Game details</h4>
-        <div>address: {game.address}</div>
-        <div>date: {game.dateTime.split('T')[0]}</div>
-        <div>time: {game.dateTime.split('T')[1]}</div>
-        <div>lower limit of skill-level: {game.minSkill || 'none'}</div>
-        <div>upper limit of skill-level: {game.maxSkill || 'none'}</div>
-        <div>{game.extraInfo ? `extra info: ${game.extraInfo}` : ''}</div>
+        <div>
+          <div>address: {game.address}</div>
+          <div>date: {game.dateTime.split('T')[0]}</div>
+          <div>time: {game.dateTime.split('T')[1]}</div>
+          <div>lower limit of skill-level: {game.minSkill || 'none'}</div>
+          <div>upper limit of skill-level: {game.maxSkill || 'none'}</div>
+          <div>{game.extraInfo ? `extra info: ${game.extraInfo}` : ''}</div>
+        </div>
         <br/>
         {game.minSkill || game.maxSkill ? <div>Key for color of player:
           {game.minSkill ? <span style={{color: 'red'}}> insufficiently </span> : null}
@@ -117,7 +119,7 @@ const ViewGame = ({ match }) => {
           // classes="table-header-rotated"
           // rowStyle={rowStyleSkill}
         />
-    </main>
+    </div>
   );
 }
 

@@ -71,11 +71,11 @@ const User = () => {
   }
 
   return (
-    <main className="centered middled">
+    <div className="simple">
       <form className="auth" onSubmit={handlePutPost}>
         <h4>
           {currentUser ?
-            "Would you like to change your account details?"
+            "Change your account details?"
           :
             "We hope that you will either login or signup."
           }
@@ -163,7 +163,7 @@ const User = () => {
           </button>
         </form>
       }
-    </main>
+    </div>
   );
 }
 

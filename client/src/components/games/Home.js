@@ -105,21 +105,25 @@ const Home = () => {
     }, [allGames, selectedOption]);
 
     return (
-        <>
+        <div className="simple">
             <div className="welcome">
-                <p>Here goes a welcome message.</p>
+                <h4>Below are tabulated games of interest to you.</h4>
             </div>
-            {options.map((option, i) => (
-                <span key={i}>
-                    <input
-                        type="radio"
-                        value={i}
-                        checked={i === selectedOption}
-                        onChange={e => setSelectedOption(Number(e.target.value))}
-                    />
-                    <span>{option[0]}</span>
-                </span>
-            ))}
+            <br/>
+            <div>
+                {options.map((option, i) => (
+                    <span key={i}>
+                        <input
+                            type="radio"
+                            value={i}
+                            checked={i === selectedOption}
+                            onChange={e => setSelectedOption(Number(e.target.value))}
+                        />
+                        <span>{option[0]}</span>
+                    </span>
+                ))}
+            </div>
+            <br/>
             {selectedOption ? null :
                 <div>
                     <NavLink exact to={"/editGames/0"} className="nav" activeClassName="active">
@@ -128,7 +132,7 @@ const Home = () => {
                 </div>
             }
             <BootstrapTable keyField='id' data={games} columns={columns} defaultSorted={defaultSorted}/>
-        </>
+        </div>
     )
 }
 export default Home;
