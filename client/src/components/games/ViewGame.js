@@ -31,7 +31,7 @@ const ViewGame = ({ match }) => {
     ['skill', 'Skill'],
     ['setter', 'setter'],
     ['middle', 'middle'],
-    ['rightSide', 'right side'],
+    ['rightSide', `right side`],
     ['outside', 'outside'],
     ['libero', 'libero'],
     ['twos', 'twos'],
@@ -39,8 +39,10 @@ const ViewGame = ({ match }) => {
     ['sixes', 'sixes']
   ];
 
-  const createMarkup = header => ({__html: `<span>${header}</span>`});
-  const MyComponent = header => <div dangerouslySetInnerHTML={createMarkup(header)} />;
+  // const createMarkup = header => ({__html: `<span>${header}</span>`});
+  // const MyComponent = header => <div dangerouslySetInnerHTML={createMarkup(header)} />;
+
+  const defaultSorted = [{dataField: 'updatedAt', order: 'asc'}];
 
   useEffect(() => {
     (async() => {
@@ -48,19 +50,21 @@ const ViewGame = ({ match }) => {
         let newGame = (await res.json()).game;
         let newPlayers = newGame.players;
         // let newColumns = Object.entries(newPlayers[0]).sort((a, b) => typeof(a[1]) < typeof(b[1]) ? 1 : typeof(a[1]) > typeof(b[1]) ? -1 : 0).map(([key]) => ({dataField: key, text: key, sort: true})).filter(key => key.text !== 'id');
-        let newColumns = columns2.map((pair, index) => ({dataField: pair[0], text: pair[1], sort: true,
-          headerStyle: {width: `${index > 5 ? "7%" : "10%"}`},
-          style: (cell, row) => ({color:
-            newGame.minSkill && (row.skill === "unknown" || row.skill < newGame.minSkill) ? 'red' :
-            newGame.maxSkill && row.skill !== "unknown" && row.skill > newGame.maxSkill ? 'blue' : 'black'
-          }),
+        let newColumns = columns2.map((pair, index) => ({dataField: pair[0], text: pair[1].split(' ').join('\n'), sort: true,
+          headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
+          style: (cell, row) => (
+            {color:
+              newGame.minSkill && (row.skill === "unknown" || row.skill < newGame.minSkill) ? 'red' :
+              newGame.maxSkill && row.skill !== "unknown" && row.skill > newGame.maxSkill ? 'blue' : 'black'
+            }
+          ),
           sortFunc: (a, b, order, dataField) => {
             let diff = a === 'unknown' ? -1 : b === 'unknown' ? 1 : a < b ? -1 : a > b ? 1 : 0;
             return diff * (order === 'asc' ? 1 : -1);
           },
           // sortCaret: (order, column) => order === "asc" ? "asc" : order === "desc" ? "desc" : "undef",
-          text: MyComponent(pair[1]),
-          headerClasses: "rotate",
+          // text: MyComponent(pair[1]),
+          // headerClasses: "rotate",
           // The following props did nothing:
           // condensed: true
           // headerStyle: {'white-space': 'nowrap'}
@@ -109,6 +113,7 @@ const ViewGame = ({ match }) => {
           keyField='id'
           data={ players }
           columns={ columns }
+          defaultSorted={defaultSorted}
           // classes="table-header-rotated"
           // rowStyle={rowStyleSkill}
         />
