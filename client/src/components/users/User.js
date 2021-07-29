@@ -13,7 +13,7 @@ const User = () => {
     'address',
     'cell',
     'skill',
-    'photo',
+    // 'photo',
     'password',
     'password2'
   ];
@@ -71,11 +71,11 @@ const User = () => {
   }
 
   return (
-    <main className="centered middled">
+    <div className="simple">
       <form className="auth" onSubmit={handlePutPost}>
         <h4>
           {currentUser ?
-            "Would you like to change your account details?"
+            "Change your account details?"
           :
             "We hope that you will either login or signup."
           }
@@ -130,10 +130,10 @@ const User = () => {
           ))}
         </select>
 
-        <span>Photo url:</span>
+        {/* <span>Photo url:</span>
         <input type="text" placeholder="Photo url" name="photo" value={params.photo}
           onChange={e => setParams({...params, photo: e.target.value})}
-        />
+        /> */}
         <span>Password:</span>
         <input
           type="password" placeholder="Password" name="password" value={params.password}
@@ -163,7 +163,7 @@ const User = () => {
           </button>
         </form>
       }
-    </main>
+    </div>
   );
 }
 

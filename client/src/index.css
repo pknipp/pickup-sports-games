@@ -14,7 +14,8 @@
 
 .simple {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 form {
@@ -43,8 +44,9 @@ span input {
   margin-left: 10px;
 }
 
-.table-header-rotated {
+/* .table-header-rotated {
   border-collapse: collapse;
+  border: none;
 }
 .table-header-rotated td {
   width: 30px;
@@ -57,21 +59,43 @@ span input {
   padding: 10px 5px;
   border: 1px solid #ccc;
 }
- .table-header-rotated th.rotate {
+.table-header-rotated th.rotate {
   height: 140px;
   white-space: nowrap;
+  border: none;
 }
- .table-header-rotated th.rotate > div {
+.table-header-rotated th.rotate > div {
   -webkit-transform: translate(25px, 51px) rotate(315deg);
       -ms-transform: translate(25px, 51px) rotate(315deg);
-          transform: translate(25px, 51px) rotate(315deg);
+          transform: translate(91px, 21px) rotate(315deg);
   width: 30px;
 }
- .table-header-rotated th.rotate > div > span {
+
+.table-header-rotated th.rotate > div > span {
   border-bottom: 1px solid #ccc;
   padding: 5px 10px;
 }
+
 .table-header-rotated th.row-header {
   padding: 0 10px;
   border-bottom: 1px solid #ccc;
+} */
+
+.caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 2px;
+  vertical-align: middle;
+  border-top: 4px dashed;
+  border-top: 4px solid \9;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+}
+
+.dropup .caret, .navbar-fixed-bottom .dropdown .caret {
+  border-top: 0;
+  border-bottom: 4px dashed;
+  border-bottom: 4px solid \9;
+  content: "";
 }

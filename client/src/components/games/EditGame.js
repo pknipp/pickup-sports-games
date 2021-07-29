@@ -79,7 +79,7 @@ const EditGame = ({ match }) => {
   }
 
   return (
-    <main className="centered middled">
+    <div className="simple">
       <form className="auth" onSubmit={handlePutPost}>
         <h4>
           {game.id ?
@@ -175,7 +175,7 @@ const EditGame = ({ match }) => {
           </button>
         </form>
       }
-    </main>
+    </div>
   );
 }
 

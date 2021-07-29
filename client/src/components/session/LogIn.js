@@ -29,7 +29,7 @@ const LogIn = () => {
   }
 
   return (currentUser) ? <Redirect to="/" /> : (
-    <main className="centered middled">
+    <div className="simple">
       <form className="auth" onSubmit={handleSubmit}>
       {/* <h1>Welcome to volleyball meetup!</h1> */}
       <h4>We hope that you will either login or signup.</h4>
@@ -51,7 +51,7 @@ const LogIn = () => {
           </NavLink>
         </span>
       </form>
-    </main>
+    </div>
   );
 }
 
