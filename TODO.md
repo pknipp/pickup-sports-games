@@ -20,6 +20,7 @@ Aaron: modify DrawSQL schema to reflect any changes:
 
 MVP goals:
     Fix some console warnings/errors caused by 1-row table in GameView.
+    put "Loading" message on GameView component, as appropriate
     Continue making front-end prettier.
     Eliminate bug ("000:000") which appears when destination = origin
     Add extraInfo column to Reservations table and use Tooltip to render this on GameView
