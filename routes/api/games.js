@@ -76,7 +76,7 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
     let player = (await User.findByPk(reservation.playerId)).dataValues;
     reservation = reservation.dataValues;
     ['gameId', 'id', 'playerId', 'createdAt'].forEach(prop => delete reservation[prop]);
-    ['firstName', 'lastName', 'address', 'tokenId', 'hashedPassword'].forEach(prop => delete player[prop]);
+    ['firstName', 'lastName', 'address', 'tokenId', 'hashedPassword', 'updatedAt'].forEach(prop => delete player[prop]);
     player = {...player, ...reservation};
     players.push(player);
   };

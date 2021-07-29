@@ -1,4 +1,5 @@
 'use strict';
+const faker = require('faker');
 const { numberOfUsers } = require('../seederData/users');
 const { numberOfGames } = require('../seederData/games');
 const { reservationProb } = require('../seederData/reservations');
@@ -10,7 +11,8 @@ for (let iUser = 0; iUser < numberOfUsers; iUser++) {
     if (Math.random() < reservationProb) {
       let reservation = {playerId: 1 + iUser, gameId: 1 + iGame};
       bools.forEach(bool => reservation[bool] = Math.random() < 0.5);
-      [reservation.createdAt, reservation.updatedAt] = [new Date(), new Date()];
+      let updatedAt = faker.date.past(0.1);
+      [reservation.createdAt, reservation.updatedAt] = [faker.date.past(0.1, updatedAt), updatedAt];
       reservations.push(reservation);
     }
   }

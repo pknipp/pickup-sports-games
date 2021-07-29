@@ -1,9 +1,13 @@
 'use strict';
+const faker = require('faker');
 
 const bcrypt = require('bcryptjs');
 const { people, numberOfUsers } = require('../seederData/users');
 const createPassword = () => bcrypt.hashSync('password');
-const r = o => ({...o, createdAt: new Date(), updatedAt: new Date()});
+// const r = o => {
+//   const updatedAt = faker.date.past(1);
+//   return {...o, createdAt: faker.date.past(1, updatedAt), updatedAt};
+// };
 
 const users = [{email: 'volleyb@aol.com', address: 'Philadelphia PA', nickName: 'Volley B', firstName: 'Volley', lastName: 'Ball'}];
 
@@ -23,7 +27,9 @@ users.forEach(user => {
   user.skill = Math.floor(Math.random() * 10);
   user.photo = `${user.firstName}'s photoURL`;
   user.hashedPassword = createPassword();
-  user = r(user);
+  const updatedAt = faker.date.past(1);
+  user = {...user, updatedAt, createdAt: faker.date.past(1, updatedAt)};
+  // console.log("user = ", user);
 })
 
 module.exports = {

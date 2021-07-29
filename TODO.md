@@ -21,7 +21,7 @@ Aaron: modify DrawSQL schema to reflect any changes:
 
 MVP goals:
     Make front-end a bit prettier.
-    Get carets to appear next to column headings, thereby indicating sortability
+    Randomize User.createdAt and Reservation.updatedAt.
 
 stretch goals:
     implement photo capability
