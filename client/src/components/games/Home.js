@@ -28,6 +28,8 @@ const Home = () => {
     const [columns, setColumns] = useState(allKeys.map(key => ({dataField: key[0], text: key[1], sort: true})));
     const [message, setMessage] = useState('');
 
+    const defaultSorted = [{dataField: 'date', order: 'asc'}];
+
     useEffect(() => {
         (async () => {
             const response = await fetch(`/api/games`);
@@ -60,7 +62,9 @@ const Home = () => {
         // Do not include the "game owner" column for the zeroth value of selectOption
         let newKeys = allKeys.filter(key => key[0] !== (!selectedOption ? 'owner' : "view"));
         setKeys(newKeys);
-        setColumns(newKeys.map((key, index) => ({dataField: key[0], text: key[1], sort: true})));
+        setColumns(newKeys.map((key, index) => {
+            return {dataField: key[0], text: key[1], sort: !!key[1]};
+        }));
         let newGames = allGames.filter((game, i) => {
             let bool;
             if (selectedOption) {
@@ -123,7 +127,7 @@ const Home = () => {
                     </NavLink>
                 </div>
             }
-            <BootstrapTable keyField='id' data={ games } columns={ columns } />
+            <BootstrapTable keyField='id' data={games} columns={columns} defaultSorted={defaultSorted}/>
         </>
     )
 }

@@ -58,7 +58,7 @@ const ViewGame = ({ match }) => {
             let diff = a === 'unknown' ? -1 : b === 'unknown' ? 1 : a < b ? -1 : a > b ? 1 : 0;
             return diff * (order === 'asc' ? 1 : -1);
           },
-          // The following pair of lines didn't work, when attempting to make headers diagonal.
+          // sortCaret: (order, column) => order === "asc" ? "asc" : order === "desc" ? "desc" : "undef",
           text: MyComponent(pair[1]),
           headerClasses: "rotate",
           // The following props did nothing:
