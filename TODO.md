@@ -19,8 +19,7 @@ Aaron: modify DrawSQL schema to reflect any changes:
     extraInformation -> extraInfo
 
 MVP goals:
-    implement "LOADING DATA" message, as appropriate
-    render Game details as a small horizontal bootstraptable, rather than as a simple list
+    Fix some console warnings/errors caused by 1-row table in GameView.
     Continue making front-end prettier.
     Eliminate bug ("000:000") which appears when destination = origin
     Add extraInfo column to Reservations table and use Tooltip to render this on GameView

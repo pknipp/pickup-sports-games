@@ -92,18 +92,41 @@ const ViewGame = ({ match }) => {
     })();
   }, [game.id]);
 
+  const detailColumns = [
+    ['address', game.address],
+    ['date', game.dateTime.split('T')[0]],
+    ['time', game.dateTime.split('T')[1]],
+    ['lower limit of skill-level', game.minSkill || 'none'],
+    ['upper limit of skill-level', game.maxSkill || 'none'],
+    ['extra info', game.extraInfo]
+  ];
+
+  const topColumns = detailColumns.filter(pair => !!pair[1]).map((pair, index) => {
+    return {dataField: String(index), text: pair[0]};
+  })
+
+  const datum = [detailColumns.reduce((pojo, pair, index) => ({...pojo, [String(index)]: pair[1]}), {})];
+
   return (
     <div className="simple">
-        <h4>Game details</h4>
-        <div>
+        <h4>Game details:</h4>
+        {/* <div>
           <div>address: {game.address}</div>
           <div>date: {game.dateTime.split('T')[0]}</div>
           <div>time: {game.dateTime.split('T')[1]}</div>
           <div>lower limit of skill-level: {game.minSkill || 'none'}</div>
           <div>upper limit of skill-level: {game.maxSkill || 'none'}</div>
           <div>{game.extraInfo ? `extra info: ${game.extraInfo}` : ''}</div>
-        </div>
+        </div> */}
+        <BootstrapTable
+          keyField='id'
+          data={ datum }
+          columns={ topColumns }
+          // classes="table-header-rotated"
+          // rowStyle={rowStyleSkill}
+        />
         <br/>
+        <h4>Game lineup:</h4>
         {game.minSkill || game.maxSkill ? <div>Key for color of player:
           {game.minSkill ? <span style={{color: 'red'}}> insufficiently </span> : null}
           {game.minSkill && game.maxSkill ? 'or ' : null}
