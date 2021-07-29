@@ -19,8 +19,6 @@ for (let iUser = 0; iUser < numberOfUsers; iUser++) {
 }
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert('Reservations', reservations);
-  },
+  up: async (queryInterface, Sequelize) => queryInterface.bulkInsert('Reservations', reservations),
   down: (queryInterface, Sequelize) => queryInterface.bulkDelete('Reservations')
 };

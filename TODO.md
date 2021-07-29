@@ -21,7 +21,6 @@ Aaron: modify DrawSQL schema to reflect any changes:
 
 MVP goals:
     Make front-end a bit prettier.
-    Randomize User.createdAt and Reservation.updatedAt.
 
 stretch goals:
     implement photo capability
