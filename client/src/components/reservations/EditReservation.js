@@ -27,7 +27,7 @@ const EditReservation = ({ match }) => {
       const res = await fetch(`/api/reservations/${resGameId}`);
       let newReservation = {...reservation, ...(await res.json()).reservation};
       Object.keys(newReservation).forEach(key => {
-        if (newReservation[key] === null) newReservation[key] = false;
+        if (newReservation[key] === null) newReservation[key] = key === 'extraInfo' ? '' : false;
       })
       newReservation.game.dateTime = moment(newReservation.game.dateTime).local().format().slice(0,-9);
       setReservation(newReservation);

@@ -27,6 +27,7 @@ const ViewGame = ({ match }) => {
     ['email', 'Email'],
     ['createdAt', `Member since`],
     ['updatedAt', `Reservation date/time`],
+    ['extraInfo', 'misc info?'],
     ['skill', 'Skill'],
     ['setter', 'setter'],
     ['middle', 'middle'],
@@ -45,6 +46,7 @@ const ViewGame = ({ match }) => {
   const [columns, setColumns] = useState(columns2.map((pair, index) => {
     return {
       dataField: pair[0],
+      // Make columns narrower by breaking multiple words, wherever possible.
       text: pair[1].split(' ').join('\n'),
       sort: true,
       headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
@@ -81,7 +83,12 @@ const ViewGame = ({ match }) => {
         newPlayers = newPlayers.map(player => {
           player = Object.entries(player).reduce((player, prop) => {
             return {...player,
-              [prop[0]]: prop[1] === true ? "x" : prop[1] === false ? "" : prop[1] === 0 ? "unknown" : prop[1]};
+              [prop[0]]:
+                prop[1] === true ? "x" :
+                prop[1] === false ? "" :
+                prop[1] === 0 ? "unknown" :
+                prop[1] && prop[0] === 'extraInfo' ? 'y' :
+                prop[1]};
           }, {});
           player.createdAt = player.createdAt.split('T')[0];
           let updatedAt = player.updatedAt.split('T');
