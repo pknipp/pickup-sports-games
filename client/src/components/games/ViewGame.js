@@ -18,9 +18,18 @@ const ViewGame = ({ match }) => {
   }, {id: Number(match.params.gameId)}));
   const [players, setPlayers] = useState([]);
   const [columns, setColumns] = useState([{}]);
+
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
 
+  const topColumns = [
+      'address',
+      'date',
+      'time',
+      'lower limit of skill-level',
+      'upper limit of skill-level',
+      'extra info'
+    ].map((text, index) => ({dataField: String(index), text}));
   let history = useHistory();
   const columns2 = [
     ['nickName', 'Name'],
@@ -62,7 +71,6 @@ const ViewGame = ({ match }) => {
             let diff = a === 'unknown' ? -1 : b === 'unknown' ? 1 : a < b ? -1 : a > b ? 1 : 0;
             return diff * (order === 'asc' ? 1 : -1);
           },
-          // sortCaret: (order, column) => order === "asc" ? "asc" : order === "desc" ? "desc" : "undef",
           // text: MyComponent(pair[1]),
           // headerClasses: "rotate",
           // The following props did nothing:
@@ -71,6 +79,15 @@ const ViewGame = ({ match }) => {
           // headerStyle: {whiteSpace: 'nowrap'}
         }));
         setColumns(newColumns);
+        setDatum([
+          newGame.address,
+          newGame.dateTime.split('T')[0],
+          newGame.dateTime.split('T')[1],
+          newGame.minSkill || 'none',
+          newGame.maxSkill || 'none',
+          newGame.extraInfo
+        ]);
+
         newPlayers = newPlayers.map(player => {
           player = Object.entries(player).reduce((player, prop) => {
             return {...player,
@@ -89,23 +106,15 @@ const ViewGame = ({ match }) => {
         });
         newGame.dateTime = moment(newGame.dateTime).local().format().slice(0,-9);
         setGame(newGame);
+
+
+        const datum = [detailColumns.reduce((pojo, pair, index) => ({...pojo, [String(index)]: pair[1]}), {})];
+        datum[0].id = 0;
+        // console.log("topColumns = ", topColumns);
+        // console.log("datum = ", datum);
     })();
   }, [game.id]);
 
-  const detailColumns = [
-    ['address', game.address],
-    ['date', game.dateTime.split('T')[0]],
-    ['time', game.dateTime.split('T')[1]],
-    ['lower limit of skill-level', game.minSkill || 'none'],
-    ['upper limit of skill-level', game.maxSkill || 'none'],
-    ['extra info', game.extraInfo]
-  ];
-
-  const topColumns = detailColumns.filter(pair => !!pair[1]).map((pair, index) => {
-    return {dataField: String(index), text: pair[0]};
-  })
-
-  const datum = [detailColumns.reduce((pojo, pair, index) => ({...pojo, [String(index)]: pair[1]}), {})];
 
   return (
     <div className="simple">
