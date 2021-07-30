@@ -86,6 +86,17 @@ const App = () => {
             <Route exact path="/viewGames/:gameId" component={ViewGame} />
             <Route exact path="/reservations/:resGameId" component={EditReservation} />
           </Switch>
+          <span>
+            <br/><br/>
+            creators:
+              <a href="https://pknipp.github.io/" target="_blank" rel="noopener noreferrer">&nbsp;
+                Peter Knipp
+              </a>
+              &nbsp;and&nbsp;
+              <a href="https://acyg2212.github.io/" target="_blank" rel="noopener noreferrer">
+                Aaron Cygnarowicz
+              </a>
+          </span>
         </BrowserRouter>
       }
     </AuthContext.Provider>
