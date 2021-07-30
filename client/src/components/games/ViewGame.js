@@ -12,16 +12,15 @@ const ViewGame = ({ match }) => {
   const userProps = ['email', 'nickName', 'cell', 'skill',
   // 'photo'
   ];
+  const topColumns = [
+    'address',
+    'date',
+    'time',
+    'lower limit of skill-level',
+    'upper limit of skill-level',
+    'extra info'
+  ].map((text, index) => ({dataField: String(index), text}));
 
-  const [game, setGame] = useState(gameProps.reduce((pojo, prop) => {
-    return {[prop]: '', ...pojo};
-  }, {id: Number(match.params.gameId)}));
-  const [players, setPlayers] = useState([]);
-  const [columns, setColumns] = useState([{}]);
-  const [message, setMessage] = useState('');
-  const [errors, setErrors] = useState([]);
-
-  let history = useHistory();
   const columns2 = [
     ['nickName', 'Name'],
     // ['photo', ''],
@@ -39,6 +38,28 @@ const ViewGame = ({ match }) => {
     ['sixes', 'sixes']
   ];
 
+  const [game, setGame] = useState(gameProps.reduce((pojo, prop) => {
+    return {[prop]: '', ...pojo};
+  }, {id: Number(match.params.gameId)}));
+  const [players, setPlayers] = useState([]);
+  const [columns, setColumns] = useState(columns2.map((pair, index) => {
+    return {
+      dataField: pair[0],
+      text: pair[1].split(' ').join('\n'),
+      sort: true,
+      headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
+      sortFunc: (a, b, order, dataField) => {
+        let diff = a === 'unknown' ? -1 : b === 'unknown' ? 1 : a < b ? -1 : a > b ? 1 : 0;
+        return diff * (order === 'asc' ? 1 : -1);
+      },
+    }
+  }));
+
+  const [message, setMessage] = useState('');
+  const [errors, setErrors] = useState([]);
+
+  let history = useHistory();
+
   // const createMarkup = header => ({__html: `<span>${header}</span>`});
   // const MyComponent = header => <div dangerouslySetInnerHTML={createMarkup(header)} />;
 
@@ -49,28 +70,14 @@ const ViewGame = ({ match }) => {
         const res = await fetch(`/api/games/${game.id}`);
         let newGame = (await res.json()).game;
         let newPlayers = newGame.players;
-        // let newColumns = Object.entries(newPlayers[0]).sort((a, b) => typeof(a[1]) < typeof(b[1]) ? 1 : typeof(a[1]) > typeof(b[1]) ? -1 : 0).map(([key]) => ({dataField: key, text: key, sort: true})).filter(key => key.text !== 'id');
-        let newColumns = columns2.map((pair, index) => ({dataField: pair[0], text: pair[1].split(' ').join('\n'), sort: true,
-          headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
-          style: (cell, row) => (
-            {color:
+        // Below sets the only prop of the columns prop which depends upon state.
+        setColumns(columns.map(column => ({...column, style: (cell, row) => (
+          {color:
               newGame.minSkill && (row.skill === "unknown" || row.skill < newGame.minSkill) ? 'red' :
               newGame.maxSkill && row.skill !== "unknown" && row.skill > newGame.maxSkill ? 'blue' : 'black'
-            }
-          ),
-          sortFunc: (a, b, order, dataField) => {
-            let diff = a === 'unknown' ? -1 : b === 'unknown' ? 1 : a < b ? -1 : a > b ? 1 : 0;
-            return diff * (order === 'asc' ? 1 : -1);
-          },
-          // sortCaret: (order, column) => order === "asc" ? "asc" : order === "desc" ? "desc" : "undef",
-          // text: MyComponent(pair[1]),
-          // headerClasses: "rotate",
-          // The following props did nothing:
-          // condensed: true
-          // headerStyle: {'white-space': 'nowrap'}
-          // headerStyle: {whiteSpace: 'nowrap'}
-        }));
-        setColumns(newColumns);
+          }
+        )})));
+
         newPlayers = newPlayers.map(player => {
           player = Object.entries(player).reduce((player, prop) => {
             return {...player,
@@ -92,38 +99,26 @@ const ViewGame = ({ match }) => {
     })();
   }, [game.id]);
 
-  const detailColumns = [
-    ['address', game.address],
-    ['date', game.dateTime.split('T')[0]],
-    ['time', game.dateTime.split('T')[1]],
-    ['lower limit of skill-level', game.minSkill || 'none'],
-    ['upper limit of skill-level', game.maxSkill || 'none'],
-    ['extra info', game.extraInfo]
-  ];
-
-  const topColumns = detailColumns.filter(pair => !!pair[1]).map((pair, index) => {
-    return {dataField: String(index), text: pair[0]};
-  })
-
-  const datum = [detailColumns.reduce((pojo, pair, index) => ({...pojo, [String(index)]: pair[1]}), {})];
 
   return (
     <div className="simple">
         <h4>Game details:</h4>
-        {/* <div>
-          <div>address: {game.address}</div>
-          <div>date: {game.dateTime.split('T')[0]}</div>
-          <div>time: {game.dateTime.split('T')[1]}</div>
-          <div>lower limit of skill-level: {game.minSkill || 'none'}</div>
-          <div>upper limit of skill-level: {game.maxSkill || 'none'}</div>
-          <div>{game.extraInfo ? `extra info: ${game.extraInfo}` : ''}</div>
-        </div> */}
         <BootstrapTable
           keyField='id'
-          data={ datum }
-          columns={ topColumns }
-          // classes="table-header-rotated"
-          // rowStyle={rowStyleSkill}
+          data={[
+            {id: 1, ...[
+                game.address,
+                game.dateTime.split('T')[0],
+                game.dateTime.split('T')[1],
+                game.minSkill || 'none',
+                game.maxSkill || 'none',
+                game.extraInfo
+              ].reduce((pojo, value, index) => {
+                return {...pojo, [String(index)]: value};
+              }, {})
+            }
+          ]}
+          columns={topColumns.slice(...(game.extraInfo ? [0] : [0, -1]))}
         />
         <br/>
         <h4>Game lineup:</h4>
@@ -139,7 +134,6 @@ const ViewGame = ({ match }) => {
           data={ players }
           columns={ columns }
           defaultSorted={defaultSorted}
-          // classes="table-header-rotated"
           // rowStyle={rowStyleSkill}
         />
     </div>
