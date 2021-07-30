@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import moment from 'moment';
 
 import AuthContext from '../../auth';
 
@@ -28,6 +29,7 @@ const EditReservation = ({ match }) => {
       Object.keys(newReservation).forEach(key => {
         if (newReservation[key] === null) newReservation[key] = false;
       })
+      newReservation.game.dateTime = moment(newReservation.game.dateTime).local().format().slice(0,-9);
       setReservation(newReservation);
     })();
   }, [reservation.id]);
@@ -68,7 +70,9 @@ const EditReservation = ({ match }) => {
     <div className="simple">
       <form className="auth" onSubmit={handlePutPost}>
         <h4>
-          {reservation.id ? "Change" : "Choose"} your reservation details for the game at {reservation.game.address} on {reservation.game.dateTime}.
+          {reservation.id ? "Change" : "Choose"} your reservation details for the game at {reservation.game.address} on &nbsp;
+          {reservation.game.dateTime.split('T')[0]} at &nbsp;
+          {reservation.game.dateTime.split('T')[1]}.
         </h4>
         {properties.map(property => (
           <span key={property}>
@@ -81,6 +85,12 @@ const EditReservation = ({ match }) => {
             />
           </span>
         ))}
+
+        <span>Extra info about your reservation (optional):</span>
+        <input
+          type="text" placeholder="Extra Info" name="extraInfo" value={reservation.extraInfo}
+          onChange={e => setReservation({...reservation, extraInfo: e.target.value})}
+        />
 
         <button color="primary" variant="outlined" type="submit">
           {reservation.id ? "Modify" : "Make"} reservation

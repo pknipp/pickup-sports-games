@@ -9,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
       }, {}),
       ...['setter','middle','rightSide','outside','libero','twos','fours','sixes'].reduce((pojo, bool) => {
         return {...pojo, [bool]: {type: DataTypes.BOOLEAN, defaultValue: false, allowNull: false}};
-      }, {})
+      }, {}),
+      extraInfo: {allowNull: true, type: DataTypes.TEXT}
     },
   );
 

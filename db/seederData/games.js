@@ -1,5 +1,5 @@
 ﻿module.exports = {
-    numberOfGames: 100,
+    numberOfGames: 10,
     skillProb: 0.5,
     miscProb: 0.5,
     cities: [

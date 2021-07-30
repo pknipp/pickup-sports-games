@@ -8,6 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      extraInfo: {type: Sequelize.TEXT},
       ...[['playerId', 'Users'], ['gameId', "Games"]].reduce((pojo, fk) => {
         return {...pojo, [fk[0]]: {
           allowNull: false,
