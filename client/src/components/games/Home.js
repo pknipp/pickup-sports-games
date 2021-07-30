@@ -1,80 +1,142 @@
 import React, { useEffect, useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
+import BootstrapTable from 'react-bootstrap-table-next';
 
 import AuthContext from '../../auth';
-import Game from './Game';
 
 const Home = () => {
-    const { currentUser, rerender } = useContext(AuthContext);
-    const [gamesOwned, setGamesOwned] = useState([]);
-    const [gamesReserved, setGamesReserved] = useState([]);
-    const [gamesOther, setGamesOther] = useState([]);
+    const options = [
+        ["games organized by you", "Edit game details", "View game details"],
+        ["games for which you are registered to play", "Edit reservation"],
+        ["games for which you are not registered to play", "Make reservation"]
+    ];
+    let allKeys = [
+        ['date', 'Game date'],
+        ['time', 'Start time'],
+        ['address', 'Address'],
+        ['duration', 'Travel time (hr:min)'],
+        ['count', 'Player reservations'],
+        ['owner', 'Game organizer'],
+        ['edit', ''],
+        ['view', '']
+    ];
+    const { currentUser } = useContext(AuthContext);
+    const [loading, setLoading] = useState(true);
+    const [allGames, setAllGames] = useState([]);
+    const [games, setGames] = useState([]);
+    const [keys, setKeys] = useState([...allKeys]);
+    const [selectedOption, setSelectedOption] = useState(0);
+    const [columns, setColumns] = useState(allKeys.map(key => ({dataField: key[0], text: key[1], sort: true})));
     const [message, setMessage] = useState('');
+
+    const defaultSorted = [{dataField: 'date', order: 'asc'}];
 
     useEffect(() => {
         (async () => {
             const response = await fetch(`/api/games`);
             let data = await response.json();
             if (response.ok) {
-              setGamesOwned(data.games.filter(game => {
-                  return game.ownerId === currentUser.id;
-              }).sort((game1, game2) => new Date(game1.dateTime) - new Date(game2.dateTime)));
-              setGamesReserved(data.games.filter(game => {
-                  return !!game.reservationId;
-              }).sort((game1, game2) => game1.owner.nickName.localeCompare(game2.owner.nickName)));
-              setGamesOther(data.games.filter(game => {
-                  return !game.reservationId;
-              }).sort((game1, game2) => game1.duration.value - game2.duration.value));
+                let newAllGames = [];
+                data.games.forEach(game => {
+                    let {id, dateTime, address, duration, count, owner, reservationId} = game;
+                    let newGame = {id, address, count, reservationId, owner: owner.nickName}
+                    let [date, time] = dateTime.split("T");
+                    time = time.slice(0, 5);
+                    let minutes = Math.round(duration.value / 60);
+                    let hours = Math.floor(minutes / 60);
+                    hours = (!hours ? "00" : hours < 10 ? "0" : "") + hours;
+                    minutes -= hours * 60;
+                    minutes = (!minutes ? "00" : minutes < 10 ? "0" : "") + minutes;
+                    duration = hours + ":" + minutes;
+                    newGame = {...newGame, date, time, duration, ownerId: owner.id};
+                    newGame.ownerId = owner.id;
+                    newAllGames.push(newGame);
+                });
+                setAllGames(newAllGames);
             } else {
-              setMessage(data.message || data.error.errors[0]);
+                setMessage(data.message || data.error.errors[0]);
             }
+            setLoading(false);
         })()
-    }, [rerender]);
+    }, [currentUser.id]);
+
+    useEffect(() => {
+        // Do not include the "game owner" column for the zeroth value of selectOption
+        let newKeys = allKeys.filter(key => key[0] !== (!selectedOption ? 'owner' : "view"));
+        setKeys(newKeys);
+        setColumns(newKeys.map((key, index) => {
+            return {dataField: key[0], text: key[1], sort: !!key[1]};
+        }));
+        let newGames = allGames.filter((game, i) => {
+            let bool;
+            if (selectedOption) {
+                bool = (!(selectedOption - 1) !== !game.reservationId);
+            } else {
+                bool = (game.ownerId === currentUser.id);
+            }
+            return bool;
+        });
+        newGames.forEach(game => {
+            let editPath;
+            if (selectedOption) {
+                editPath = `/reservations/${game.reservationId}-${game.id}`;
+            } else {
+                editPath = `/editGames/${game.id}`;
+            }
+            let viewPath = `/viewGames/${game.id}`;
+            game.edit = (
+                <NavLink
+                    exact to={editPath}
+                    className="nav"
+                    activeClassName="active"
+                >
+                    {options[selectedOption][1]}
+                </NavLink>
+            );
+            game.view = (
+                <NavLink
+                    exact to={viewPath}
+                    className="nav"
+                    activeClassName="active"
+                >
+                    {options[selectedOption][2]}
+                </NavLink>
+            )
+        });
+        setGames(newGames);
+    }, [allGames, selectedOption]);
 
     return (
-        <>
-            <div>
-                <div className="welcome">
-                    <p>Here goes a welcome message.</p>
-                </div>
+        <div className="simple">
+            <div className="welcome">
+                <h4>Below are tabulated games of interest to you.</h4>
             </div>
+            <br/>
             <div>
-                <NavLink exact to={"/games/0"} className="nav" activeClassName="active">
-                    Create new Game
-                </NavLink>
+                {options.map((option, i) => (
+                    <span key={i}>
+                        <input
+                            type="radio"
+                            value={i}
+                            checked={i === selectedOption}
+                            onChange={e => setSelectedOption(Number(e.target.value))}
+                        />
+                        <span>{option[0]}</span>
+                    </span>
+                ))}
             </div>
-            {!gamesOwned.length ? null :
+            <br/>
+            {selectedOption ? null :
                 <div>
-                    Game{gamesOwned.length > 1 ? "s" : ""} owned by you (sorted chronologically):
-                    <ul>
-                        {gamesOwned.map(game => {
-                        return <Game key={game.id} game={game} type={"Edit game"}/>;
-                        })}
-                    </ul>
+                    <NavLink exact to={"/editGames/0"} className="nav" activeClassName="active">
+                        <div>Create new Game</div>
+                    </NavLink>
                 </div>
             }
-            {!gamesReserved.length ? null :
-                <div>
-                    Game{gamesReserved.length > 1 ? "s" : ""} for which you have a reservation (sorted by game owner):
-                    <ul>
-                        {gamesReserved.map(game => {
-                            return <Game key={game.id} type={"Edit reservation"} game={game} />;
-                        })}
-                    </ul>
-                </div>
+            {loading ? <h2>Loading data</h2> :
+                <BootstrapTable keyField='id' data={games} columns={columns} defaultSorted={defaultSorted}/>
             }
-            {!gamesOther.length ? null :
-                <div>
-                    Game{gamesOther.length > 1 ? "s" : ""} for which you have not yet made a reservation (sorted geographically):
-                    <ul>
-                        {gamesOther.map(game => {
-                            return <Game key={game.id} game={game} type={"Make reservation"} />;
-                        })}
-                    </ul>
-                </div>
-            }
-        </>
+        </div>
     )
 }
-
 export default Home;

@@ -39,8 +39,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING(60).BINARY,
       },
-      ...['createdAt', 'updatedAt'].reduce((pojo, key) => {
-        return ({...pojo, [key]: {allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW")}});
+      ...['createdAt', 'updatedAt'].reduce((pojo, date) => {
+        return {...pojo, [date]: {allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW")}};
       }, {})
     });
   },

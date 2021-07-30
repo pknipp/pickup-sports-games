@@ -1,1 +1,1 @@
-module.exports = { reservationProb: 0.4 };
+module.exports = { reservationProb: 0.5 };

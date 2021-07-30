@@ -65,7 +65,7 @@ const EditReservation = ({ match }) => {
   }
 
   return (
-    <main className="centered middled">
+    <div className="simple">
       <form className="auth" onSubmit={handlePutPost}>
         <h4>
           {reservation.id ? "Change" : "Choose"} your reservation details for the game at {reservation.game.address} on {reservation.game.dateTime}.
@@ -94,7 +94,7 @@ const EditReservation = ({ match }) => {
           </button>
         </form>
       }
-    </main>
+    </div>
   );
 }
 

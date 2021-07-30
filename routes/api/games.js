@@ -10,6 +10,7 @@ const { mapsConfig: { mapsApiKey } } = require('../../config');
 const checkAddress = require('./checkAddress');
 
 const router = express.Router();
+// const bools = ['setter','middle','rightSide','outside','libero','twos','fours','sixes'];
 
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     let [game, message, status] = [{}, '', 201];
@@ -35,10 +36,11 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     const user = req.user;
     // transform Query return to an array of pojos, to enable us to attach properties to each
     const games = (await Game.findAll({})).map(game => game.dataValues);
-    const venues = [];
+    const allVenues = [];
     games.forEach(async game => {
-        venues.push(game.address);
+        allVenues.push(game.address);
         game.owner = (await User.findByPk(game.ownerId)).dataValues;
+        delete game.owner.hashedPassword;
         let reservations = await Reservation.findAll({where: {gameId: game.id}});
         // transform Query to an array of pojos, to enable us to compute array's length
         game.count = reservations.map(reservation => reservation.dataValues).length;
@@ -47,23 +49,39 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
             return (reservation.playerId === user.id ? reservation.id : reservationId);
         }, 0);
     })
-    // fetch travel-Time between user and array of addresses ("venues")
-    const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${user.address}&destinations=${venues.join('|')}&key=${mapsApiKey}`);
-    let data = await response.json();
-    data.rows[0].elements.forEach((element, index) => games[index].duration = element.duration);
+    // fetch travel-Time between user and a bundled array of addresses ("venues")
+    // google restricts each bundle to contain no more than 25 addresses
+    const maxFetch = 25;
+    let nBundle = 0;
+    while (allVenues.length) {
+      let venues = allVenues.splice(0, Math.min(maxFetch, allVenues.length));
+      const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${user.address}&destinations=${venues.join('|')}&key=${mapsApiKey}`);
+      let data = await response.json();
+      data.rows[0].elements.forEach((element, index) => {
+        games[index + nBundle * maxFetch].duration = element.duration;
+      });
+      nBundle++;
+    }
     res.json({games});
 }));
 
-router.get('/:id', async(req, res) => {
-    const game = await Game.findByPk(Number(req.params.id));
-    let owner = await User.findByPk(game.ownerId);
-    const reservations = await Reservation.findAll({where: {gameId: game.id}});
-    let players = [];
-    reservations.forEach(async(reservation) => {
-        players.push(await User.findByPk(reservation.playerId));
-    });
-    res.json({game: {...game.dataValues, owner, players}});
-})
+router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
+  const user = req.user;
+  const gameId = Number(req.params.id);
+  const game = await Game.findByPk(gameId);
+  if (game.ownerId !== user.id) return next({ status: 401, message: "You are not authorized." });
+  const reservations = await Reservation.findAll({where: {gameId}});
+  let players = [];
+  for await (reservation of reservations) {
+    let player = (await User.findByPk(reservation.playerId)).dataValues;
+    reservation = reservation.dataValues;
+    ['gameId', 'id', 'playerId', 'createdAt'].forEach(prop => delete reservation[prop]);
+    ['firstName', 'lastName', 'address', 'tokenId', 'hashedPassword', 'updatedAt'].forEach(prop => delete player[prop]);
+    player = {...player, ...reservation};
+    players.push(player);
+  };
+  res.json({game: {...game.dataValues, owner: user, players}});
+}))
 
 // Do we want to allow a game owner to transfer game-"owner"ship to another user?
 router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
@@ -74,6 +92,7 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     let checked = await checkAddress(req.body.address);
     if (checked.success) {
       req.body.address = checked.address;
+
     } else {
       message = `There is something wrong with your game's address (${req.body.address}).`
       delete req.body.address;

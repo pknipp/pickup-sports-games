@@ -8,7 +8,7 @@ module.exports = {
       extraInfo: {type: Sequelize.TEXT},
       dateTime: {type: Sequelize.DATE, allowNull: false},
       ...['minSkill', 'maxSkill'].reduce((pojo, key) => {
-        return ({...pojo, [key]: {type: Sequelize.INTEGER}});
+        return ({...pojo, [key]: {allowNull: false, type: Sequelize.INTEGER}});
       }, {}),
       ...["createdAt", "updatedAt"].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW")}});

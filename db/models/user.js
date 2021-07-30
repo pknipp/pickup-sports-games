@@ -3,8 +3,7 @@ const {Model} = require('sequelize');
 const bcrypt = require('bcryptjs');
 
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define(
-    "User",
+  const User = sequelize.define("User",
     {
       email: {allowNull: false, type: DataTypes.STRING, unique: true
         // validates: {isEmail: true, len: [3, 255]},
@@ -13,16 +12,15 @@ module.exports = (sequelize, DataTypes) => {
       nickName: {allowNull: false, type: DataTypes.STRING, unique: true
         // validates: {isEmail: true, len: [3, 255]},
       },
+      photo: {type: DataTypes.TEXT},
+      tokenId: {type: DataTypes.STRING},
+      hashedPassword: {allowNull: false, type: DataTypes.STRING.BINARY, validates: {len: [60, 60]}},
       ...['firstName', 'lastName'].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: DataTypes.STRING}});
       }, {}),
       ...['cell', 'skill'].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: DataTypes.INTEGER}});
       }, {}),
-      photo: {type: DataTypes.TEXT},
-      tokenId: {type: DataTypes.STRING},
-      hashedPassword: {allowNull: false, type: DataTypes.STRING.BINARY, validates: {len: [60, 60]},
-      },
     },
     {
       defaultScope: {

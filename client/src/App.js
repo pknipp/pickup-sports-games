@@ -7,6 +7,7 @@ import User from './components/users/User';
 // import Container from "./components/Container";
 import NavBar from "./components/NavBar";
 import EditGame from "./components/games/EditGame";
+import ViewGame from "./components/games/ViewGame";
 import EditReservation from "./components/reservations/EditReservation";
 import Home from "./components/games/Home";
 import AuthContext from './auth';
@@ -78,18 +79,24 @@ const App = () => {
 
             <AuthRoute exact path="/login" component={LogIn} />
             <AuthRoute exact path="/signup" component={User} />
-
-             {/* <Route path="/feature1" component={Feature1}/> */}
-             <ProtectedRoute exact path="/" component={Home}/>
+            <ProtectedRoute exact path="/" component={Home}/>
             <ProtectedRoute exact path="/edituser" component={User}/>
             <ProtectedRoute path="/logout" component={LogOut}/>
-            <Route exact path="/games/:gameId" component={EditGame} />
+            <Route exact path="/editGames/:gameId" component={EditGame} />
+            <Route exact path="/viewGames/:gameId" component={ViewGame} />
             <Route exact path="/reservations/:resGameId" component={EditReservation} />
-
-            {/* <PrivateRoute exact path="/"
-            // exact={true}
-            needLogin={!currentUser} component={Container} /> */}
           </Switch>
+          <span>
+            <br/><br/>
+            creators:
+              <a href="https://pknipp.github.io/" target="_blank" rel="noopener noreferrer">&nbsp;
+                Peter Knipp
+              </a>
+              &nbsp;and&nbsp;
+              <a href="https://acyg2212.github.io/" target="_blank" rel="noopener noreferrer">
+                Aaron Cygnarowicz
+              </a>
+          </span>
         </BrowserRouter>
       }
     </AuthContext.Provider>
