@@ -4,6 +4,7 @@ module.exports = {
     return queryInterface.createTable("Games", {
       id: {allowNull: false, autoIncrement: true, primaryKey: true, type: Sequelize.INTEGER},
       ownerId: {allowNull: false, type: Sequelize.INTEGER, onDelete: 'CASCADE', references: {model: "Users"}},
+      gameTypeId: {allowNull: false, type: Sequelize.INTEGER, onDelete: 'CASCADE', references: {model: "GameTypes"}},
       address: {allowNull: false, type: Sequelize.TEXT},
       extraInfo: {type: Sequelize.TEXT},
       dateTime: {type: Sequelize.DATE, allowNull: false},

@@ -9,6 +9,7 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       extraInfo: {type: Sequelize.TEXT},
+      bools: {allowNull: false, type: Sequelize.INTEGER},
       ...[['playerId', 'Users'], ['gameId', "Games"]].reduce((pojo, fk) => {
         return {...pojo, [fk[0]]: {
           allowNull: false,
@@ -16,9 +17,6 @@ module.exports = {
           onDelete: 'CASCADE',
           references: {model: `${fk[1]}`}
         }}
-      }, {}),
-      ...['setter','middle','rightSide','outside','libero','twos','fours','sixes'].reduce((pojo, bool)=>{
-        return {...pojo, [bool]: {type: Sequelize.BOOLEAN, defaultValue: false}};
       }, {}),
       ...['createdAt', 'updatedAt'].reduce((pojo, date) => {
         return {...pojo, [date]: {type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW")}};
