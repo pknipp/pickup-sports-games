@@ -1,5 +1,5 @@
 'use strict';
-const {Model} = require('sequelize');
+const {Model, INTEGER} = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   const Reservation = sequelize.define("Reservation",
@@ -7,10 +7,8 @@ module.exports = (sequelize, DataTypes) => {
       ...['playerId','gameId'].reduce((pojo, fk) => {
         return {...pojo, [fk]: {type: DataTypes.INTEGER, allowNull: false}};
       }, {}),
-      ...['setter','middle','rightSide','outside','libero','twos','fours','sixes'].reduce((pojo, bool) => {
-        return {...pojo, [bool]: {type: DataTypes.BOOLEAN, defaultValue: false, allowNull: false}};
-      }, {}),
-      extraInfo: {allowNull: true, type: DataTypes.TEXT}
+      bools: {allowNull: false, defaultValue: 0, type: DataTypes: INTEGER},
+      extraInfo: {allowNull: true, type: DataTypes.TEXT},
     },
   );
 

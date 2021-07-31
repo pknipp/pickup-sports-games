@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     "Game",
     {
       ownerId: {allowNull: false, type: DataTypes.INTEGER},
+      gameTypeId: {allowNull: false, type: DataTypes.INTEGER},
       ...['minSkill', 'maxSkill'].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: DataTypes.INTEGER}});
       }, {}),
@@ -16,8 +17,9 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Game.associate = function(models) {
-    Game.belongsTo(models.User, {foreignKey: 'ownerId', onDelete: 'CASCADE'});
     Game.hasMany(models.Reservation, {foreignKey: 'gameId'});
+    Game.belongsTo(models.User, {foreignKey: 'ownerId', onDelete: 'CASCADE'});
+    Game.belongsTo(models.GameType, {foreignKey: 'gameTypeId', onDelete: 'CASCADE'});
   };
 
   return Game;
