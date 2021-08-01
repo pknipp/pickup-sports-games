@@ -25,10 +25,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.BIGINT,
       },
-      skill: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-      },
+      // skill: {
+      //   allowNull: false,
+      //   type: Sequelize.INTEGER,
+      // },
       photo: {
         type: Sequelize.TEXT,
       },

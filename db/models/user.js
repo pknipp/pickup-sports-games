@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       ...['firstName', 'lastName'].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: DataTypes.STRING}});
       }, {}),
-      ...['cell', 'skill'].reduce((pojo, key) => {
+      ...['cell'].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: DataTypes.INTEGER}});
       }, {}),
     },
