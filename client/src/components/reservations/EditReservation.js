@@ -8,8 +8,8 @@ const EditReservation = ({ match }) => {
   const resGameId = match.params.resGameId;
   const [reservationId, gameId] = resGameId.split('-').map(id => Number(id));
   const { fetchWithCSRF, currentUser, rerender, setRerender } = useContext(AuthContext);
-  const properties = ['setter','middle','rightSide','outside','libero','twos','fours','sixes'];
-  const nullReservation = properties.reduce((pojo, prop) => {
+  const [bools, setBools] = useState([[]]);
+  const nullReservation = bools.reduce((pojo, prop) => {
     return {...pojo, [prop]: false};
   }, {id: 0, playerId: 0, gameId: 0, game: {address: '', dateTime: ''}});
   const [reservation, setReservation] = useState({...nullReservation,
@@ -26,17 +26,31 @@ const EditReservation = ({ match }) => {
     (async() => {
       const res = await fetch(`/api/reservations/${resGameId}`);
       let newReservation = {...reservation, ...(await res.json()).reservation};
+      console.log("newReservation = ", newReservation);
       Object.keys(newReservation).forEach(key => {
         if (newReservation[key] === null) newReservation[key] = key === 'extraInfo' ? '' : false;
       })
       newReservation.game.dateTime = moment(newReservation.game.dateTime).local().format().slice(0,-9);
+
       setReservation(newReservation);
+      const newBools = newReservation.game.bools;
+      for (let i = 0; i < newBools.length; i++) {
+        const boolVal = newReservation.bools % 2;
+        newBools[i] = [newBools[i], !!boolVal];
+        newReservation.bools -= boolVal;
+        newReservation.bools /= 2;
+      }
+      setBools(newBools);
+      console.log("newBools = ", newBools);
     })();
   }, [reservation.id]);
 
 
 
   const handlePutPost = async e => {
+    reservation.bools = [...bools].reverse().reduce((tot, bool) => {
+      return 2 * tot + Number(bool[1]);
+    }, 0);
     e.preventDefault();
     const res = await fetch(`/api/reservations${reservation.id ? ('/' + reservation.id) : ''}`, { method: reservation.id ? 'PUT': 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -70,18 +84,22 @@ const EditReservation = ({ match }) => {
     <div className="simple">
       <form className="auth" onSubmit={handlePutPost}>
         <h4>
-          {reservation.id ? "Change" : "Choose"} your reservation details for the game at {reservation.game.address} on &nbsp;
+          {reservation.id ? "Change" : "Choose"} your reservation details for the {reservation.game.name} game at {reservation.game.address} on &nbsp;
           {reservation.game.dateTime.split('T')[0]} at &nbsp;
           {reservation.game.dateTime.split('T')[1]}.
         </h4>
-        {properties.map(property => (
-          <span key={property}>
-            <span>{property}:</span>
+        {bools.map((bool, index) => (
+          <span key={index}>
+            <span>{bool[0]}:</span>
             <input
-              name={property}
+              name={bool[0]}
               type="checkbox"
-              checked={reservation[property]}
-              onChange={e => setReservation({...reservation, [property]: e.target.checked})}
+              checked={bool[1]}
+              onChange={e => {
+                const newBools = [...bools];
+                newBools[index][1] = e.target.checked;
+                setBools(newBools);
+              }}
             />
           </span>
         ))}

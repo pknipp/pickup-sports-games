@@ -12,8 +12,8 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   GameType.associate = function(models) {
-    Game.hasMany(models.Game, {foreignKey: 'gameTypeId'});
+    GameType.hasMany(models.Game, {foreignKey: 'gameTypeId'});
   };
 
-  return Game;
+  return GameType;
 };

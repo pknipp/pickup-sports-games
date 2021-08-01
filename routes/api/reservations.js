@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { Game, Reservation, User } = require("../../db/models");
+const { Game, Reservation, User, GameType } = require("../../db/models");
 const { Op } = require('sequelize');
 const asyncHandler = require('express-async-handler');
 const { authenticated } = require('./security-utils');
+const gameType = require('../../db/models/gameType');
 
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     try {
@@ -23,14 +24,12 @@ router.get('', [authenticated], asyncHandler(async(req, res) => {
 
 router.get('/:resGameId', async(req, res) => {
     const [reservationId, gameId] = req.params.resGameId.split('-').map(id => Number(id));
-    let reservation;
-    if (reservationId) {
-        reservation = (await Reservation.findByPk(reservationId)).dataValues;
-        const game = (await Game.findByPk(gameId)).dataValues;
-        reservation.game = game;
-    } else {
-        reservation = {game : (await Game.findByPk(gameId)).dataValues};
-    }
+    let reservation = reservationId && (await Reservation.findByPk(reservationId)).dataValues;
+    const game = (await Game.findByPk(gameId)).dataValues;
+    const gameType = (await GameType.findByPk(game.gameTypeId)).dataValues;
+    game.name = gameType.name;
+    game.bools = JSON.parse(gameType.bools);
+    reservation.game = game;
     res.json({reservation});
 })
 

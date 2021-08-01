@@ -29,14 +29,14 @@ const ViewGame = ({ match }) => {
     ['updatedAt', `Reservation date/time`],
     ['extraInfo', 'misc info?'],
     ['skill', 'Skill'],
-    ['setter', 'setter'],
-    ['middle', 'middle'],
-    ['rightSide', `right side`],
-    ['outside', 'outside'],
-    ['libero', 'libero'],
-    ['twos', 'twos'],
-    ['fours', 'fours'],
-    ['sixes', 'sixes']
+    // ['setter', 'setter'],
+    // ['middle', 'middle'],
+    // ['rightSide', `right side`],
+    // ['outside', 'outside'],
+    // ['libero', 'libero'],
+    // ['twos', 'twos'],
+    // ['fours', 'fours'],
+    // ['sixes', 'sixes']
   ];
 
   const [game, setGame] = useState(gameProps.reduce((pojo, prop) => {
