@@ -24,7 +24,7 @@ router.get('', [authenticated], asyncHandler(async(req, res) => {
 
 router.get('/:resGameId', async(req, res) => {
     const [reservationId, gameId] = req.params.resGameId.split('-').map(id => Number(id));
-    let reservation = reservationId && (await Reservation.findByPk(reservationId)).dataValues;
+    let reservation = (reservationId && (await Reservation.findByPk(reservationId)).dataValues) || {};
     const game = (await Game.findByPk(gameId)).dataValues;
     const gameType = (await GameType.findByPk(game.gameTypeId)).dataValues;
     game.name = gameType.name;

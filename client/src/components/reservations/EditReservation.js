@@ -26,14 +26,13 @@ const EditReservation = ({ match }) => {
     (async() => {
       const res = await fetch(`/api/reservations/${resGameId}`);
       let newReservation = {...reservation, ...(await res.json()).reservation};
-      console.log("newReservation = ", newReservation);
       Object.keys(newReservation).forEach(key => {
         if (newReservation[key] === null) newReservation[key] = key === 'extraInfo' ? '' : false;
       })
       newReservation.game.dateTime = moment(newReservation.game.dateTime).local().format().slice(0,-9);
 
       setReservation(newReservation);
-      const newBools = newReservation.game.bools;
+      const newBools = newReservation.game.bools || [];
       for (let i = 0; i < newBools.length; i++) {
         const boolVal = newReservation.bools % 2;
         newBools[i] = [newBools[i], !!boolVal];
@@ -41,7 +40,6 @@ const EditReservation = ({ match }) => {
         newReservation.bools /= 2;
       }
       setBools(newBools);
-      console.log("newBools = ", newBools);
     })();
   }, [reservation.id]);
 
