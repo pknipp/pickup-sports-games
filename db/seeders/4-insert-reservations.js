@@ -1,16 +1,18 @@
 'use strict';
 const faker = require('faker');
 const { numberOfUsers } = require('../seederData/users');
-const { numberOfGames } = require('../seederData/games');
+const { gameTypes } = require('../seederData/gameTypes');
+const { games } = require('./3-insert-games');
 const { reservationProb } = require('../seederData/reservations');
 
-const bools = ['setter','middle','rightSide','outside','libero','twos','fours','sixes'];
 let reservations = [];
 for (let iUser = 0; iUser < numberOfUsers; iUser++) {
-  for (let iGame = 0; iGame < numberOfGames; iGame++) {
+  for (let i = 0; i < games.length; i++) {
     if (Math.random() < reservationProb) {
-      let reservation = {playerId: 1 + iUser, gameId: 1 + iGame};
-      bools.forEach(bool => reservation[bool] = Math.random() < 0.5);
+      const reservation = {playerId: 1 + iUser, gameId: i + 1};
+      // Why is JSON.parse needed in the following?
+      let boolsLength = JSON.parse(gameTypes[games[i].gameTypeId - 1].bools).length;
+      reservation.bools = Math.floor(Math.random() * 2 ** boolsLength);
       let updatedAt = faker.date.past(0.1);
       [reservation.createdAt, reservation.updatedAt] = [faker.date.past(0.1, updatedAt), updatedAt];
       reservations.push(reservation);
