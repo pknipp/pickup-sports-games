@@ -4,10 +4,11 @@ const faker = require('faker');
 const { Op } = require('sequelize');
 const fetch = require('node-fetch');
 
-const { Game, Reservation, User } = require("../../db/models");
+const { Game, Reservation, User, GameType } = require("../../db/models");
 const { authenticated } = require('./security-utils');
 const { mapsConfig: { mapsApiKey } } = require('../../config');
 const checkAddress = require('./checkAddress');
+const gameType = require('../../db/models/gameType');
 
 const router = express.Router();
 // const bools = ['setter','middle','rightSide','outside','libero','twos','fours','sixes'];
@@ -68,7 +69,10 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
 router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   const user = req.user;
   const gameId = Number(req.params.id);
-  const game = await Game.findByPk(gameId);
+  const game = (await Game.findByPk(gameId)).dataValues;
+  const gameType = await GameType.findByPk(game.gameTypeId);
+  game.name = gameType.name;
+  game.bools = JSON.parse(gameType.bools);
   if (game.ownerId !== user.id) return next({ status: 401, message: "You are not authorized." });
   const reservations = await Reservation.findAll({where: {gameId}});
   let players = [];
@@ -80,7 +84,7 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
     player = {...player, ...reservation};
     players.push(player);
   };
-  res.json({game: {...game.dataValues, owner: user, players}});
+  res.json({game: {...game, owner: user, players}});
 }))
 
 // Do we want to allow a game owner to transfer game-"owner"ship to another user?

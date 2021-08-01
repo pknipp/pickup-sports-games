@@ -13,6 +13,7 @@ const ViewGame = ({ match }) => {
   // 'photo'
   ];
   const topColumns = [
+    'sport',
     'address',
     'date',
     'time',
@@ -29,20 +30,14 @@ const ViewGame = ({ match }) => {
     ['updatedAt', `Reservation date/time`],
     ['extraInfo', 'misc info?'],
     ['skill', 'Skill'],
-    // ['setter', 'setter'],
-    // ['middle', 'middle'],
-    // ['rightSide', `right side`],
-    // ['outside', 'outside'],
-    // ['libero', 'libero'],
-    // ['twos', 'twos'],
-    // ['fours', 'fours'],
-    // ['sixes', 'sixes']
   ];
 
   const [game, setGame] = useState(gameProps.reduce((pojo, prop) => {
     return {[prop]: '', ...pojo};
   }, {id: Number(match.params.gameId)}));
   const [players, setPlayers] = useState([]);
+  const [bools, setBools] = useState([[]]);
+
   const [columns, setColumns] = useState(columns2.map((pair, index) => {
     return {
       dataField: pair[0],
@@ -70,10 +65,32 @@ const ViewGame = ({ match }) => {
   useEffect(() => {
     (async() => {
         const res = await fetch(`/api/games/${game.id}`);
-        let newGame = (await res.json()).game;
+        let data = await res.json();
+        // console.log("data = ", data);
+        // let newGame = (await res.json()).game;
+        let newGame = data.game;
+        let bools = newGame.bools;
+
+        let newColumns = [...columns2, ...bools.map(bool => [bool, bool])];
+        // console.log("newGame = ", newGame);
         let newPlayers = newGame.players;
         // Below sets the only prop of the columns prop which depends upon state.
-        setColumns(columns.map(column => ({...column, style: (cell, row) => (
+
+        newColumns = newColumns.map((pair, index) => {
+          return {
+            dataField: pair[0],
+            // Make columns narrower by breaking multiple words, wherever possible.
+            text: pair[1].split(' ').join('\n'),
+            sort: true,
+            headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
+            sortFunc: (a, b, order, dataField) => {
+              let diff = a === 'unknown' ? -1 : b === 'unknown' ? 1 : a < b ? -1 : a > b ? 1 : 0;
+              return diff * (order === 'asc' ? 1 : -1);
+            },
+          }
+        });
+
+        setColumns(newColumns.map(column => ({...column, style: (cell, row) => (
           {color:
               newGame.minSkill && (row.skill === "unknown" || row.skill < newGame.minSkill) ? 'red' :
               newGame.maxSkill && row.skill !== "unknown" && row.skill > newGame.maxSkill ? 'blue' : 'black'
@@ -93,9 +110,16 @@ const ViewGame = ({ match }) => {
           player.createdAt = player.createdAt.split('T')[0];
           let updatedAt = player.updatedAt.split('T');
           player.updatedAt = updatedAt[0].slice(5) + ' ' + updatedAt[1].slice(0, -8);
+          bools.forEach((bool, index) => {
+            player[bool] = player.bools % 2;
+            player.bools -= player[bool];
+            player[bool] = player[bool] ? 'x' : '';
+            player.bools /= 2;
+          })
           // player.photo = 'photo';
           return player;
         });
+        // console.log("newPlayers = ", newPlayers);
         setPlayers(newPlayers);
         // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
@@ -114,6 +138,7 @@ const ViewGame = ({ match }) => {
           keyField='id'
           data={[
             {id: 1, ...[
+                game.name,
                 game.address,
                 game.dateTime.split('T')[0],
                 game.dateTime.split('T')[1],
