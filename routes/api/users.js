@@ -8,7 +8,7 @@ const { authenticated, generateToken } = require('./security-utils');
 const { uploadFile } = require('../../s3helper.js');
 const checkAddress = require('./checkAddress');
 
-const BUCKET = 'volleyballbucket';
+// const BUCKET = 'volleyballbucket';
 
 const email = check('email').isEmail().withMessage('Give a valid email address').normalizeEmail();
 // const firstName = check('firstName').not().isEmpty().withMessage('Provide first name');

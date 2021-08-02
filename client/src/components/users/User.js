@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
 
 import AuthContext from '../../auth';
@@ -17,7 +17,7 @@ const User = () => {
     'password',
     'password2'
   ];
-  const skills = ['unknown','1','2','3','4','5','6','7','8','9'];
+  // const skills = ['unknown','1','2','3','4','5','6','7','8','9'];
   const [params, setParams] = useState(currentUser ?
     {...currentUser, password: '', password2: ''}
       :
@@ -25,8 +25,18 @@ const User = () => {
   );
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
+  const [iSkills, setISkills] = useState([]);
+  const [gameTypes, setGameTypes] = useState([]);
 
   let history = useHistory();
+
+  useEffect(() => {
+    (async() => {
+      const res = await fetch('/api/skills');
+      let newGameTypes = (await res.json()).gameTypes;
+      setGameTypes(newGameTypes);
+    })();
+  }, [currentUser.id]);
 
   const handlePutPost = async e => {
     e.preventDefault();
@@ -116,7 +126,7 @@ const User = () => {
           onChange={e => setParams({...params, skill: "unknown" || Number(e.target.value)})}
         /> */}
 
-        <select
+        {/* <select
           onChange={e => setParams({...params, skill: !Number(e.target.value) ? 'unknown' : e.target.value})}
           value={params.skill}
         >
@@ -128,7 +138,7 @@ const User = () => {
                   {skill}
               </option>
           ))}
-        </select>
+        </select> */}
 
         {/* <span>Photo url:</span>
         <input type="text" placeholder="Photo url" name="photo" value={params.photo}
