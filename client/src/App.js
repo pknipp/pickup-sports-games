@@ -60,7 +60,6 @@ const App = () => {
       try {
         const payloadObj = JSON.parse(atob(authToken.split(".")[1]))
         setCurrentUser(payloadObj.data);
-        console.log("user = ", payloadObj.data);
       } catch (e) {
         Cookies.remove("token");
       }

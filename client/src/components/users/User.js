@@ -12,7 +12,6 @@ const User = () => {
     'nickName',
     'address',
     'cell',
-    'skill',
     // 'photo',
     'password',
     'password2'
@@ -25,8 +24,9 @@ const User = () => {
   );
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
-  const [iSkills, setISkills] = useState([]);
+  const [iSkill, setISkill] = useState(0);
   const [gameTypes, setGameTypes] = useState([]);
+  const [iGameType, setIGameType] = useState(0);
 
   let history = useHistory();
 
@@ -45,7 +45,6 @@ const User = () => {
                   params.password !== params.password2 ? "Passwords must match" : "";
     setMessage(message);
     if (!message) {
-      params.skill = isNaN(params.skill) ? 0 : Number(params.skill);
       const res = await fetch(`/api/users`, { method: currentUser ? 'PUT': 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params)
@@ -120,25 +119,29 @@ const User = () => {
           type="number" placeholder="Cell" name="cell" value={params.cell}
           onChange={e => setParams({...params, cell: Number(e.target.value)})}
         />
-        <span>Skill:</span>
+        <span>{iGameType ? gameTypes[iGameType - 1].name : ""} skill-level:</span>
         {/* <input
           type="number" placeholder="Skill" name="skill" value={params.skill}
           onChange={e => setParams({...params, skill: "unknown" || Number(e.target.value)})}
         /> */}
 
-        {/* <select
-          onChange={e => setParams({...params, skill: !Number(e.target.value) ? 'unknown' : e.target.value})}
-          value={params.skill}
+        <select
+          onChange={e => {
+            let val = Number(e.target.value);
+            iGameType ? setISkill(val) : setIGameType(val);
+          }}
+          value={iGameType && iSkill}
         >
-          {skills.map((skill, index) => (
+          {[null, ...(iGameType ? gameTypes[iGameType - 1].skills : gameTypes)].map((gameType, index) => (
               <option
                   key={`${index}`}
-                  value={index || 'unknown'}
+                  value={index}
               >
-                  {skill}
+                  {index ? (iGameType ? gameTypes[iGameType - 1].skills[index - 1] : gameType.name)
+                  : `Select ${iGameType ? "skill level" : "sport"}`}
               </option>
           ))}
-        </select> */}
+        </select>
 
         {/* <span>Photo url:</span>
         <input type="text" placeholder="Photo url" name="photo" value={params.photo}
