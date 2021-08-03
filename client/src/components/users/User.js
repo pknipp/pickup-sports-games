@@ -24,9 +24,9 @@ const User = () => {
   );
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
-  const [iSkill, setISkill] = useState(0);
+  const [skill, setSkill] = useState(0);
   const [gameTypes, setGameTypes] = useState([]);
-  const [iGameType, setIGameType] = useState(0);
+  const [gameTypeId, setGameTypeId] = useState(0);
 
   let history = useHistory();
 
@@ -45,6 +45,7 @@ const User = () => {
                   params.password !== params.password2 ? "Passwords must match" : "";
     setMessage(message);
     if (!message) {
+      params = {...params, gameTypeId, skill}
       const res = await fetch(`/api/users`, { method: currentUser ? 'PUT': 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params)
@@ -119,26 +120,27 @@ const User = () => {
           type="number" placeholder="Cell" name="cell" value={params.cell}
           onChange={e => setParams({...params, cell: Number(e.target.value)})}
         />
-        <span>{iGameType ? gameTypes[iGameType - 1].name : ""} skill-level:</span>
-        {/* <input
-          type="number" placeholder="Skill" name="skill" value={params.skill}
-          onChange={e => setParams({...params, skill: "unknown" || Number(e.target.value)})}
-        /> */}
+        <span>{gameTypeId ? gameTypes[gameTypeId - 1].name : ""} skill-level:</span>
 
         <select
           onChange={e => {
             let val = Number(e.target.value);
-            iGameType ? setISkill(val) : setIGameType(val);
+            if (gameTypeId) {
+              setSkill(val);
+             } else {
+               setGameTypeId(val);
+               setSkill(gameTypes[gameTypeId].skill);
+             }
           }}
-          value={iGameType && iSkill}
+          value={gameTypeId && skill}
         >
-          {[null, ...(iGameType ? gameTypes[iGameType - 1].skills : gameTypes)].map((gameType, index) => (
+          {[null, ...(gameTypeId ? gameTypes[gameTypeId - 1].skills : gameTypes)].map((gameType, index) => (
               <option
                   key={`${index}`}
                   value={index}
               >
-                  {index ? (iGameType ? gameTypes[iGameType - 1].skills[index - 1] : gameType.name)
-                  : `Select ${iGameType ? "skill level" : "sport"}`}
+                  {index ? (gameTypeId ? gameTypes[gameTypeId - 1].skills[index - 1] : gameType.name)
+                  : `Select ${gameTypeId ? "level" : "sport"}`}
               </option>
           ))}
         </select>
