@@ -106,8 +106,6 @@ router.put('', [authenticated, email, password],
         ]
       }});
       skill.skill = req.body.skill;
-      console.log("skill = ", skill);
-      console.log("typeof skill.save = ", typeof skill.save);
       await skill.save();
     }
     res.status(status).json({ user: { ...user.toSafeObject(), message } });

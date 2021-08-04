@@ -33,7 +33,7 @@ const User = () => {
   useEffect(() => {
     (async() => {
       const res = await fetch('/api/skills');
-      let newGameTypes = (await res.json()).gameTypes;
+      let newGameTypes = (await res.json()).gameTypes.sort((a, b) => a.id - b.id);
       setGameTypes(newGameTypes);
     })();
   }, [currentUser.id]);
@@ -50,10 +50,10 @@ const User = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newParams)
       });
-      let data = await res.json();
-      console.log("data = ", data);
-      // let user = (await res.json()).user;
-      let user = data.user;
+      // let data = await res.json();
+      // console.log("data = ", data);
+      // let user = data.user;
+      let user = (await res.json()).user;
       let message = user.message;
       if (currentUser) {
         // PUT route

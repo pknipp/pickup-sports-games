@@ -11,6 +11,7 @@ const r = o => ({...o,
 for (let i = 0; i < gameTypes.length; i++) {
     gameTypes[i] = r(gameTypes[i]);
 };
+gameTypes.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 
 module.exports = {
   up: async (queryInterface, Sequelize) => queryInterface.bulkInsert('GameTypes', gameTypes),
