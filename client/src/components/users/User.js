@@ -129,20 +129,26 @@ const User = () => {
           onChange={e => {
             let val = Number(e.target.value);
             if (gameTypeId) {
-              setSkill(val);
-             } else {
-               setGameTypeId(val);
-               setSkill(gameTypes[gameTypeId].skill);
-             }
+              if (val <= gameTypes[gameTypeId - 1].skills.length) {
+                setSkill(val);
+              } else {
+                setGameTypeId(0);
+              }
+            } else {
+              setGameTypeId(val);
+              setSkill(gameTypes[gameTypeId].skill);
+            }
           }}
           value={gameTypeId && skill}
         >
-          {[null, ...(gameTypeId ? gameTypes[gameTypeId - 1].skills : gameTypes)].map((gameType, index) => (
+          {[null, ...(gameTypeId ? [...gameTypes[gameTypeId - 1].skills, 'Cancel'] : gameTypes)].map((gameType, index) => (
               <option
                   key={`${index}`}
                   value={index}
               >
-                  {index ? (gameTypeId ? gameTypes[gameTypeId - 1].skills[index - 1] : gameType.name)
+                  {index ? (
+                    gameTypeId && index === gameTypes[gameTypeId - 1].skills.length + 1 ? 'CANCEL' :
+                    gameTypeId ? gameTypes[gameTypeId - 1].skills[index - 1] : gameType.name)
                   : `Select ${gameTypeId ? "level" : "sport"}`}
               </option>
           ))}
