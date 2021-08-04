@@ -86,8 +86,10 @@ const EditReservation = ({ match }) => {
           {reservation.game.dateTime.split('T')[0]} at &nbsp;
           {reservation.game.dateTime.split('T')[1]}.
         </h4>
+        <span>Your preferences:</span>
+        <div>
         {bools.map((bool, index) => (
-          <span key={index}>
+          <div key={index}>
             <span>{bool[0]}:</span>
             <input
               name={bool[0]}
@@ -99,8 +101,9 @@ const EditReservation = ({ match }) => {
                 setBools(newBools);
               }}
             />
-          </span>
+          </div>
         ))}
+        </div>
 
         <span>Extra info about your reservation (optional):</span>
         <input
