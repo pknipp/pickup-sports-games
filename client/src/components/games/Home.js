@@ -11,6 +11,7 @@ const Home = () => {
         ["games for which you are not registered to play", "Make reservation"]
     ];
     let allKeys = [
+        ['sport', 'Sport'],
         ['date', 'Game date'],
         ['time', 'Start time'],
         ['address', 'Address'],
@@ -38,8 +39,9 @@ const Home = () => {
             if (response.ok) {
                 let newAllGames = [];
                 data.games.forEach(game => {
-                    let {id, dateTime, address, duration, count, owner, reservationId} = game;
-                    let newGame = {id, address, count, reservationId, owner: owner.nickName}
+                    // Consolidate the following two lines, for the sake of DRY-ness.
+                    let {id, sport, dateTime, address, duration, count, owner, reservationId} = game;
+                    let newGame = {id, sport, address, count, reservationId, owner: owner.nickName}
                     let [date, time] = dateTime.split("T");
                     time = time.slice(0, 5);
                     let minutes = Math.round(duration.value / 60);

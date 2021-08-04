@@ -15,7 +15,7 @@ const router = express.Router();
 
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     let [game, message, status] = [{}, '', 201];
-    try {
+    // try {
         req.body.ownerId = req.user.id;
         req.body.dateTime = faker.date.future();
         let checked = await checkAddress(req.body.address);
@@ -28,9 +28,9 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
           status = 400;
         }
         res.status(status).json({game});
-    } catch (e) {
-        res.status(400).send(e)
-    }
+    // } catch (e) {
+    //     res.status(400).send(e)
+    // }
 }));
 
 router.get('', [authenticated], asyncHandler(async(req, res, next) => {
@@ -41,6 +41,7 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     games.forEach(async game => {
         allVenues.push(game.address);
         game.owner = (await User.findByPk(game.ownerId)).dataValues;
+        game.sport = (await GameType.findByPk(game.gameTypeId)).dataValues.name;
         delete game.owner.hashedPassword;
         let reservations = await Reservation.findAll({where: {gameId: game.id}});
         // transform Query to an array of pojos, to enable us to compute array's length
