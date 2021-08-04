@@ -81,17 +81,17 @@ const EditReservation = ({ match }) => {
   return (
     <div className="simple">
       <form className="auth" onSubmit={handlePutPost}>
-        <h4>
+        <h3>
           {reservation.id ? "Change" : "Choose"} your reservation details for the {reservation.game.name} game at {reservation.game.address} on &nbsp;
           {reservation.game.dateTime.split('T')[0]} at &nbsp;
           {reservation.game.dateTime.split('T')[1]}.
-        </h4>
-        <span>Your preferences:</span>
+        </h3>
+        <span><h4>Your preferences:</h4></span>
         <div>
         {bools.map((bool, index) => (
-          <div key={index}>
-            <span>{bool[0]}:</span>
-            <input
+          <div key={index} className="checkboxPair">
+            <div><span>{bool[0]}:</span></div>
+            <div><input
               name={bool[0]}
               type="checkbox"
               checked={bool[1]}
@@ -100,12 +100,12 @@ const EditReservation = ({ match }) => {
                 newBools[index][1] = e.target.checked;
                 setBools(newBools);
               }}
-            />
+            /></div>
           </div>
         ))}
         </div>
 
-        <span>Extra info about your reservation (optional):</span>
+        <span><h4>Extra info about your reservation (optional):</h4></span>
         <input
           type="text" placeholder="Extra Info" name="extraInfo" value={reservation.extraInfo}
           onChange={e => setReservation({...reservation, extraInfo: e.target.value})}

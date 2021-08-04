@@ -44,6 +44,22 @@ span input {
   margin-left: 10px;
 }
 
+.checkboxPair {
+  width: 200px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.checkboxPair>*{
+  padding-right: 10px;
+}
+
+/* .checkboxPair>div{
+  padding-bottom: 20px;
+} */
+
+/* .checkboxPair>input{padding-top: 20px;} */
+
 /* .table-header-rotated {
   border-collapse: collapse;
   border: none;

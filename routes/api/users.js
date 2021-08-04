@@ -3,7 +3,7 @@ const { check, validationResult } = require('express-validator');
 const Sequelize = require('sequelize');
 const router = require('express').Router();
 
-const { User, Game, Reservation } = require('../../db/models');
+const { User, Game, Reservation, Skill } = require('../../db/models');
 const { authenticated, generateToken } = require('./security-utils');
 const { uploadFile } = require('../../s3helper.js');
 const checkAddress = require('./checkAddress');
@@ -99,6 +99,16 @@ router.put('', [authenticated, email, password],
       user.tokenId = jti;
       res.cookie("token", token);
       await user.save();
+      let skill = await Skill.findOne({where: {
+        [Sequelize.Op.and]: [
+          {userId: user.id},
+          {gameTypeId: req.body.gameTypeId }
+        ]
+      }});
+      skill.skill = req.body.skill;
+      console.log("skill = ", skill);
+      console.log("typeof skill.save = ", typeof skill.save);
+      await skill.save();
     }
     res.status(status).json({ user: { ...user.toSafeObject(), message } });
   })

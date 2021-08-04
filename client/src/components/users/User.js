@@ -45,12 +45,15 @@ const User = () => {
                   params.password !== params.password2 ? "Passwords must match" : "";
     setMessage(message);
     if (!message) {
-      params = {...params, gameTypeId, skill}
+      let newParams = {...params, gameTypeId, skill}
       const res = await fetch(`/api/users`, { method: currentUser ? 'PUT': 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(params)
+        body: JSON.stringify(newParams)
       });
-      let user = (await res.json()).user;
+      let data = await res.json();
+      console.log("data = ", data);
+      // let user = (await res.json()).user;
+      let user = data.user;
       let message = user.message;
       if (currentUser) {
         // PUT route
