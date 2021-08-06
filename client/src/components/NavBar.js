@@ -9,7 +9,7 @@ const NavBar = () => {
   const head = (
     <h1>
         <p align="center">
-            Welcome {currentUser ? `${currentUser.nickName} ` : ""} to volleyball meetup!
+            Welcome {currentUser ? `${currentUser.nickName} ` : ""} to sports meetup!
         </p>
     </h1>
 );

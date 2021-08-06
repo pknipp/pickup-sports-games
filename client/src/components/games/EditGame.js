@@ -8,6 +8,7 @@ const EditGame = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender } = useContext(AuthContext);
   const skills = ['none', '1','2','3','4','5','6','7','8','9'];
   const properties = [
+    'gameType',
     'address',
     'dateTime',
     'extraInfo',
@@ -88,6 +89,24 @@ const EditGame = ({ match }) => {
             "Choose the Game details."
           }
         </h4>
+        {/* <span>Sport:</span>
+        <select
+          onChange={e => {
+            let val = Number(e.target.value);
+            if (val) setGameTypeId(val);
+          }}
+          value={gameTypeId && skill}
+        >
+          {[null, ...gameTypes].map((gameType, index) => (
+              <option
+                  key={`${index}`}
+                  value={index}
+              >
+                  {index ? gameType.name : "Select sport"}`}
+              </option>
+          ))}
+        </select> */}
+
         <span>Game address:</span>
         <input
           type="text" placeholder="Address" name="address" value={game.address}
@@ -101,11 +120,6 @@ const EditGame = ({ match }) => {
         />
 
         <span>Lower limit of skill-level:</span>
-
-        {/* <input
-          type="number" placeholder="minSkill" name="minSkill" value={game.minSkill}
-          onChange={e => setGame({...game, minSkill: Number(e.target.value)})}
-        /> */}
 
         <select
           onChange={e => setGame({...game, minSkill: !Number(e.target.value) ? 'none' : e.target.value})}

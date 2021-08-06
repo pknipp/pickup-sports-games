@@ -15,7 +15,7 @@ const Container = () => {
   return (
     // <BrowserRouter>
       <nav>
-        <h1>{currentUser.nickName}: Welcome to volleyball-meetup!</h1>
+        <h1>{currentUser.nickName}: Welcome to sports meetup!</h1>
         <div className="nav-bar">
           <span>
             <NavLink className="nav" exact to="/" activeClassName="active">

@@ -12,7 +12,7 @@
         },
         {
             name: "flag football",
-            bools: ["4 on 4", "7 on 7", "8 on 8", "men's", "women's", "mixed"],
+            bools: ["4 on 4", "7 on 7", "8 on 8", "men's", "women's", "mixed", "quarterback", "receiver", "defense", "line", "running back"],
             skills: ["beginner", "intermediate", "advanced"],
         },
         {
@@ -21,8 +21,18 @@
             skills: ["beginner", "intermediate", "advanced"],
         },
         {
-            name: "softball",
-            bools: ["12 inch", "16 inch", "men'", "women's", "mixed", "infield", "outfield", "pitcher", "catcher"],
+            name: "12-inch softball",
+            bools: ["men's", "women's", "mixed", "infield", "outfield", "pitcher", "catcher"],
+            skills: ["beginner", "intermediate", "advanced"],
+        },
+        {
+            name: "16-inch softball",
+            bools: ["men's", "women's", "mixed", "infield", "outfield", "pitcher", "catcher"],
+            skills: ["beginner", "intermediate", "advanced"],
+        },
+        {
+            name: "soccer",
+            bools: ["men's", "women's", "mixed"],
             skills: ["beginner", "intermediate", "advanced"],
         }
     ],

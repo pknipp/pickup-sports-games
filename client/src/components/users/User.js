@@ -16,7 +16,6 @@ const User = () => {
     'password',
     'password2'
   ];
-  // const skills = ['unknown','1','2','3','4','5','6','7','8','9'];
   const [params, setParams] = useState(currentUser ?
     {...currentUser, password: '', password2: ''}
       :
@@ -50,9 +49,6 @@ const User = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newParams)
       });
-      // let data = await res.json();
-      // console.log("data = ", data);
-      // let user = data.user;
       let user = (await res.json()).user;
       let message = user.message;
       if (currentUser) {
@@ -93,6 +89,7 @@ const User = () => {
             "We hope that you will either login or signup."
           }
         </h4>
+        {/* DRY the following code. */}
         <span>Email address:</span>
         <input
           type="text" placeholder="Email" name="email" value={params.email}
