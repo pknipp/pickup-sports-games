@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      skill: {allowNull: false, type: Sequelize.INTEGER},
+      skill: {allowNull: true, type: Sequelize.INTEGER},
       ...[['userId', 'Users'], ['gameTypeId', "GameTypes"]].reduce((pojo, fk) => {
         return {...pojo, [fk[0]]: {
           allowNull: false,

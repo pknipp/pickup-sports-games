@@ -4,7 +4,8 @@ module.exports = {
     return queryInterface.createTable("GameTypes", {
       id: {allowNull: false, autoIncrement: true, primaryKey: true, type: Sequelize.INTEGER},
       name: {allowNull: false, type: Sequelize.TEXT},
-      bools: {allowNull: true, type: Sequelize.TEXT},
+      positions: {allownull: true, type: Sequelize.TEXT},
+      sizes: {allowNull: true, type: Sequelize.TEXT},
       skills: {allowNull: false, type: Sequelize.TEXT, defaultValue: JSON.stringify(["beginner", "intermediate", "advanced"])},
       ...["createdAt", "updatedAt"].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW")}});
