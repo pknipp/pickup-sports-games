@@ -1,6 +1,5 @@
 shortcomings of games branch pushed and PR-ed by PK on 6/19:
     error handling is poor or nonexistent
-    front-end is very ugly
     Lack of DRY-ness associated with the existence of TWO Route wrappers.
 
 put validation stuff in several columns of Users table
@@ -10,18 +9,9 @@ in model files insert a many-to-many relationship between Users and Games
 allow any player to add a photo to a Game?
 Have users login w/nickName rather than email, and NOT require that email be unique? (White space'll prob be a problem).
 
-Aaron: modify DrawSQL schema to reflect any changes:
-    skillLevel -> skill
-    nickName in Users table
-    gameOwner -> ownerId
-    date & time -> dateTime
-    Signup table -> Reservations?
-    extraInformation -> extraInfo
-
 MVP goals:
     Modify EditGame to allow for the facts that ...:
         gameType is now a "thing"
-        maxSkill and minSkill should now pertain to Skills table.
     Other sports to include:
         hockey, ultimate, badminton, pingpong, squash, sailing, running, bowling, golf, lacrosse
     Partition booleans into three categories: gender, number, and position

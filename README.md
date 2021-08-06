@@ -1,7 +1,8 @@
 # Volleyball Meetup
 
 ## Database
-- https://drawsql.app/getout/diagrams/volleyballmeetup
+<!-- - https://drawsql.app/getout/diagrams/volleyballmeetup -->
+- https://drawsql.app/appacademy-2/diagrams/sportsmeetup
 
 ## API set up
 
@@ -22,5 +23,3 @@
     - POST /:gameId - sign a user up for a game
     - PUT /:id (might have to use combo of userId and gameId) - edit users sign up
     - DELETE /:id (might have to use combo of userId and gameId) - delete sign up
-
-
