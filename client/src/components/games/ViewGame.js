@@ -68,10 +68,15 @@ const ViewGame = ({ match }) => {
         let data = await res.json();
         // console.log("data = ", data);
         // let newGame = (await res.json()).game;
+        console.log("data = ", data);
         let newGame = data.game;
-        let bools = newGame.bools;
+        console.log("newGame = ", newGame);
+        // let bools = newGame.bools;
+        let positions = newGame.positions || [];
+        let sizes = newGame.sizes || [];
 
-        let newColumns = [...columns2, ...bools.map(bool => [bool, bool])];
+        // let newColumns = [...columns2, ...bools.map(bool => [bool, bool])];
+        let newColumns = [...columns2, ...positions.map(position => [position, position]), ...sizes.map(size => [size, size])];
         // console.log("newGame = ", newGame);
         let newPlayers = newGame.players;
         // Below sets the only prop of the columns prop which depends upon state.
