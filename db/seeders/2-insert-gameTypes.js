@@ -4,8 +4,10 @@ const { gameTypes } = require('../seederData/gameTypes');
 const r = o => ({...o,
     createdAt: new Date(),
     updatedAt: new Date(),
-    bools: JSON.stringify(o.bools),
-    skills: JSON.stringify(o.skills),
+    // ...(["positions", "skills", "sizes"].map(prop => ([prop]: JSON.stringify(o[prop]))),
+    positions: JSON.stringify(o.positions),
+    skills: JSON.stringify(o.skills || ["beginner", "intermediate", "advanced"]),
+    sizes: JSON.stringify(o.sizes),
 });
 
 for (let i = 0; i < gameTypes.length; i++) {

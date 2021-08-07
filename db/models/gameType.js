@@ -6,8 +6,9 @@ module.exports = (sequelize, DataTypes) => {
     "GameType",
     {
       name: {allowNull: false, type: DataTypes.TEXT},
-      bools: {allowNull: true, type: DataTypes.TEXT},
+      positions: {allowNull: true, type: DataTypes.TEXT},
       skills: {allowNull: false, type: DataTypes.TEXT},
+      sizes: {allowNull: true, type: DataTypes.TEXT},
     },
   );
 

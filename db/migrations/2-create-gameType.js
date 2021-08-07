@@ -6,7 +6,9 @@ module.exports = {
       name: {allowNull: false, type: Sequelize.TEXT},
       positions: {allownull: true, type: Sequelize.TEXT},
       sizes: {allowNull: true, type: Sequelize.TEXT},
-      skills: {allowNull: false, type: Sequelize.TEXT, defaultValue: JSON.stringify(["beginner", "intermediate", "advanced"])},
+      skills: {allowNull: false, type: Sequelize.TEXT,
+        // defaultValue: JSON.stringify(["beginner", "intermediate", "advanced"])
+      },
       ...["createdAt", "updatedAt"].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW")}});
       }, {})
