@@ -7,10 +7,10 @@ import User from "./users/User";
 import Home from "./games/Home";
 import EditGame from "./games/EditGame";
 
-import AuthContext from '../auth';
+import Context from '../context';
 
 const Container = () => {
-  const { fetchWithCSRF, currentUser } = useContext(AuthContext);
+  const { fetchWithCSRF, currentUser } = useContext(Context);
 
   return (
     // <BrowserRouter>

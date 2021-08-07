@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 
-import AuthContext from '../auth';
+import Context from '../context';
 
 const NavBar = () => {
-  const { fetchWithCSRF, currentUser } = useContext(AuthContext);
+  const { fetchWithCSRF, currentUser } = useContext(Context);
 
   const head = (
     <h1>

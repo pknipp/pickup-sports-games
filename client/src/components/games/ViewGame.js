@@ -3,11 +3,11 @@ import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 import BootstrapTable from 'react-bootstrap-table-next';
 
-import AuthContext from '../../auth';
+import Context from '../../context';
 import { time } from 'faker';
 
 const ViewGame = ({ match }) => {
-  const { fetchWithCSRF, rerender, setRerender } = useContext(AuthContext);
+  const { fetchWithCSRF, rerender, setRerender } = useContext(Context);
   const gameProps = ['address', 'dateTime', 'extraInfo', 'minSkill', 'maxSkill'];
   const userProps = ['email', 'nickName', 'cell', 'skill',
   // 'photo'

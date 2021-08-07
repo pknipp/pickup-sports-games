@@ -2,10 +2,10 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 
-import AuthContext from '../../auth';
+import Context from '../../context';
 
 const EditGame = ({ match }) => {
-  const { fetchWithCSRF, rerender, setRerender } = useContext(AuthContext);
+  const { fetchWithCSRF, rerender, setRerender } = useContext(Context);
   const skills = ['none', '1','2','3','4','5','6','7','8','9'];
   const properties = [
     'gameType',
@@ -29,7 +29,11 @@ const EditGame = ({ match }) => {
     (async() => {
       if (game.id) {
         const res = await fetch(`/api/games/${game.id}`);
+        // let data = await res.json();
+        // console.log("data = ", data);
         let newGame = (await res.json()).game;
+        // let newGame = data.game;
+        // console.log("newGame = ", newGame);
         // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';

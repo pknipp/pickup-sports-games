@@ -10,7 +10,7 @@ import EditGame from "./components/games/EditGame";
 import ViewGame from "./components/games/ViewGame";
 import EditReservation from "./components/reservations/EditReservation";
 import Home from "./components/games/Home";
-import AuthContext from './auth';
+import Context from './context';
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={(props) => (
@@ -19,7 +19,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 )
 
 const ProtectedRoute = ({ component: Component, path, exact, ...rest}) => {
-  const { currentUser } = useContext(AuthContext)
+  const { currentUser } = useContext(Context)
   return (
       <Route
           {...rest}
@@ -34,7 +34,7 @@ const ProtectedRoute = ({ component: Component, path, exact, ...rest}) => {
 }
 
 const AuthRoute = ({ component: Component, path, exact, ...rest }) => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser } = useContext(Context);
   return (
       <Route
           {...rest}
@@ -52,7 +52,7 @@ const App = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [rerender, setRerender] = useState(0);
-  const authContextValue = {fetchWithCSRF, currentUser, setCurrentUser, rerender, setRerender};
+  const contextValue = {fetchWithCSRF, currentUser, setCurrentUser, rerender, setRerender, genders: ["men's", "women's", "mixed", "gender neutral"]};
 
   const loadUser = () => {
     const authToken = Cookies.get("token");
@@ -69,7 +69,7 @@ const App = () => {
   useEffect(loadUser, []);
 
   return (
-    <AuthContext.Provider value={authContextValue}>
+    <Context.Provider value={contextValue}>
       {loading ?
         <h1>Loading</h1>
       :
@@ -99,7 +99,7 @@ const App = () => {
           </span>
         </BrowserRouter>
       }
-    </AuthContext.Provider>
+    </Context.Provider>
   );
 }
 

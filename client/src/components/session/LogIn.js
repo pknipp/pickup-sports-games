@@ -1,12 +1,12 @@
 import React, { useState, useContext } from 'react';
 import { Redirect, NavLink } from 'react-router-dom';
-import AuthContext from '../../auth';
+import Context from '../../context';
 
 const LogIn = () => {
   const [email, setEmail] = useState("volleyb@aol.com");
   const [password, setPassword] = useState("password");
   const [message, setMessage] = useState('');
-  const { fetchWithCSRF, currentUser, setCurrentUser } = useContext(AuthContext);
+  const { fetchWithCSRF, currentUser, setCurrentUser } = useContext(Context);
 
   const login = async (email, password) => {
     const response = await fetch(`/api/session`, { method: 'PUT',

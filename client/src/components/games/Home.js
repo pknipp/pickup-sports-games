@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
 import BootstrapTable from 'react-bootstrap-table-next';
 
-import AuthContext from '../../auth';
+import Context from '../../context';
 
 const Home = () => {
     const options = [
@@ -21,7 +21,7 @@ const Home = () => {
         ['edit', ''],
         ['view', '']
     ];
-    const { currentUser } = useContext(AuthContext);
+    const { currentUser, gender } = useContext(Context);
     const [loading, setLoading] = useState(true);
     const [allGames, setAllGames] = useState([]);
     const [games, setGames] = useState([]);

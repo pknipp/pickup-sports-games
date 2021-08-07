@@ -73,7 +73,9 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   const game = (await Game.findByPk(gameId)).dataValues;
   const gameType = await GameType.findByPk(game.gameTypeId);
   game.name = gameType.name;
-  game.bools = JSON.parse(gameType.bools);
+  // game.bools = JSON.parse(gameType.bools);
+  game.positions = gameType.positions && JSON.parse(gameType.positions);
+  game.sizes     = gameType.sizes     && JSON.parse(gameType.sizes);
   if (game.ownerId !== user.id) return next({ status: 401, message: "You are not authorized." });
   const reservations = await Reservation.findAll({where: {gameId}});
   let players = [];

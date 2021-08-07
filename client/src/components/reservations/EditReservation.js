@@ -2,12 +2,12 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 
-import AuthContext from '../../auth';
+import Context from '../../context';
 
 const EditReservation = ({ match }) => {
   const resGameId = match.params.resGameId;
   const [reservationId, gameId] = resGameId.split('-').map(id => Number(id));
-  const { fetchWithCSRF, currentUser, rerender, setRerender } = useContext(AuthContext);
+  const { fetchWithCSRF, currentUser, rerender, setRerender } = useContext(Context);
   const [bools, setBools] = useState([[]]);
   const nullReservation = bools.reduce((pojo, prop) => {
     return {...pojo, [prop]: false};

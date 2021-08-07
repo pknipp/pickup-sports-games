@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
 
-import AuthContext from '../../auth';
+import Context from '../../context';
 
 const User = () => {
-  const { fetchWithCSRF, currentUser, setCurrentUser } = useContext(AuthContext);
+  const { fetchWithCSRF, currentUser, setCurrentUser } = useContext(Context);
   const properties = [
     'email',
     'firstName',

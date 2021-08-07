@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import AuthContext from '../../auth';
+import Context from '../../context';
 
 const LogOut = () => {
 
-  const { fetchWithCSRF, currentUser, setCurrentUser } = useContext(AuthContext);
+  const { fetchWithCSRF, currentUser, setCurrentUser } = useContext(Context);
 
   const logout = async () => {
     const res = await fetch('/api/session', { method: "delete" });
