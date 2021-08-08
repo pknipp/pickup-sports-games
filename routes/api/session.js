@@ -5,22 +5,24 @@ const router = require('express').Router();
 const UserRepository = require('../../db/user-repository');
 const { authenticated, generateToken } = require('./security-utils');
 
-const email = check('email').isEmail().withMessage('Provide valid email').normalizeEmail();
-const password = check('password').not().isEmpty().withMessage('Provide password');
+const Email = check('Email').isEmail().withMessage('Provide valid email').normalizeEmail();
+const Password = check('Password').not().isEmpty().withMessage('Provide password');
 
 router.get('', asyncHandler(async(req, res, next) => {res.json({message: "Hello world"});}));
 
-router.put('', [email, password],
+router.put('', [Email, Password],
   asyncHandler(async(req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return next({ status: 422, errors: errors.array() });
   let user;
   try {
-    user = await UserRepository.findByEmail(req.body.email);
+    console.log("before userRepo"
+    )
+    user = await UserRepository.findByEmail(req.body.Email);
   } catch (e) {
     return next({ status: 401, message: "Invalid credentials" });
   }
-  if (!user.isValidPassword(req.body.password)) {
+  if (!user.isValidPassword(req.body.Password)) {
     let error = new Error('Invalid credentials');
     error = {...error, status: 401, title: 'Login failed', errors: ['Invalid credentials']};
     return next(error);

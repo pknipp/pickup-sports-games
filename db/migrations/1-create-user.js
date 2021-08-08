@@ -39,7 +39,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING(60).BINARY,
       },
-      ...['Created at', 'Updated at'].reduce((pojo, date) => {
+      ...['createdAt', 'updatedAt'].reduce((pojo, date) => {
         return {...pojo, [date]: {allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW")}};
       }, {})
     });

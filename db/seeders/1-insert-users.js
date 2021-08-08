@@ -31,8 +31,8 @@ users.forEach(user => {
   user.Photo = `${user.firstName}'s photoURL`;
   user.hashedPassword = createPassword();
   const updatedAt = faker.date.past(1);
-  user["Updated at"] = updatedAt;
-  user["Created at"] = faker.date.past(1, updatedAt);
+  user.updatedAt = updatedAt;
+  user.createdAt = faker.date.past(1, updatedAt);
   // The following line was not an adequate replacement for the previous 2 oines.
   // user = {...user, updatedAt, createdAt: faker.date.past(1, updatedAt)};
 })

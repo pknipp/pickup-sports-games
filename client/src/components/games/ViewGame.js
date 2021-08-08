@@ -23,13 +23,13 @@ const ViewGame = ({ match }) => {
   ].map((text, index) => ({dataField: String(index), text}));
 
   const columns2 = [
-    ['nickName', 'Name'],
+    'Nickname',
     // ['photo', ''],
-    ['email', 'Email'],
-    ['createdAt', `Member since`],
-    ['updatedAt', `Reservation date/time`],
-    ['extraInfo', 'misc info?'],
-    ['skill', 'Skill'],
+    'Email',
+    'Member since',
+    'Reservation Updated at',
+    'Misc info?',
+    'Skill',
   ];
 
   const [game, setGame] = useState(gameProps.reduce((pojo, prop) => {
@@ -38,11 +38,11 @@ const ViewGame = ({ match }) => {
   const [players, setPlayers] = useState([]);
   const [bools, setBools] = useState([[]]);
 
-  const [columns, setColumns] = useState(columns2.map((pair, index) => {
+  const [columns, setColumns] = useState(columns2.map((column, index) => {
     return {
-      dataField: pair[0],
+      dataField: column,
       // Make columns narrower by breaking multiple words, wherever possible.
-      text: pair[1].split(' ').join('\n'),
+      text: column.split(' ').join('\n'),
       sort: true,
       headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
       sortFunc: (a, b, order, dataField) => {
@@ -70,22 +70,24 @@ const ViewGame = ({ match }) => {
         // let newGame = (await res.json()).game;
         console.log("data = ", data);
         let newGame = data.game;
-        console.log("newGame = ", newGame);
+        newGame["Created at"] = newGame.createdAt;
+        newGame["Updated at"] = newGame.updatedAt;
+        // console.log("newGame = ", newGame);
         // let bools = newGame.bools;
         let positions = newGame.positions || [];
         let sizes = newGame.sizes || [];
 
         // let newColumns = [...columns2, ...bools.map(bool => [bool, bool])];
-        let newColumns = [...columns2, ...positions.map(position => [position, position]), ...sizes.map(size => [size, size])];
+        let newColumns = [...columns2, ...positions, ...sizes];
         // console.log("newGame = ", newGame);
         let newPlayers = newGame.players;
         // Below sets the only prop of the columns prop which depends upon state.
 
-        newColumns = newColumns.map((pair, index) => {
+        newColumns = newColumns.map((column, index) => {
           return {
-            dataField: pair[0],
+            dataField: column,
             // Make columns narrower by breaking multiple words, wherever possible.
-            text: pair[1].split(' ').join('\n'),
+            text: column.split(' ').join('\n'),
             sort: true,
             headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
             sortFunc: (a, b, order, dataField) => {
@@ -112,7 +114,7 @@ const ViewGame = ({ match }) => {
                 prop[1] && prop[0] === 'extraInfo' ? 'y' :
                 prop[1]};
           }, {});
-          player.createdAt = player.createdAt.split('T')[0];
+          player["Created at"] = player.createdAt.split('T')[0];
           let updatedAt = player.updatedAt.split('T');
           player.updatedAt = updatedAt[0].slice(5) + ' ' + updatedAt[1].slice(0, -8);
           bools.forEach((bool, index) => {

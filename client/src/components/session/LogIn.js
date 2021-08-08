@@ -3,17 +3,18 @@ import { Redirect, NavLink } from 'react-router-dom';
 import Context from '../../context';
 
 const LogIn = () => {
-  const [email, setEmail] = useState("volleyb@aol.com");
-  const [password, setPassword] = useState("password");
+  const [Email, setEmail] = useState("volleyb@aol.com");
+  const [Password, setPassword] = useState("password");
   const [message, setMessage] = useState('');
   const { fetchWithCSRF, currentUser, setCurrentUser } = useContext(Context);
 
-  const login = async (email, password) => {
+  const login = async (Email, Password) => {
     const response = await fetch(`/api/session`, { method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ Email, Password })
     });
     let data = await response.json();
+    console.log("data = ", data);
     if (response.ok) {
       setCurrentUser(data.user);
     } else {
@@ -23,9 +24,9 @@ const LogIn = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    let message = !email ? "Email address is needed." : !password ? "Password is needed." : "";
+    let message = !Email ? "Email address is needed." : !Password ? "Password is needed." : "";
     setMessage(message);
-    if (!message) login(email, password);
+    if (!message) login(Email, Password);
   }
 
   return (currentUser) ? <Redirect to="/" /> : (
@@ -35,12 +36,12 @@ const LogIn = () => {
       <h4>We hope that you will either login or signup.</h4>
         <span>Email address:</span>
         <input
-          type="text" placeholder="Email" value={email}
+          type="text" placeholder="Email" value={Email}
           onChange={e => setEmail(e.target.value)}
         />
         <span>Password:</span>
         <input
-          type="password" placeholder="Password" value={password}
+          type="password" placeholder="Password" value={Password}
           onChange={e => setPassword(e.target.value)}
         />
         <button color="primary" variant="outlined" type="submit">Login</button>

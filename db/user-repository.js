@@ -9,14 +9,14 @@ class NullUser {
 
 async function create(details) {
   const user = await User.build(details);
-  user.setPassword(details.password);
+  user.setPassword(details.Password);
   return await user.save();
 }
 
-async function findByEmail(email) {
+async function findByEmail(Email) {
   let user;
   try {
-    user = await User.findOne({ where: { email } });
+    user = await User.findOne({ where: { Email } });
   } catch (error) {
     console.error(error);
     return next({ status: 401, message: "User.findOne made an error" });
