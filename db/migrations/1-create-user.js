@@ -8,20 +8,20 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      email: {
+      Email: {
         allowNull: false,
         type: Sequelize.STRING(255),
         unique: true,
       },
-      nickName: {
+      Nickname: {
         allowNull: false,
         type: Sequelize.STRING(32),
         unique: true
       },
-      ...['firstName', 'lastName', 'address'].reduce((pojo, key) => {
+      ...['First name', 'Last name', 'Address'].reduce((pojo, key) => {
         return {...pojo, [key]: {allowNull: false, type: Sequelize.STRING(63)}};
       }, {}),
-      cell: {
+      Cell: {
         allowNull: false,
         type: Sequelize.BIGINT,
       },
@@ -29,7 +29,7 @@ module.exports = {
       //   allowNull: false,
       //   type: Sequelize.INTEGER,
       // },
-      photo: {
+      Photo: {
         type: Sequelize.TEXT,
       },
       tokenId: {
@@ -39,7 +39,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING(60).BINARY,
       },
-      ...['createdAt', 'updatedAt'].reduce((pojo, date) => {
+      ...['Created at', 'Updated at'].reduce((pojo, date) => {
         return {...pojo, [date]: {allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW")}};
       }, {})
     });

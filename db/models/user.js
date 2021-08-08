@@ -5,20 +5,20 @@ const bcrypt = require('bcryptjs');
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define("User",
     {
-      email: {allowNull: false, type: DataTypes.STRING, unique: true
+      Email: {allowNull: false, type: DataTypes.STRING, unique: true
         // validates: {isEmail: true, len: [3, 255]},
       },
-      address: {allowNull: false, type: DataTypes.STRING},
-      nickName: {allowNull: false, type: DataTypes.STRING, unique: true
+      Address: {allowNull: false, type: DataTypes.STRING},
+      Nickname: {allowNull: false, type: DataTypes.STRING, unique: true
         // validates: {isEmail: true, len: [3, 255]},
       },
-      photo: {type: DataTypes.TEXT},
+      Photo: {type: DataTypes.TEXT},
       tokenId: {type: DataTypes.STRING},
       hashedPassword: {allowNull: false, type: DataTypes.STRING.BINARY, validates: {len: [60, 60]}},
-      ...['firstName', 'lastName'].reduce((pojo, key) => {
+      ...['First name', 'Last name'].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: DataTypes.STRING}});
       }, {}),
-      ...['cell'].reduce((pojo, key) => {
+      ...['Cell'].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: DataTypes.INTEGER}});
       }, {}),
     },
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultScope: {
         attributes: {
 //          exclude: ["hashedPassword", "createdAt", "updatedAt"],
-          exclude: ["updatedAt"],
+          exclude: ["Updated at"],
         },
       },
       scopes: {
@@ -48,38 +48,38 @@ module.exports = (sequelize, DataTypes) => {
 
   User.prototype.toSafeObject = function () {
     // DRY up the following, by simply deleting the hashedpassword property from the pojo
-    return ["createdAt", "email", "firstName", "lastName", "nickName", "address", "photo", "cell", "skill", "id"].reduce((pojo, key) => {
+    return ["Created at", "Email", "First name", "Last name", "Nickname", "Address", "Photo", "Cell", "id"].reduce((pojo, key) => {
       return {...pojo, [key]: this[key]}
     }, {});
   }
 
-  User.login = async function({ email, password }) {
-    const user = await User.scope('loginUser').findOne({where: [{ email }]});
-    if (user && user.validatePassword(password)) {
+  User.login = async function({ Email, Password }) {
+    const user = await User.scope('loginUser').findOne({where: [{ Email }]});
+    if (user && user.validatePassword(Password)) {
       return await User.scope('currentUser').findByPk(user.id);
     }
   };
 
   // Do we ever use the following?
-  User.signup = async function({ firstName, lastName, optStuff, email, wantsEmail, password }) {
-    const hashedPassword = bcrypt.hashSync(password);
-    const user = await User.create({email, hashedPassword});
-    return await User.scope("currentUser").findByPk(user.id);
-  };
+  // User.signup = async function({ ["First name"]: Firstname, lastName, optStuff, Email, wantsEmail, password }) {
+  //   const hashedPassword = bcrypt.hashSync(password);
+  //   const user = await User.create({Email, hashedPassword});
+  //   return await User.scope("currentUser").findByPk(user.id);
+  // };
 
-  User.prototype.validatePassword = function(password) {
-    return bcrypt.compareSync(password, this.hashedPassword.toString());
+  User.prototype.validatePassword = function(Password) {
+    return bcrypt.compareSync(Password, this.hashedPassword.toString());
   };
 
   User.prototype.isValid = () => true;
 
-  User.prototype.setPassword = function (password) {
-    this.hashedPassword = bcrypt.hashSync(password);
+  User.prototype.setPassword = function (Password) {
+    this.hashedPassword = bcrypt.hashSync(Password);
     return this;
   };
 
-  User.prototype.isValidPassword = function (password) {
-    return bcrypt.compareSync(password, this.hashedPassword.toString());
+  User.prototype.isValidPassword = function (Password) {
+    return bcrypt.compareSync(Password, this.hashedPassword.toString());
   };
 
   User.getCurrentUserById = async function(id) {
