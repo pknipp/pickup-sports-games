@@ -76,7 +76,6 @@ const App = () => {
         <BrowserRouter>
           <NavBar />
           <Switch>
-
             <AuthRoute exact path="/login" component={LogIn} />
             <AuthRoute exact path="/signup" component={User} />
             <ProtectedRoute exact path="/" component={Home}/>

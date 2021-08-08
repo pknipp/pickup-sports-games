@@ -7,7 +7,7 @@ import Context from '../../context';
 import { time } from 'faker';
 
 const ViewGame = ({ match }) => {
-  const { fetchWithCSRF, rerender, setRerender } = useContext(Context);
+  const { fetchWithCSRF, rerender, setRerender, genders } = useContext(Context);
   const gameProps = ['address', 'dateTime', 'extraInfo', 'minSkill', 'maxSkill'];
   const userProps = ['email', 'nickName', 'cell', 'skill',
   // 'photo'
@@ -78,7 +78,7 @@ const ViewGame = ({ match }) => {
         let sizes = newGame.sizes || [];
 
         // let newColumns = [...columns2, ...bools.map(bool => [bool, bool])];
-        let newColumns = [...columns2, ...positions, ...sizes];
+        let newColumns = [...columns2, ...genders, ...positions, ...sizes];
         // console.log("newGame = ", newGame);
         let newPlayers = newGame.players;
         // Below sets the only prop of the columns prop which depends upon state.

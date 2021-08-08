@@ -16,7 +16,7 @@
             name: "flag football",
             sizes: ["4 on 4", "7 on 7", "8 on 8"],
             // , "men's", "women's", "mixed",
-            positions: ["quarterback", "receiver", "defense", "line", "running back"],
+            positions: ["QB", "receiver", "defense", "line", "running back"],
             // skills: ["beginner", "intermediate", "advanced"],
         },
         {
