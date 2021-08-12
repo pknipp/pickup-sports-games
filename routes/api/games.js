@@ -40,12 +40,12 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     const allVenues = [];
     games.forEach(async game => {
         allVenues.push(game.address);
-        game.owner = (await User.findByPk(game.ownerId)).dataValues;
-        game.sport = (await GameType.findByPk(game.gameTypeId)).dataValues.name;
-        delete game.owner.hashedPassword;
+        game["Game organizer"] = (await User.findByPk(game.ownerId)).dataValues.Nickname;
+        game.Sport = (await GameType.findByPk(game.gameTypeId)).dataValues.name;
+        // delete game.owner.hashedPassword;
         let reservations = await Reservation.findAll({where: {gameId: game.id}});
         // transform Query to an array of pojos, to enable us to compute array's length
-        game.count = reservations.map(reservation => reservation.dataValues).length;
+        game["Player reservations"] = reservations.map(reservation => reservation.dataValues).length;
         // Set reservationId to zero if no reservation for this game has been made by this user.
         game.reservationId = reservations.reduce((reservationId, reservation) => {
             return (reservation.playerId === user.id ? reservation.id : reservationId);
@@ -73,7 +73,6 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   const game = (await Game.findByPk(gameId)).dataValues;
   const gameType = await GameType.findByPk(game.gameTypeId);
   game.name = gameType.name;
-  // game.bools = JSON.parse(gameType.bools);
   game.positions = gameType.positions && JSON.parse(gameType.positions);
   game.sizes     = gameType.sizes     && JSON.parse(gameType.sizes);
   if (game.ownerId !== user.id) return next({ status: 401, message: "You are not authorized." });

@@ -22,15 +22,16 @@ const ViewGame = ({ match }) => {
     'extra info'
   ].map((text, index) => ({dataField: String(index), text}));
 
-  const columns2 = [
-    'Nickname',
-    // ['photo', ''],
-    'Email',
-    'Member since',
-    'Reservation Updated at',
-    'Misc info?',
-    'Skill',
-  ];
+  const columns2 = [];
+  // const columns2 = [
+  //   'Nickname',
+  //   // ['photo', ''],
+  //   'Email',
+  //   'Member since',
+  //   'Reservation Updated at',
+  //   'Misc info?',
+  //   'Skill',
+  // ];
 
   const [game, setGame] = useState(gameProps.reduce((pojo, prop) => {
     return {[prop]: '', ...pojo};
@@ -78,8 +79,8 @@ const ViewGame = ({ match }) => {
         let sizes = newGame.sizes || [];
 
         // let newColumns = [...columns2, ...bools.map(bool => [bool, bool])];
-        let newColumns = [...columns2, ...genders, ...positions, ...sizes];
-        // console.log("newGame = ", newGame);
+        let bools = [...genders, ...positions, ...sizes];
+        let newColumns = [...columns2, ...bools];
         let newPlayers = newGame.players;
         // Below sets the only prop of the columns prop which depends upon state.
 

@@ -10,24 +10,24 @@ const Home = () => {
         ["games for which you are registered to play", "Edit reservation"],
         ["games for which you are not registered to play", "Make reservation"]
     ];
-    let allKeys = [
-        ['sport', 'Sport'],
-        ['date', 'Game date'],
-        ['time', 'Start time'],
-        ['address', 'Address'],
-        ['duration', 'Travel time (hr:min)'],
-        ['count', 'Player reservations'],
-        ['owner', 'Game organizer'],
-        ['edit', ''],
-        ['view', '']
-    ];
+    // let allKeys = [
+    //     ['sport', 'Sport'],
+    //     ['date', 'Game date'],
+    //     ['time', 'Start time'],
+    //     ['address', 'Address'],
+    //     ['duration', 'Travel time (hr:min)'],
+    //     ['count', 'Player reservations'],
+    //     ['owner', 'Game organizer'],
+    //     ['edit', ''],
+    //     ['view', '']
+    // ];
     const { currentUser, gender } = useContext(Context);
     const [loading, setLoading] = useState(true);
     const [allGames, setAllGames] = useState([]);
     const [games, setGames] = useState([]);
-    const [keys, setKeys] = useState([...allKeys]);
+    const [keys, setKeys] = useState([]);
     const [selectedOption, setSelectedOption] = useState(0);
-    const [columns, setColumns] = useState(allKeys.map(key => ({dataField: key[0], text: key[1], sort: true})));
+    const [columns, setColumns] = useState(keys.map(key => ({dataField: key, text: key, sort: true})));
     const [message, setMessage] = useState('');
 
     const defaultSorted = [{dataField: 'date', order: 'asc'}];
@@ -40,18 +40,18 @@ const Home = () => {
                 let newAllGames = [];
                 data.games.forEach(game => {
                     // Consolidate the following two lines, for the sake of DRY-ness.
-                    let {id, sport, dateTime, address, duration, count, owner, reservationId} = game;
-                    let newGame = {id, sport, address, count, reservationId, owner: owner.nickName}
-                    let [date, time] = dateTime.split("T");
-                    time = time.slice(0, 5);
-                    let minutes = Math.round(duration.value / 60);
+                    // let {id, sport, dateTime, address, duration, count, owner, reservationId} = game;
+                    // let newGame = {id, sport, address, count, reservationId, ["Game organizer"]: game["Game organizer"]}
+                    let [Date, Time] = game.dateTime.split("T");
+                    Time = Time.slice(0, 5);
+                    let minutes = Math.round(game.duration.value / 60);
+                    delete game.duration;
                     let hours = Math.floor(minutes / 60);
                     hours = (!hours ? "00" : hours < 10 ? "0" : "") + hours;
                     minutes -= hours * 60;
                     minutes = (!minutes ? "00" : minutes < 10 ? "0" : "") + minutes;
-                    duration = hours + ":" + minutes;
-                    newGame = {...newGame, date, time, duration, ownerId: owner.id};
-                    newGame.ownerId = owner.id;
+                    game["Travel time"] = hours + ":" + minutes;
+                    let newGame = {...game, Date, Time, ["Travel time"]: game["Travel time"]};
                     newAllGames.push(newGame);
                 });
                 setAllGames(newAllGames);
@@ -64,10 +64,12 @@ const Home = () => {
 
     useEffect(() => {
         // Do not include the "game owner" column for the zeroth value of selectOption
-        let newKeys = allKeys.filter(key => key[0] !== (!selectedOption ? 'owner' : "view"));
+        // let newKeys = allKeys.filter(key => key[0] !== (!selectedOption ? 'owner' : "view"));
+        let newKeys = !allGames.length ? [] : Object.keys(allGames[0]);
         setKeys(newKeys);
+        console.log("newKeys = ", newKeys);
         setColumns(newKeys.map((key, index) => {
-            return {dataField: key[0], text: key[1], sort: !!key[1]};
+            return {dataField: key, text: key, sort: !!key};
         }));
         let newGames = allGames.filter((game, i) => {
             let bool;
@@ -78,6 +80,7 @@ const Home = () => {
             }
             return bool;
         });
+        console.log("newGames = ", newGames);
         newGames.forEach(game => {
             let editPath;
             if (selectedOption) {
