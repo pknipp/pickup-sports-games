@@ -39,20 +39,16 @@ const Home = () => {
             if (response.ok) {
                 let newAllGames = [];
                 data.games.forEach(game => {
-                    // Consolidate the following two lines, for the sake of DRY-ness.
-                    // let {id, sport, dateTime, address, duration, count, owner, reservationId} = game;
-                    // let newGame = {id, sport, address, count, reservationId, ["Game organizer"]: game["Game organizer"]}
                     let [GameDate, GameTime] = game.dateTime.split("T");
                     GameTime = GameTime.slice(0, 5);
                     let minutes = Math.round(game.duration.value / 60);
-                    delete game.duration;
                     let hours = Math.floor(minutes / 60);
                     hours = (!hours ? "00" : hours < 10 ? "0" : "") + hours;
                     minutes -= hours * 60;
                     minutes = (!minutes ? "00" : minutes < 10 ? "0" : "") + minutes;
                     game["Travel time"] = hours + ":" + minutes;
                     let newGame = {...game, ["Game date"]: GameDate, ["Game time"]: GameTime};
-                    ['dateTime'].forEach(key => delete newGame[key]);
+                    ['dateTime', 'duration'].forEach(key => delete newGame[key]);
                     newAllGames.push(newGame);
                 });
                 setAllGames(newAllGames);
@@ -64,19 +60,6 @@ const Home = () => {
     }, [currentUser.id]);
 
     useEffect(() => {
-        // Do not include the "game owner" column for the zeroth value of selectOption
-        // let newKeys = allKeys.filter(key => key[0] !== (!selectedOption ? 'owner' : "view"));
-        // let newKeys = !allGames.length ? [] : Object.keys(allGames[0]);
-        // setKeys(newKeys);
-        // setColumns(newKeys.map((key, index) => {
-        //     return {dataField: key, text: key, sort: !!key};
-        // }));
-        let newColumns = (!allGames.length ? [] : Object.keys(allGames[0]).filter(col => {
-            return !["id", "reservationId", "Minimum skill", "Maximum skill", "Extra info"].includes(col);
-        }).map(col => {
-            return {dataField: col, text: col, sort: !!col};
-        }));    
-        setColumns(newColumns);
         let newGames = allGames.filter((game, i) => {
             let bool;
             if (selectedOption) {
@@ -114,6 +97,13 @@ const Home = () => {
             )
         });
         setGames(newGames);
+        let newColumns = (!newGames.length ? [] : Object.keys(newGames[0]).filter(col => {
+            return !["id", "reservationId", "Minimum skill", "Maximum skill", "Extra info", !selectedOption ? 'Game organizer' : 'view'].includes(col);
+        }).map(col => {
+            let text = ['edit', 'view'].includes(col) ? '' : col
+            return {dataField: col, text, sort: !!text};
+        }));
+        setColumns(newColumns);
     }, [allGames, selectedOption]);
 
     return (
