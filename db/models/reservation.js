@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         return {...pojo, [fk]: {type: DataTypes.INTEGER, allowNull: false}};
       }, {}),
       bools: {allowNull: false, defaultValue: 0, type: DataTypes.INTEGER},
-      extraInfo: {allowNull: true, type: DataTypes.TEXT},
+      ['Extra info']: {allowNull: true, type: DataTypes.TEXT},
     },
   );
 

@@ -11,7 +11,7 @@ const EditReservation = ({ match }) => {
   const [bools, setBools] = useState([[]]);
   const nullReservation = bools.reduce((pojo, prop) => {
     return {...pojo, [prop]: false};
-  }, {id: 0, playerId: 0, gameId: 0, game: {address: '', dateTime: ''}});
+  }, {id: 0, playerId: 0, gameId: 0, game: {Location: '', dateTime: ''}});
   const [reservation, setReservation] = useState({...nullReservation,
     playerId: currentUser.id,
     id: reservationId,
@@ -27,7 +27,7 @@ const EditReservation = ({ match }) => {
       const res = await fetch(`/api/reservations/${resGameId}`);
       let newReservation = {...reservation, ...(await res.json()).reservation};
       Object.keys(newReservation).forEach(key => {
-        if (newReservation[key] === null) newReservation[key] = key === 'extraInfo' ? '' : false;
+        if (newReservation[key] === null) newReservation[key] = key === 'Extra info' ? '' : false;
       })
       newReservation.game.dateTime = moment(newReservation.game.dateTime).local().format().slice(0,-9);
 
@@ -82,7 +82,7 @@ const EditReservation = ({ match }) => {
     <div className="simple">
       <form className="auth" onSubmit={handlePutPost}>
         <h3>
-          {reservation.id ? "Change" : "Choose"} your reservation details for the {reservation.game.name} game at {reservation.game.address} on &nbsp;
+          {reservation.id ? "Change" : "Choose"} your reservation details for the {reservation.game.Sport && reservation.game.Sport.toLowerCase()} game at {reservation.game.Location} on &nbsp;
           {reservation.game.dateTime.split('T')[0]} at &nbsp;
           {reservation.game.dateTime.split('T')[1]}.
         </h3>
@@ -107,8 +107,8 @@ const EditReservation = ({ match }) => {
 
         <span><h4>Extra info about your reservation (optional):</h4></span>
         <input
-          type="text" placeholder="Extra Info" name="extraInfo" value={reservation.extraInfo}
-          onChange={e => setReservation({...reservation, extraInfo: e.target.value})}
+          type="text" placeholder="Extra info" name="Extra info" value={reservation['Extra info']}
+          onChange={e => setReservation({...reservation, ['Extra info']: e.target.value})}
         />
 
         <button color="primary" variant="outlined" type="submit">

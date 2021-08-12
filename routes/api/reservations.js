@@ -27,8 +27,8 @@ router.get('/:resGameId', async(req, res) => {
     let reservation = (reservationId && (await Reservation.findByPk(reservationId)).dataValues) || {};
     const game = (await Game.findByPk(gameId)).dataValues;
     const gameType = (await GameType.findByPk(game.gameTypeId)).dataValues;
-    game.name = gameType.name;
-    game.bools = JSON.parse(gameType.bools);
+    game.Sport = gameType.Sport;
+    game.bools = [...JSON.parse(gameType.positions || '[]'), ...JSON.parse(gameType.sizes || '[]')];
     reservation.game = game;
     res.json({reservation});
 })
