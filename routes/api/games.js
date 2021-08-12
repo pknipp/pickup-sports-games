@@ -39,13 +39,13 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     const games = (await Game.findAll({})).map(game => game.dataValues);
     const allVenues = [];
     games.forEach(async game => {
-        allVenues.push(game.address);
+        allVenues.push(game.Location);
         game["Game organizer"] = (await User.findByPk(game.ownerId)).dataValues.Nickname;
         game.Sport = (await GameType.findByPk(game.gameTypeId)).dataValues.name;
         // delete game.owner.hashedPassword;
         let reservations = await Reservation.findAll({where: {gameId: game.id}});
         // transform Query to an array of pojos, to enable us to compute array's length
-        game["Player reservations"] = reservations.map(reservation => reservation.dataValues).length;
+        game["Player reservations"] = reservations.length;
         // Set reservationId to zero if no reservation for this game has been made by this user.
         game.reservationId = reservations.reduce((reservationId, reservation) => {
             return (reservation.playerId === user.id ? reservation.id : reservationId);
@@ -57,7 +57,7 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     let nBundle = 0;
     while (allVenues.length) {
       let venues = allVenues.splice(0, Math.min(maxFetch, allVenues.length));
-      const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${user.address}&destinations=${venues.join('|')}&key=${mapsApiKey}`);
+      const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${user.Address}&destinations=${venues.join('|')}&key=${mapsApiKey}`);
       let data = await response.json();
       data.rows[0].elements.forEach((element, index) => {
         games[index + nBundle * maxFetch].duration = element.duration;
