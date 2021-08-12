@@ -42,8 +42,8 @@ const Home = () => {
                     // Consolidate the following two lines, for the sake of DRY-ness.
                     // let {id, sport, dateTime, address, duration, count, owner, reservationId} = game;
                     // let newGame = {id, sport, address, count, reservationId, ["Game organizer"]: game["Game organizer"]}
-                    let [Date, Time] = game.dateTime.split("T");
-                    Time = Time.slice(0, 5);
+                    let [GameDate, GameTime] = game.dateTime.split("T");
+                    GameTime = GameTime.slice(0, 5);
                     let minutes = Math.round(game.duration.value / 60);
                     delete game.duration;
                     let hours = Math.floor(minutes / 60);
@@ -51,7 +51,8 @@ const Home = () => {
                     minutes -= hours * 60;
                     minutes = (!minutes ? "00" : minutes < 10 ? "0" : "") + minutes;
                     game["Travel time"] = hours + ":" + minutes;
-                    let newGame = {...game, Date, Time, ["Travel time"]: game["Travel time"]};
+                    let newGame = {...game, ["Game date"]: GameDate, ["Game time"]: GameTime};
+                    // ['ownerId'].forEach(key => delete newGame[key]);
                     newAllGames.push(newGame);
                 });
                 setAllGames(newAllGames);
@@ -76,7 +77,7 @@ const Home = () => {
             if (selectedOption) {
                 bool = (!(selectedOption - 1) !== !game.reservationId);
             } else {
-                bool = (game.ownerId === currentUser.id);
+                bool = (game["Game organizer"] === currentUser.Nickname);
             }
             return bool;
         });
