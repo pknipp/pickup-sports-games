@@ -29,11 +29,7 @@ const EditGame = ({ match }) => {
     (async() => {
       if (game.id) {
         const res = await fetch(`/api/games/${game.id}`);
-        // let data = await res.json();
-        // console.log("data = ", data);
         let newGame = (await res.json()).game;
-        // let newGame = data.game;
-        // console.log("newGame = ", newGame);
         // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';

@@ -7,11 +7,11 @@ module.exports = (sequelize, DataTypes) => {
     {
       ownerId: {allowNull: false, type: DataTypes.INTEGER},
       gameTypeId: {allowNull: false, type: DataTypes.INTEGER},
-      ...['minSkill', 'maxSkill'].reduce((pojo, key) => {
+      ...['Minimum skill', 'Maximum skill'].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: DataTypes.INTEGER}});
       }, {}),
-      address: {allowNull: false, type: DataTypes.TEXT},
-      extraInfo: {allowNull: true, type: DataTypes.TEXT},
+      Location: {allowNull: false, type: DataTypes.TEXT},
+      ["Extra info"]: {allowNull: true, type: DataTypes.TEXT},
       dateTime: {allowNull: false, type: DataTypes.DATE}
     },
   );

@@ -5,10 +5,10 @@ module.exports = {
       id: {allowNull: false, autoIncrement: true, primaryKey: true, type: Sequelize.INTEGER},
       ownerId: {allowNull: false, type: Sequelize.INTEGER, onDelete: 'CASCADE', references: {model: "Users"}},
       gameTypeId: {allowNull: false, type: Sequelize.INTEGER, onDelete: 'CASCADE', references: {model: "GameTypes"}},
-      address: {allowNull: false, type: Sequelize.TEXT},
-      extraInfo: {type: Sequelize.TEXT},
+      Location: {allowNull: false, type: Sequelize.TEXT},
+      ['Extra info']: {type: Sequelize.TEXT},
       dateTime: {type: Sequelize.DATE, allowNull: false},
-      ...['minSkill', 'maxSkill'].reduce((pojo, key) => {
+      ...['Minimum skill', 'Maximum skill'].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: Sequelize.INTEGER}});
       }, {}),
       ...["createdAt", "updatedAt"].reduce((pojo, key) => {

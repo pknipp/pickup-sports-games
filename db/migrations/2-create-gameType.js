@@ -3,7 +3,7 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable("GameTypes", {
       id: {allowNull: false, autoIncrement: true, primaryKey: true, type: Sequelize.INTEGER},
-      name: {allowNull: false, type: Sequelize.TEXT},
+      ['Sport']: {allowNull: false, type: Sequelize.TEXT},
       positions: {allownull: true, type: Sequelize.TEXT},
       sizes: {allowNull: true, type: Sequelize.TEXT},
       skills: {allowNull: false, type: Sequelize.TEXT,
