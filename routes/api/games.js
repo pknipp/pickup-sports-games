@@ -41,7 +41,7 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     games.forEach(async game => {
         allVenues.push(game.Location);
         game["Game organizer"] = (await User.findByPk(game.ownerId)).dataValues.Nickname;
-        game.Sport = (await GameType.findByPk(game.gameTypeId)).dataValues.name;
+        game.Sport = (await GameType.findByPk(game.gameTypeId)).dataValues.Sport;
         // delete game.owner.hashedPassword;
         let reservations = await Reservation.findAll({where: {gameId: game.id}});
         // transform Query to an array of pojos, to enable us to compute array's length
@@ -50,6 +50,7 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
         game.reservationId = reservations.reduce((reservationId, reservation) => {
             return (reservation.playerId === user.id ? reservation.id : reservationId);
         }, 0);
+        ['gameTypeId', 'ownerId', 'createdAt', 'updatedAt'].forEach(key => delete game[key]);
     })
     // fetch travel-Time between user and a bundled array of addresses ("venues")
     // google restricts each bundle to contain no more than 25 addresses

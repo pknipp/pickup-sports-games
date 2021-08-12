@@ -52,7 +52,7 @@ const Home = () => {
                     minutes = (!minutes ? "00" : minutes < 10 ? "0" : "") + minutes;
                     game["Travel time"] = hours + ":" + minutes;
                     let newGame = {...game, ["Game date"]: GameDate, ["Game time"]: GameTime};
-                    // ['ownerId'].forEach(key => delete newGame[key]);
+                    ['dateTime'].forEach(key => delete newGame[key]);
                     newAllGames.push(newGame);
                 });
                 setAllGames(newAllGames);
@@ -66,12 +66,17 @@ const Home = () => {
     useEffect(() => {
         // Do not include the "game owner" column for the zeroth value of selectOption
         // let newKeys = allKeys.filter(key => key[0] !== (!selectedOption ? 'owner' : "view"));
-        let newKeys = !allGames.length ? [] : Object.keys(allGames[0]);
-        setKeys(newKeys);
-        console.log("newKeys = ", newKeys);
-        setColumns(newKeys.map((key, index) => {
-            return {dataField: key, text: key, sort: !!key};
-        }));
+        // let newKeys = !allGames.length ? [] : Object.keys(allGames[0]);
+        // setKeys(newKeys);
+        // setColumns(newKeys.map((key, index) => {
+        //     return {dataField: key, text: key, sort: !!key};
+        // }));
+        let newColumns = (!allGames.length ? [] : Object.keys(allGames[0]).filter(col => {
+            return !["id", "reservationId", "Minimum skill", "Maximum skill", "Extra info"].includes(col);
+        }).map(col => {
+            return {dataField: col, text: col, sort: !!col};
+        }));    
+        setColumns(newColumns);
         let newGames = allGames.filter((game, i) => {
             let bool;
             if (selectedOption) {
@@ -81,7 +86,6 @@ const Home = () => {
             }
             return bool;
         });
-        console.log("newGames = ", newGames);
         newGames.forEach(game => {
             let editPath;
             if (selectedOption) {
