@@ -16,8 +16,6 @@ router.put('', [Email, Password],
   if (!errors.isEmpty()) return next({ status: 422, errors: errors.array() });
   let user;
   try {
-    console.log("before userRepo"
-    )
     user = await UserRepository.findByEmail(req.body.Email);
   } catch (e) {
     return next({ status: 401, message: "Invalid credentials" });

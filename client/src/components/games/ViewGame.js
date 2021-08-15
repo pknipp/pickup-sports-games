@@ -69,7 +69,7 @@ const ViewGame = ({ match }) => {
         let data = await res.json();
         // console.log("data = ", data);
         // let newGame = (await res.json()).game;
-        console.log("data = ", data);
+        // console.log("data = ", data);
         let newGame = data.game;
         newGame["Created at"] = newGame.createdAt;
         newGame["Updated at"] = newGame.updatedAt;

@@ -11,9 +11,10 @@ Have users login w/nickName rather than email, and NOT require that email be uni
 
 MVP goals:
     Modify EditGame to allow for the facts that ...:
-        gameType is now a "thing"
-    Other sports to include:
-        hockey, ultimate, badminton, pingpong, squash, sailing, running, bowling, golf, lacrosse
+        gameType is a "thing"
+    What to do if EditGame changes things (like Sport):
+        - cancel reservations?
+        - trigger email to players?
     Partition booleans into three categories: gender, number, and position
         genderBooleans:
             defined - and put into context - in App component (ie, not in db)
@@ -21,9 +22,10 @@ MVP goals:
             heading will include parenthetical "trans-inclusive"
         sizeBooleans: defined in db.gameTypes, allow to be null (e.g., soccer and softball)
         positionBooleans: defined in db.gameTypes, allow to be null (e.g., tennis and basketball)
-    Make default value of db.GameTypes.skills as follows:
-        JSON.stringify(["beginner", "intermediate", "advanced"])
-    Not allow player to create/put reservation unless he/she has at least one true boolean for each of the categories for which there is at least one boolean.
+    On EditReservation page, issue warning if user fails to submit at least one "true" for each of the three boolean categories which are non-empty: gender, positions, sizes
+    Separate contexts into auth, gender, etc.
+    Other sports to include:
+        hockey, ultimate, badminton, pingpong, squash, sailing, running, bowling, golf, lacrosse
     Flesh out README.md
     Continue making front-end prettier.
     Eliminate bug ("000:000") which appears when destination = origin
