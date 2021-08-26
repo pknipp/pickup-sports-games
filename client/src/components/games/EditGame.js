@@ -8,7 +8,7 @@ const EditGame = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender } = useContext(Context);
   const skills = ['none', '1','2','3','4','5','6','7','8','9'];
   const properties = [
-    'gameType',
+    'gameTypeId',
     'Location',
     'dateTime',
     'Extra info',
@@ -17,7 +17,7 @@ const EditGame = ({ match }) => {
   ];
 
   const [game, setGame] = useState(properties.reduce((pojo, prop) => {
-    return {[prop]: '', ...pojo};
+    return {[prop]: '', Sports: [], ...pojo};
   }, {id: Number(match.params.gameId)}));
   const [wantsToPlay, setWantsToPlay] = useState(false);
   const [message, setMessage] = useState('');
@@ -30,6 +30,7 @@ const EditGame = ({ match }) => {
       if (game.id) {
         const res = await fetch(`/api/games/${game.id}`);
         let newGame = (await res.json()).game;
+        console.log("newGame = ", newGame);
         // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';
@@ -89,23 +90,27 @@ const EditGame = ({ match }) => {
             "Choose the Game details."
           }
         </h4>
-        {/* <span>Sport:</span>
+        <span>Sport:</span>
         <select
+          // onChange={e => {
+          //   let val = Number(e.target.value);
+          //   if (val) setGameTypeId(val);
+          // }}
           onChange={e => {
-            let val = Number(e.target.value);
-            if (val) setGameTypeId(val);
+            console.log("game.Sports[Number(e.target.value)] = ", game.Sports[Number(e.target.value)]);
+            setGame({...game, gameTypeId: Number(e.target.value)});
           }}
-          value={gameTypeId && skill}
+          value={1 + game.Sports.map(sport => sport.id).indexOf(game.gameTypeId)}
         >
-          {[null, ...gameTypes].map((gameType, index) => (
+          {game.Sports.map((gameType, index) => (
               <option
-                  key={`${index}`}
+                  key={`${game.Sports[index].id}`}
                   value={index}
               >
-                  {index ? gameType.name : "Select sport"}`}
+                  {index ? game.Sports[index - 1].Sport : "Select sport"}
               </option>
           ))}
-        </select> */}
+        </select>
 
         <span>Game location:</span>
         <input
