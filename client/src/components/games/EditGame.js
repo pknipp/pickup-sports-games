@@ -30,7 +30,7 @@ const EditGame = ({ match }) => {
       if (game.id) {
         const res = await fetch(`/api/games/${game.id}`);
         let newGame = (await res.json()).game;
-        console.log("newGame = ", newGame);
+        // console.log("newGame = ", newGame);
         // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';
@@ -57,10 +57,10 @@ const EditGame = ({ match }) => {
     });
     newGame.dateTime = moment(newGame.dateTime).local().format().slice(0, -6);
     setMessage(newGame.message || "Success!");
-    if (game.id) {
+    if (!game.id) {
       // PUT route
-      setGame(newGame);
-    } else {
+      // setGame(newGame);
+    // } else {
       // POST route
       if (!newGame.message) history.push(wantsToPlay ? `/reservations/0-${newGame.id}` : '/');
     }
@@ -97,14 +97,14 @@ const EditGame = ({ match }) => {
           //   if (val) setGameTypeId(val);
           // }}
           onChange={e => {
-            console.log("game.Sports[Number(e.target.value)] = ", game.Sports[Number(e.target.value)]);
+            // console.log("game.Sports[Number(e.target.value)] = ", game.Sports[Number(e.target.value)]);
             setGame({...game, gameTypeId: Number(e.target.value)});
           }}
           value={1 + game.Sports.map(sport => sport.id).indexOf(game.gameTypeId)}
         >
           {game.Sports.map((gameType, index) => (
               <option
-                  key={`${game.Sports[index].id}`}
+                  key={`${index && game.Sports[index - 1].id}`}
                   value={index}
               >
                   {index ? game.Sports[index - 1].Sport : "Select sport"}
