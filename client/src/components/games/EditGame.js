@@ -11,7 +11,7 @@ const EditGame = ({ match }) => {
     'gameType',
     'Location',
     'dateTime',
-    'extraInfo',
+    'Extra info',
     'minSkill',
     'maxSkill'
   ];
@@ -30,7 +30,6 @@ const EditGame = ({ match }) => {
       if (game.id) {
         const res = await fetch(`/api/games/${game.id}`);
         let newGame = (await res.json()).game;
-        console.log("newGame = ", newGame);
         // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';
@@ -159,8 +158,8 @@ const EditGame = ({ match }) => {
 
         <span>Extra info (optional):</span>
         <input
-          type="text" placeholder="Extra Info about event" name="extraInfo" value={game.extraInfo}
-          onChange={e => setGame({...game, extraInfo: e.target.value})}
+          type="text" placeholder="Extra Info about event" name="Extra info" value={game['Extra info']}
+          onChange={e => setGame({...game, ['Extra info']: e.target.value})}
         />
 
         {game.id ? null :
