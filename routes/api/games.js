@@ -106,8 +106,8 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
         game[key] = value !== '' ? value : null;
     });
     await game.save();
-    game = {...game.dataValues, message};
-    res.status(200).json({game});
+    // game = {...game.dataValues, message};
+    res.status(200).json({id: game.id, message});
 }));
 
 router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {

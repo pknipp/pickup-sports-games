@@ -50,19 +50,21 @@ const EditGame = ({ match }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(game)
     });
-    let newGame = (await res.json()).game;
+    let {id, newMessage} = await res.json();
     // React likes '' but does not like null.
-    Object.entries(newGame).forEach(([key, value]) => {
-      if (value === null) newGame[key] = '';
-    });
-    newGame.dateTime = moment(newGame.dateTime).local().format().slice(0, -6);
-    setMessage(newGame.message || "Success!");
-    if (!game.id) {
+    // Object.entries(newGame).forEach(([key, value]) => {
+    //   if (value === null) newGame[key] = '';
+    // });
+    // newGame.dateTime = moment(newGame.dateTime).local().format().slice(0, -6);
+    setMessage(newMessage || "Success!");
+    setGame({...game, id});
+    if (!id) {
       // PUT route
       // setGame(newGame);
     // } else {
       // POST route
-      if (!newGame.message) history.push(wantsToPlay ? `/reservations/0-${newGame.id}` : '/');
+
+      if (!newMessage) history.push(wantsToPlay ? `/reservations/0-${id}` : '/');
     }
     setRerender(rerender + 1);
   };
