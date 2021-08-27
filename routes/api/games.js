@@ -27,7 +27,9 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
           game.message = `There is something wrong with your game's location (${req.body.Location}).`
           status = 400;
         }
-        res.status(status).json({game});
+        console.log("game = ", game)
+        // res.status(status).json({game});
+        res.status(200).json({id: game.id, message});
     // } catch (e) {
     //     res.status(400).send(e)
     // }
