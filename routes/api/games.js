@@ -111,14 +111,14 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
 }));
 
 router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {
-    const game = await Game.findByPk(Number(req.params.id))   ;
+    const game = await Game.findByPk(Number(req.params.id));
     if (game.ownerId !== req.user.id) res.status(401).send("Unauthorized Access");
-    try{
+    // try{
       await game.destroy();
       res.json({});
-    } catch(e) {
-      res.status(400).send(e);
-    }
+    // } catch(e) {
+    //   res.status(400).send(e);
+    // }
 }));
 
 module.exports = router;

@@ -71,6 +71,7 @@ const EditGame = ({ match }) => {
   };
 
   const handleDelete = async e => {
+    e.preventDefault();
     const res = await fetch(`/api/games/${game.id}`, { method: 'DELETE'});
     if (res.ok) {
       let nullGame = properties.reduce((pojo, prop) => {
