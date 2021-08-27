@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 
 import Context from '../../context';
+import fetch from 'node-fetch';
 
 const EditGame = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender } = useContext(Context);
@@ -12,10 +13,11 @@ const EditGame = ({ match }) => {
     'Location',
     'dateTime',
     'Extra info',
-    'minSkill',
-    'maxSkill'
+    'Minimum skill',
+    'Maximum skill'
   ];
 
+  const [gameTypes, setGameTypes] = useState([]);
   const [game, setGame] = useState(properties.reduce((pojo, prop) => {
     return {[prop]: '', Sports: [], ...pojo};
   }, {id: Number(match.params.gameId)}));
@@ -27,16 +29,20 @@ const EditGame = ({ match }) => {
 
   useEffect(() => {
     (async() => {
+      setGameTypes(await (await (await fetch('/api/gameTypes')).json()).gameTypes);
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async() => {
       if (game.id) {
         const res = await fetch(`/api/games/${game.id}`);
         let newGame = (await res.json()).game;
-        // console.log("newGame = ", newGame);
         // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
           if (newGame[key] === null) newGame[key] = '';
         });
         newGame.dateTime = moment(newGame.dateTime).local().format().slice(0, -6);
-        // newGame.dateTime = moment(newGame.dateTime).local().format().slice(0, -6);
         setGame(newGame)
       }
     })();
@@ -44,8 +50,8 @@ const EditGame = ({ match }) => {
 
   const handlePutPost = async e => {
     e.preventDefault();
-    game.minSkill = isNaN(game.minSkill) ? 0 : Number(game.minSkill);
-    game.maxSkill = isNaN(game.maxSkill) ? 0 : Number(game.maxSkill);
+    game['Minimum skill'] = isNaN(game['Minimum skill']) ? 0 : Number(game['Minimum skill']);
+    game['Maximum skill'] = isNaN(game['Maximum skill']) ? 0 : Number(game['Maximum skill']);
     const res = await fetch(`/api/games${game.id ? ('/' + game.id) : ''}`, { method: game.id ? 'PUT': 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(game)
@@ -59,11 +65,6 @@ const EditGame = ({ match }) => {
     setMessage(newMessage || "Success!");
     setGame({...game, id});
     if (!id) {
-      // PUT route
-      // setGame(newGame);
-    // } else {
-      // POST route
-
       if (!newMessage) history.push(wantsToPlay ? `/reservations/0-${id}` : '/');
     }
     setRerender(rerender + 1);
@@ -94,22 +95,17 @@ const EditGame = ({ match }) => {
         </h4>
         <span>Sport:</span>
         <select
-          // onChange={e => {
-          //   let val = Number(e.target.value);
-          //   if (val) setGameTypeId(val);
-          // }}
           onChange={e => {
-            // console.log("game.Sports[Number(e.target.value)] = ", game.Sports[Number(e.target.value)]);
             setGame({...game, gameTypeId: Number(e.target.value)});
           }}
-          value={1 + game.Sports.map(sport => sport.id).indexOf(game.gameTypeId)}
+          value={1 + gameTypes.map(gameType => gameType.id).indexOf(game.gameTypeId)}
         >
-          {game.Sports.map((gameType, index) => (
+          {gameTypes.map((gameType, index) => (
               <option
-                  key={`${index && game.Sports[index - 1].id}`}
+                  key={`${index && gameTypes[index - 1].id}`}
                   value={index}
               >
-                  {index ? game.Sports[index - 1].Sport : "Select sport"}
+                  {index ? gameTypes[index - 1].Sport : "Select sport"}
               </option>
           ))}
         </select>
@@ -129,8 +125,8 @@ const EditGame = ({ match }) => {
         <span>Lower limit of skill-level:</span>
 
         <select
-          onChange={e => setGame({...game, minSkill: !Number(e.target.value) ? 'none' : e.target.value})}
-          value={game.minSkill}
+          onChange={e => setGame({...game, ['Minimum skill']: !Number(e.target.value) ? 'none' : e.target.value})}
+          value={game['Minimum skill']}
         >
           {skills.map((skill, index) => (
               <option
@@ -150,8 +146,8 @@ const EditGame = ({ match }) => {
         /> */}
 
         <select
-          onChange={e => setGame({...game, maxSkill: !Number(e.target.value) ? 'none' : e.target.value})}
-          value={Number(game.maxSkill)}
+          onChange={e => setGame({...game, ['Maximum skill']: !Number(e.target.value) ? 'none' : e.target.value})}
+          value={Number(game['Maximum skill'])}
         >
           {skills.map((skill, index) => (
               <option

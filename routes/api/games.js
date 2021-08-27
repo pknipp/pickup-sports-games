@@ -7,7 +7,7 @@ const fetch = require('node-fetch');
 const { Game, Reservation, User, GameType } = require("../../db/models");
 const { authenticated } = require('./security-utils');
 const { mapsConfig: { mapsApiKey } } = require('../../config');
-const checkAddress = require('./checkAddress');
+const checkLocation = require('./checkLocation');
 const gameType = require('../../db/models/gameType');
 
 const router = express.Router();
@@ -18,13 +18,13 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     // try {
         req.body.ownerId = req.user.id;
         req.body.dateTime = faker.date.future();
-        let checked = await checkAddress(req.body.address);
+        let checked = await checkLocation(req.body.Location);
         if (checked.success) {
-          req.body.address = checked.address;
+          req.body.Location = checked.Location;
           game = (await Game.create(req.body)).dataValues;
           game = {...game, count: 0, reservationId: 0};
         } else {
-          game.message = `There is something wrong with your game's address (${req.body.address}).`
+          game.message = `There is something wrong with your game's location (${req.body.Location}).`
           status = 400;
         }
         res.status(status).json({game});

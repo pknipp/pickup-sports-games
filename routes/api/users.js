@@ -6,7 +6,7 @@ const router = require('express').Router();
 const { User, Game, Reservation, Skill } = require('../../db/models');
 const { authenticated, generateToken } = require('./security-utils');
 const { uploadFile } = require('../../s3helper.js');
-const checkAddress = require('./checkAddress');
+const checkLocation = require('./checkLocation');
 
 // const BUCKET = 'volleyballbucket';
 
