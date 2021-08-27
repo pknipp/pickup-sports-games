@@ -134,7 +134,8 @@ const Home = () => {
                 </div>
             }
             {loading ? <h2>Loading data</h2> :
-                <BootstrapTable keyField='id' data={games} columns={columns} defaultSorted={defaultSorted}/>
+                !columns.length ? <h3>No games</h3> :
+                    <BootstrapTable keyField='id' data={games} columns={columns} defaultSorted={defaultSorted}/>
             }
         </div>
     )
