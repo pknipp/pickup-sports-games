@@ -12,7 +12,7 @@ const r = o => ({...o,
 
 for (let i = 0; i < gameTypes.length; i++) {
     gameTypes[i] = r(gameTypes[i]);
-};
+}; 
 gameTypes.sort((a, b) => a.Sport < b.Sport ? -1 : a.Sport > b.Sport ? 1 : 0);
 
 module.exports = {

@@ -21,15 +21,16 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
         let checked = await checkLocation(req.body.Location);
         if (checked.success) {
           req.body.Location = checked.Location;
+          // game = await Game.create(req.body);
           game = (await Game.create(req.body)).dataValues;
           game = {...game, count: 0, reservationId: 0};
         } else {
           game.message = `There is something wrong with your game's location (${req.body.Location}).`
           status = 400;
         }
-        console.log("game = ", game)
+        // console.log("game = ", game)
         // res.status(status).json({game});
-        res.status(200).json({id: game.id, message});
+        res.status(201).json({id: game.id, message});
     // } catch (e) {
     //     res.status(400).send(e)
     // }
@@ -84,7 +85,7 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
     let player = (await User.findByPk(reservation.playerId)).dataValues;
     reservation = reservation.dataValues;
     ['gameId', 'id', 'playerId', 'createdAt'].forEach(prop => delete reservation[prop]);
-    ['firstName', 'lastName', 'address', 'tokenId', 'hashedPassword', 'updatedAt'].forEach(prop => delete player[prop]);
+    ['First name', 'Last name', 'Address', 'tokenId', 'hashedPassword', 'updatedAt'].forEach(prop => delete player[prop]);
     player = {...player, ...reservation};
     players.push(player);
   };
@@ -97,12 +98,12 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     let message = '';
     if (game.ownerId !== req.user.id) res.status(401).send("Unauthorized Access");
     // confirm that Google Maps API can find a route between game's address & NYC
-    let checked = await checkAddress(req.body.address);
+    let checked = await checkLocation(req.body.Location);
     if (checked.success) {
-      req.body.address = checked.address;
+      req.body.Location = checked.Location;
     } else {
-      message = `There is something wrong with your game's address (${req.body.address}).`
-      delete req.body.address;
+      message = `There is something wrong with your game's location (${req.body.Location}).`
+      delete req.body.Location;
     }
     Object.entries(req.body).forEach(([key, value]) => {
         game[key] = value !== '' ? value : null;

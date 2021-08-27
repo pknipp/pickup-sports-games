@@ -10,7 +10,7 @@ const checkLocation = require('./checkLocation');
 
 // const BUCKET = 'volleyballbucket';
 
-const email = check('email').isEmail().withMessage('Give a valid email address').normalizeEmail();
+const email = check('Email').isEmail().withMessage('Give a valid email address').normalizeEmail();
 // const firstName = check('firstName').not().isEmpty().withMessage('Provide first name');
 // const lastName = check('lastName').not().isEmpty().withMessage('Provide last name');
 const password = check('password').not().isEmpty().withMessage('Provide a password');
@@ -22,17 +22,17 @@ router.post('', [email, password],
     if (errors.length) {
       message = errors[0].msg;
     } else {
-      let otherUser1 = await User.findOne({ where: { email: req.body.email } });
-      let otherUser2 = await User.findOne({ where: { nickName: req.body.nickName } });
+      let otherUser1 = await User.findOne({ where: { Email: req.body.Email } });
+      let otherUser2 = await User.findOne({ where: { Nickname: req.body.Nickname } });
       if (otherUser1) {
         message = "That email is taken.";
       } else if (otherUser2) {
         message = "That nickname is taken.";
       } else {
         // confirm that Google Maps API can find a route between user's address & NYC
-        let checked = await checkAddress(req.body.address);
+        let checked = await checkLocation(req.body.Address);
         if (checked.success) {
-          req.body.address = checked.address;
+          req.body.Address = checked.Location;
           user = (await User.build(req.body)).setPassword(req.body.password);
           const { jti, token } = generateToken(user);
           user.tokenId = jti;
@@ -41,7 +41,7 @@ router.post('', [email, password],
           user = user.toSafeObject();
           status = 201;
         } else {
-          message = `There is something wrong with your address (${req.body.address}).`
+          message = `There is something wrong with your address (${req.body.Address}).`
         }
       }
     }
@@ -62,7 +62,7 @@ router.put('', [authenticated, email, password],
       let otherUser1 = await User.findOne({
         where: {
           [Sequelize.Op.and]: [
-            { email: req.body.email },
+            { Email: req.body.Email },
             { [Sequelize.Op.not]: { id: user.id } }
           ]
         }
@@ -70,25 +70,25 @@ router.put('', [authenticated, email, password],
       let otherUser2 = await User.findOne({
         where: {
           [Sequelize.Op.and]: [
-            { nickName: req.body.nickName },
+            { Nickname: req.body.Nickname },
             { [Sequelize.Op.not]: { id: user.id } }
           ]
         }
       });
       if (otherUser1) {
-        message = `That email (${req.body.email}) is taken.`;
-        delete req.body.email;
+        message = `That email (${req.body.Email}) is taken.`;
+        delete req.body.Email;
       } else if (otherUser2) {
-        message = `That nickname (${req.body.nickName}) is taken.`;
-        delete req.body.nickName
+        message = `That nickname (${req.body.Nickname}) is taken.`;
+        delete req.body.Nickname
       } else {
         // confirm that Google Maps API can find a route between user's address & NYC
-        let checked = await checkAddress(req.body.address);
+        let checked = await checkLocation(req.body.Address);
         if (checked.success) {
-          req.body.address = checked.address;
+          req.body.Address = checked.Location;
         } else {
-          message = `There is something wrong with your new home address (${req.body.address}).`
-          delete req.body.address;
+          message = `There is something wrong with your new home address (${req.body.Address}).`
+          delete req.body.Address;
         }
       }
       Object.entries(req.body).filter(([key,]) => key !== 'password').forEach(([key, value]) => {
@@ -99,14 +99,16 @@ router.put('', [authenticated, email, password],
       user.tokenId = jti;
       res.cookie("token", token);
       await user.save();
-      let skill = await Skill.findOne({where: {
-        [Sequelize.Op.and]: [
-          {userId: user.id},
-          {gameTypeId: req.body.gameTypeId }
-        ]
-      }});
-      skill.skill = req.body.skill;
-      await skill.save();
+      if (req.body.gameTypeId) {
+        let skill = await Skill.findOne({where: {
+          [Sequelize.Op.and]: [
+            {userId: user.id},
+            {gameTypeId: req.body.gameTypeId }
+          ]
+        }});
+        skill.Skill = req.body.Skill;
+        await skill.save();
+      }
     }
     res.status(status).json({ user: { ...user.toSafeObject(), message } });
   })

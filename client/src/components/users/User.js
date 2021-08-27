@@ -6,12 +6,12 @@ import Context from '../../context';
 const User = () => {
   const { fetchWithCSRF, currentUser, setCurrentUser } = useContext(Context);
   const properties = [
-    'email',
-    'firstName',
-    'lastName',
-    'nickName',
-    'address',
-    'cell',
+    'Email',
+    'First name',
+    'Last name',
+    'Nickname',
+    'Address',
+    'Cell',
     // 'photo',
     'password',
     'password2'
@@ -23,11 +23,17 @@ const User = () => {
   );
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
-  const [skill, setSkill] = useState(0);
+  const [Skill, setSkill] = useState(0);
   const [gameTypes, setGameTypes] = useState([]);
   const [gameTypeId, setGameTypeId] = useState(0);
 
   let history = useHistory();
+
+  // useEffect(() => {
+  //   (async() => {
+  //     setGameTypes(await (await (await fetch('/api/gameTypes')).json()).gameTypes);
+  //   })();
+  // }, []);
 
   useEffect(() => {
     (async() => {
@@ -39,12 +45,12 @@ const User = () => {
 
   const handlePutPost = async e => {
     e.preventDefault();
-    let message = !params.email ? "Email address is needed." :
+    let message = !params.Email ? "Email address is needed." :
                   !params.password?"Password is needed." :
                   params.password !== params.password2 ? "Passwords must match" : "";
     setMessage(message);
     if (!message) {
-      let newParams = {...params, gameTypeId, skill}
+      let newParams = {...params, gameTypeId, Skill}
       const res = await fetch(`/api/users`, { method: currentUser ? 'PUT': 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newParams)
@@ -92,33 +98,33 @@ const User = () => {
         {/* DRY the following code. */}
         <span>Email address:</span>
         <input
-          type="text" placeholder="Email" name="email" value={params.email}
-          onChange={e => setParams({...params, email: e.target.value})}
+          type="text" placeholder="Email" name="Email" value={params.Email}
+          onChange={e => setParams({...params, Email: e.target.value})}
         />
         <span>First name:</span>
         <input
-          type="text" placeholder="First name" name="firstName" value={params.firstName}
-          onChange={e => setParams({...params, firstName: e.target.value})}
+          type="text" placeholder="First name" name="First name" value={params['First name']}
+          onChange={e => setParams({...params, ['First name']: e.target.value})}
         />
         <span>Last name:</span>
         <input
-          type="text" placeholder="Last name" name="lastName" value={params.lastName}
-          onChange={e => setParams({...params, lastName: e.target.value})}
+          type="text" placeholder="Last name" name="Last name" value={params['Last name']}
+          onChange={e => setParams({...params, ['Last name']: e.target.value})}
         />
         <span>Nickname:</span>
         <input
-          type="text" placeholder="Nickname" name="nickName" value={params.nickName}
-          onChange={e => setParams({...params, nickName: e.target.value})}
+          type="text" placeholder="Nickname" name="Nickname" value={params.Nickname}
+          onChange={e => setParams({...params, Nickname: e.target.value})}
         />
         <span>Address:</span>
         <input
-          type="text" placeholder="Address" name="address" value={params.address}
-          onChange={e => setParams({...params, address: e.target.value})}
+          type="text" placeholder="Address" name="Address" value={params.Address}
+          onChange={e => setParams({...params, Address: e.target.value})}
         />
         <span>Cell number (10 digits):</span>
         <input
-          type="number" placeholder="Cell" name="cell" value={params.cell}
-          onChange={e => setParams({...params, cell: Number(e.target.value)})}
+          type="number" placeholder="Cell" name="Cell" value={params.Cell}
+          onChange={e => setParams({...params, Cell: Number(e.target.value)})}
         />
         <span>{gameTypeId ? gameTypes[gameTypeId - 1].name : ""} skill-level:</span>
 
@@ -133,10 +139,10 @@ const User = () => {
               }
             } else {
               setGameTypeId(val);
-              setSkill(gameTypes[gameTypeId].skill);
+              setSkill(gameTypes[gameTypeId].Skill);
             }
           }}
-          value={gameTypeId && skill}
+          value={gameTypeId && Skill}
         >
           {[null, ...(gameTypeId ? [...gameTypes[gameTypeId - 1].skills, 'Cancel'] : gameTypes)].map((gameType, index) => (
               <option
@@ -145,7 +151,7 @@ const User = () => {
               >
                   {index ? (
                     gameTypeId && index === gameTypes[gameTypeId - 1].skills.length + 1 ? 'CANCEL' :
-                    gameTypeId ? gameTypes[gameTypeId - 1].skills[index - 1] : gameType.name)
+                    gameTypeId ? gameTypes[gameTypeId - 1].skills[index - 1] : gameType.Sport)
                   : `Select ${gameTypeId ? "level" : "sport"}`}
               </option>
           ))}

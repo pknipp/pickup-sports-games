@@ -65,9 +65,7 @@ const EditGame = ({ match }) => {
     // newGame.dateTime = moment(newGame.dateTime).local().format().slice(0, -6);
     setMessage(newMessage || "Success!");
     setGame({...game, id});
-    // if (!id) {
-      if (!newMessage) history.push(wantsToPlay ? `/reservations/0-${id}` : '/');
-    // }
+    if (!newMessage) history.push(wantsToPlay ? `/reservations/0-${id}` : '/');
     setRerender(rerender + 1);
   };
 
