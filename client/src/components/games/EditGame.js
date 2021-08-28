@@ -38,6 +38,7 @@ const EditGame = ({ match }) => {
 
   useEffect(() => {
     (async() => {
+      // Put following in the separate useEffect?
       let newGameTypes = (await (await fetch('/api/gameTypes')).json()).gameTypes;
       setGameTypes(newGameTypes);
       if (game.id) {
@@ -49,7 +50,8 @@ const EditGame = ({ match }) => {
         });
         newGame.dateTime = moment(newGame.dateTime).local().format().slice(0, -6);
         setGame(newGame);
-        setSkills(["unspecified", ...newGameTypes[newGame.gameTypeId].skills]);
+        // Put following in separate useEffect?
+        setSkills(["unspecified", ...newGameTypes[newGame.gameTypeId - 1].skills]);
       }
     })();
   }, [game.id]);
@@ -62,11 +64,7 @@ const EditGame = ({ match }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(game)
     });
-    console.log("res = ", res);
-    let data = await res.json();
-    console.log("data = ", data);
-    let {id, newMessage} = data;
-    // let {id, newMessage} = await res.json();
+    let {id, newMessage} = await res.json();
     // React likes '' but does not like null.
     // Object.entries(newGame).forEach(([key, value]) => {
     //   if (value === null) newGame[key] = '';
@@ -117,7 +115,7 @@ const EditGame = ({ match }) => {
           }}
           value={1 + gameTypes.map(gameType => gameType.id).indexOf(game.gameTypeId)}
         >
-          {gameTypes.map((gameType, index) => (
+          {["Select sport", ...gameTypes].map((gameType, index) => (
               <option
                   key={`${index && gameTypes[index - 1].id}`}
                   value={index}

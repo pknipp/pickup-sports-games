@@ -8,6 +8,7 @@ in model files check associations between tables
 in model files insert a many-to-many relationship between Users and Games
 allow any player to add a photo to a Game?
 Have users login w/nickName rather than email, and NOT require that email be unique? (White space'll prob be a problem).
+DRY up setSkills invocation in EditGame, and ensure that it'll work if gameTypes' ids aren't simply [1, 2, ..., 7]
 
 MVP goals:
     Modify EditGame to allow for the facts that ...:
