@@ -62,7 +62,11 @@ const EditGame = ({ match }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(game)
     });
-    let {id, newMessage} = await res.json();
+    console.log("res = ", res);
+    let data = await res.json();
+    console.log("data = ", data);
+    let {id, newMessage} = data;
+    // let {id, newMessage} = await res.json();
     // React likes '' but does not like null.
     // Object.entries(newGame).forEach(([key, value]) => {
     //   if (value === null) newGame[key] = '';

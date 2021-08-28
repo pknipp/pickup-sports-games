@@ -94,7 +94,8 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
 
 // Do we want to allow a game owner to transfer game-"owner"ship to another user?
 router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
-    let game = await Game.findByPk(Number(req.params.id));
+    const gameId = Number(req.params.id);
+    let game = await Game.findByPk(gameId);
     let message = '';
     if (game.ownerId !== req.user.id) res.status(401).send("Unauthorized Access");
     // confirm that Google Maps API can find a route between game's address & NYC
@@ -105,12 +106,18 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
       message = `There is something wrong with your game's location (${req.body.Location}).`
       delete req.body.Location;
     }
-    let sameGameType = req.body.gameTypeId === game.gameTypeId;
+    if (req.body.gameTypeId !== game.gameTypeId) {
+      (await Reservation.findAll({where: {gameId}})).forEach(async reservation => {
+        reservation.bools = 0;
+        await reservation.save();
+      });
+    }
     Object.entries(req.body).forEach(([key, value]) => {
         game[key] = value !== '' ? value : null;
     });
     // Set max/min restrictions on skill to "unspecified" if #gameTypeId is changed
-    ["Minimum skill", "Maximum skill"].forEach(key => game[key] *= Number(sameGameType));
+    // The following is now handled on the front, in EditGame component.
+    // ["Minimum skill", "Maximum skill"].forEach(key => game[key] *= Number(sameGameType));
     await game.save();
     // game = {...game.dataValues, message};
     res.status(200).json({id: game.id, message});
