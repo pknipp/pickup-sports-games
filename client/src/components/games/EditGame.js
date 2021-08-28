@@ -7,7 +7,6 @@ import fetch from 'node-fetch';
 
 const EditGame = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender } = useContext(Context);
-  // const skills = ['unspecified', '1','2','3','4','5','6','7','8','9'];
   const properties = [
     'gameTypeId',
     'Location',
@@ -50,8 +49,8 @@ const EditGame = ({ match }) => {
         });
         newGame.dateTime = moment(newGame.dateTime).local().format().slice(0, -6);
         setGame(newGame);
-        // Put following in separate useEffect?
-        setSkills(["unspecified", ...newGameTypes[newGame.gameTypeId - 1].skills]);
+        // Put following in separate useEffect, and allow for non-sequential gameTypeIds?
+        setSkills(["none", ...newGameTypes[newGame.gameTypeId - 1].skills]);
       }
     })();
   }, [game.id]);
@@ -105,12 +104,14 @@ const EditGame = ({ match }) => {
           onChange={e => {
             let index = Number(e.target.value);
             let newGameTypeId = index && gameTypes[index - 1].id;
-            let sameGameType = Number(game.gameTypeId === newGameTypeId);
+            let isSameGameType = Number(game.gameTypeId === newGameTypeId);
             let newGame = {...game};
-            ["Minimum skill", "Maximum skill"].forEach(key => newGame[key] = sameGameType && newGame[key]);
+            // The follows UNspecifies the max/min skill levels, if the gameType is changed.
+            ["Minimum skill", "Maximum skill"].forEach(key => newGame[key] = isSameGameType && newGame[key]);
+            // The following prevents state changes until a gameType is selected.
             if (index) {
               setGame({...newGame, gameTypeId: newGameTypeId});
-              setSkills(["unspecified", ...gameTypes[newGameTypeId - 1].skills]);
+              setSkills(["unspecified", ...gameTypes[index - 1].skills]);
             }
           }}
           value={1 + gameTypes.map(gameType => gameType.id).indexOf(game.gameTypeId)}
@@ -140,13 +141,13 @@ const EditGame = ({ match }) => {
         <span>Lower limit of skill-level:</span>
 
         <select
-          onChange={e => setGame({...game, ['Minimum skill']: !Number(e.target.value) ? 'none' : e.target.value})}
+          onChange={e => setGame({...game, ['Minimum skill']: Number(e.target.value)})}
           value={game['Minimum skill']}
         >
           {skills.map((skill, index) => (
               <option
                   key={`${index}`}
-                  value={index || 'none'}
+                  value={index}
               >
                   {skill}
               </option>

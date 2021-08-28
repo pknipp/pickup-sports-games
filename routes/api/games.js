@@ -4,7 +4,7 @@ const faker = require('faker');
 const { Op } = require('sequelize');
 const fetch = require('node-fetch');
 
-const { Game, Reservation, User, GameType } = require("../../db/models");
+const { Game, Reservation, User, GameType, Skill } = require("../../db/models");
 const { authenticated } = require('./security-utils');
 const { mapsConfig: { mapsApiKey } } = require('../../config');
 const checkLocation = require('./checkLocation');
@@ -75,7 +75,9 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   const user = req.user;
   const gameId = Number(req.params.id);
   const game = (await Game.findByPk(gameId)).dataValues;
-  game.Sports = (await GameType.findAll()).map(gameType => ({id: gameType.id, Sport: gameType.Sport}));
+  let gameTypeId = game.gameTypeId;
+  game.Sports = (await GameType.findAll()).map(gameType => ({id: gameType.id, Sport: gameType.Sport, skills: JSON.parse(gameType.skills)}));
+  const gameType = await GameType.findByPk(gameTypeId);
   game.positions = gameType.positions && JSON.parse(gameType.positions);
   game.sizes     = gameType.sizes     && JSON.parse(gameType.sizes);
   if (game.ownerId !== user.id) return next({ status: 401, message: "You are not authorized." });
@@ -83,6 +85,7 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   let players = [];
   for await (reservation of reservations) {
     let player = (await User.findByPk(reservation.playerId)).dataValues;
+    player.Skill = (await Skill.findOne({where: {gameTypeId, userId: player.id}})).skill;
     reservation = reservation.dataValues;
     ['gameId', 'id', 'playerId', 'createdAt'].forEach(prop => delete reservation[prop]);
     ['First name', 'Last name', 'Address', 'tokenId', 'hashedPassword', 'updatedAt'].forEach(prop => delete player[prop]);

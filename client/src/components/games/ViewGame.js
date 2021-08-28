@@ -24,16 +24,16 @@ const ViewGame = ({ match }) => {
     'Extra info'
   ].map((text, index) => ({dataField: String(index), text}));
 
-  const columns2 = [];
-  // const columns2 = [
-  //   'Nickname',
+  const columns2 = [
+    'Nickname',
   //   // ['photo', ''],
-  //   'Email',
-  //   'Member since',
-  //   'Reservation Updated at',
-  //   'Misc info?',
-  //   'Skill',
-  // ];
+    'Email',
+    'Cell',
+    ['createdAt', 'Member since'],
+    ['updatedAt', 'Reservation last modified'],
+    ['Misc info', 'Misc info?'],
+    'Skill',
+  ];
 
   const [game, setGame] = useState(gameProps.reduce((pojo, prop) => {
     return {[prop]: '', ...pojo};
@@ -43,9 +43,9 @@ const ViewGame = ({ match }) => {
 
   const [columns, setColumns] = useState(columns2.map((column, index) => {
     return {
-      dataField: column,
+      dataField: typeof(column) === 'string' ? column : column[0],
       // Make columns narrower by breaking multiple words, wherever possible.
-      text: column.split(' ').join('\n'),
+      text: (typeof(column) === 'string' ? column : column[1]).split(' ').join('\n'),
       sort: true,
       headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
       sortFunc: (a, b, order, dataField) => {
@@ -57,6 +57,7 @@ const ViewGame = ({ match }) => {
 
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
+  const [skills, setSkills] = useState([]);
 
   let history = useHistory();
 
@@ -68,15 +69,14 @@ const ViewGame = ({ match }) => {
   useEffect(() => {
     (async() => {
         const res = await fetch(`/api/games/${game.id}`);
-        let data = await res.json();
-        // console.log("data = ", data);
-        // let newGame = (await res.json()).game;
-        // console.log("data = ", data);
-        let newGame = data.game;
+        let newGame = (await res.json()).game;
+        let newSkills = ['unknown', ...newGame.Sports[newGame.gameTypeId - 1].skills];
+        setSkills(newSkills);
+        // Recode following line to handle non-sequential gameType ids.
         newGame.Sport = newGame.Sports[newGame.gameTypeId - 1].Sport;
-        newGame["Created at"] = newGame.createdAt;
-        newGame["Updated at"] = newGame.updatedAt;
-        console.log("newGame = ", newGame);
+        console.log(newGame);
+        // newGame["Created at"] = newGame.createdAt;
+        // newGame["Updated at"] = newGame.updatedAt;
         // let bools = newGame.bools;
         let positions = newGame.positions || [];
         let sizes = newGame.sizes || [];
@@ -87,13 +87,14 @@ const ViewGame = ({ match }) => {
           ...positions, ...sizes];
         let newColumns = [...columns2, ...bools];
         let newPlayers = newGame.players;
+        newPlayers.forEach(player => player.Skill = newSkills[player.Skill]);
         // Below sets the only prop of the columns prop which depends upon state.
 
         newColumns = newColumns.map((column, index) => {
           return {
-            dataField: column,
+            dataField: typeof(column) === 'string' ? column : column[0],
             // Make columns narrower by breaking multiple words, wherever possible.
-            text: column.split(' ').join('\n'),
+            text: (typeof(column) === 'string' ? column : column[1]).split(' ').join('\n'),
             sort: true,
             headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
             sortFunc: (a, b, order, dataField) => {
@@ -120,7 +121,7 @@ const ViewGame = ({ match }) => {
                 prop[1] && prop[0] === 'extraInfo' ? 'y' :
                 prop[1]};
           }, {});
-          player["Created at"] = player.createdAt.split('T')[0];
+          player.createdAt = player.createdAt.split('T')[0];
           let updatedAt = player.updatedAt.split('T');
           player.updatedAt = updatedAt[0].slice(5) + ' ' + updatedAt[1].slice(0, -8);
           bools.forEach((bool, index) => {
