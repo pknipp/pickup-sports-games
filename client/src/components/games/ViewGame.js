@@ -7,19 +7,21 @@ import Context from '../../context';
 import { time } from 'faker';
 
 const ViewGame = ({ match }) => {
-  const { fetchWithCSRF, rerender, setRerender, genders } = useContext(Context);
-  const gameProps = ['address', 'dateTime', 'extraInfo', 'minSkill', 'maxSkill'];
-  const userProps = ['email', 'nickName', 'cell', 'skill',
+  const { fetchWithCSRF, rerender, setRerender,
+    // genders
+  } = useContext(Context);
+  const gameProps = ['Location', 'dateTime', 'Extra info', 'Minimum skill', 'Maximum skill'];
+  const userProps = ['Email', 'Nickname', 'Cell',
   // 'photo'
   ];
   const topColumns = [
-    'sport',
-    'address',
+    'Sport',
+    'Location',
     'date',
     'time',
     'lower limit of skill-level',
     'upper limit of skill-level',
-    'extra info'
+    'Extra info'
   ].map((text, index) => ({dataField: String(index), text}));
 
   const columns2 = [];
@@ -71,15 +73,18 @@ const ViewGame = ({ match }) => {
         // let newGame = (await res.json()).game;
         // console.log("data = ", data);
         let newGame = data.game;
+        newGame.Sport = newGame.Sports[newGame.gameTypeId - 1].Sport;
         newGame["Created at"] = newGame.createdAt;
         newGame["Updated at"] = newGame.updatedAt;
-        // console.log("newGame = ", newGame);
+        console.log("newGame = ", newGame);
         // let bools = newGame.bools;
         let positions = newGame.positions || [];
         let sizes = newGame.sizes || [];
 
         // let newColumns = [...columns2, ...bools.map(bool => [bool, bool])];
-        let bools = [...genders, ...positions, ...sizes];
+        let bools = [
+          // ...genders,
+          ...positions, ...sizes];
         let newColumns = [...columns2, ...bools];
         let newPlayers = newGame.players;
         // Below sets the only prop of the columns prop which depends upon state.
@@ -146,36 +151,36 @@ const ViewGame = ({ match }) => {
           keyField='id'
           data={[
             {id: 1, ...[
-                game.name,
-                game.address,
+                game.Sport,
+                game.Location,
                 game.dateTime.split('T')[0],
                 game.dateTime.split('T')[1],
-                game.minSkill || 'none',
-                game.maxSkill || 'none',
-                game.extraInfo
+                game['Minimum skill'] || 'none',
+                game['Maximum skill'] || 'none',
+                game['Extra info']
               ].reduce((pojo, value, index) => {
                 return {...pojo, [String(index)]: value};
               }, {})
             }
           ]}
-          columns={topColumns.slice(...(game.extraInfo ? [0] : [0, -1]))}
+          columns={topColumns.slice(...(game['Extra info'] ? [0] : [0, -1]))}
         />
         <br/>
         <h4>Game lineup:</h4>
-        {game.minSkill || game.maxSkill ? <div>Key for color of player:
-          {game.minSkill ? <span style={{color: 'red'}}> insufficiently </span> : null}
-          {game.minSkill && game.maxSkill ? 'or ' : null}
-          {game.maxSkill ? <span style={{color: 'blue'}}> excessively </span> : null}
+        {game['Minimum skill'] || game['Maximum skill'] ? <div>Key for color of player:
+          {game['Minimum skill'] ? <span style={{color: 'red'}}> insufficiently </span> : null}
+          {game['Minimum skill'] && game['Maximum skill'] ? 'or ' : null}
+          {game['Maximum skill'] ? <span style={{color: 'blue'}}> excessively </span> : null}
           skilled</div>
         : null}
         <br/>
-        <BootstrapTable
+        {!columns || !columns.length ? <span>NO COLUMNS</span> : <BootstrapTable
           keyField='id'
           data={ players }
           columns={ columns }
           defaultSorted={defaultSorted}
           // rowStyle={rowStyleSkill}
-        />
+        />}
     </div>
   );
 }
