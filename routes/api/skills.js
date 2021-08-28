@@ -9,7 +9,6 @@ const { authenticated } = require('./security-utils');
 const gameType = require('../../db/models/gameType');
 
 const router = express.Router();
-// const bools = ['setter','middle','rightSide','outside','libero','twos','fours','sixes'];
 
 router.get('', [authenticated], asyncHandler(async (req, res, next) => {
     const gameTypes = [];

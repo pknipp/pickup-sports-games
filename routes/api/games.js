@@ -105,9 +105,12 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
       message = `There is something wrong with your game's location (${req.body.Location}).`
       delete req.body.Location;
     }
+    let sameGameType = req.body.gameTypeId === game.gameTypeId;
     Object.entries(req.body).forEach(([key, value]) => {
         game[key] = value !== '' ? value : null;
     });
+    // Set max/min restrictions on skill to "unspecified" if #gameTypeId is changed
+    ["Minimum skill", "Maximum skill"].forEach(key => game[key] *= Number(sameGameType));
     await game.save();
     // game = {...game.dataValues, message};
     res.status(200).json({id: game.id, message});

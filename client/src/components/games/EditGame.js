@@ -7,7 +7,7 @@ import fetch from 'node-fetch';
 
 const EditGame = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender } = useContext(Context);
-  const skills = ['none', '1','2','3','4','5','6','7','8','9'];
+  // const skills = ['unspecified', '1','2','3','4','5','6','7','8','9'];
   const properties = [
     'gameTypeId',
     'Location',
@@ -22,19 +22,24 @@ const EditGame = ({ match }) => {
     return {[prop]: '', Sports: [], ...pojo};
   }, {id: Number(match.params.gameId)}));
   const [wantsToPlay, setWantsToPlay] = useState(false);
+  const [skills, setSkills] = useState([]);
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
 
   let history = useHistory();
 
-  useEffect(() => {
-    (async() => {
-      setGameTypes(await (await (await fetch('/api/gameTypes')).json()).gameTypes);
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async() => {
+  //     let newGameTypes = (await (await fetch('/api/gameTypes')).json()).gameTypes;
+  //     console.log("1st ue says that newGameTypes = ", newGameTypes);
+  //     setGameTypes(newGameTypes);
+  //   })();
+  // }, []);
 
   useEffect(() => {
     (async() => {
+      let newGameTypes = (await (await fetch('/api/gameTypes')).json()).gameTypes;
+      setGameTypes(newGameTypes);
       if (game.id) {
         const res = await fetch(`/api/games/${game.id}`);
         let newGame = (await res.json()).game;
@@ -43,7 +48,8 @@ const EditGame = ({ match }) => {
           if (newGame[key] === null) newGame[key] = '';
         });
         newGame.dateTime = moment(newGame.dateTime).local().format().slice(0, -6);
-        setGame(newGame)
+        setGame(newGame);
+        setSkills(["unspecified", ...newGameTypes[newGame.gameTypeId].skills]);
       }
     })();
   }, [game.id]);
@@ -57,7 +63,6 @@ const EditGame = ({ match }) => {
       body: JSON.stringify(game)
     });
     let {id, newMessage} = await res.json();
-    console.log("id = ", id, " and newMessage = ", newMessage);
     // React likes '' but does not like null.
     // Object.entries(newGame).forEach(([key, value]) => {
     //   if (value === null) newGame[key] = '';
@@ -96,7 +101,15 @@ const EditGame = ({ match }) => {
         <span>Sport:</span>
         <select
           onChange={e => {
-            setGame({...game, gameTypeId: Number(e.target.value)});
+            let index = Number(e.target.value);
+            let newGameTypeId = index && gameTypes[index - 1].id;
+            let sameGameType = Number(game.gameTypeId === newGameTypeId);
+            let newGame = {...game};
+            ["Minimum skill", "Maximum skill"].forEach(key => newGame[key] = sameGameType && newGame[key]);
+            if (index) {
+              setGame({...newGame, gameTypeId: newGameTypeId});
+              setSkills(["unspecified", ...gameTypes[newGameTypeId - 1].skills]);
+            }
           }}
           value={1 + gameTypes.map(gameType => gameType.id).indexOf(game.gameTypeId)}
         >
