@@ -31,7 +31,7 @@ const ViewGame = ({ match }) => {
     'Cell',
     ['createdAt', 'Member since'],
     ['updatedAt', 'Reservation date/time'],
-    ['Misc info', 'Misc info?'],
+    ['Extra info', 'Misc info?'],
     'Skill',
   ];
 
@@ -70,6 +70,7 @@ const ViewGame = ({ match }) => {
     (async() => {
         const res = await fetch(`/api/games/${game.id}`);
         let newGame = (await res.json()).game;
+        // Recode following to handle non-sequential gameType ids.
         let newSkills = ['unknown', ...newGame.Sports[newGame.gameTypeId - 1].skills];
         setSkills(newSkills);
         // Recode following line to handle non-sequential gameType ids.
@@ -77,7 +78,6 @@ const ViewGame = ({ match }) => {
         let positions = newGame.positions || [];
         let sizes = newGame.sizes || [];
 
-        // let newColumns = [...columns2, ...bools.map(bool => [bool, bool])];
         let bools = [
           // ...genders,
           ...positions, ...sizes];
@@ -114,7 +114,7 @@ const ViewGame = ({ match }) => {
                 prop[1] === true ? "x" :
                 prop[1] === false ? "" :
                 prop[1] === 0 ? "unknown" :
-                prop[1] && prop[0] === 'extraInfo' ? 'y' :
+                prop[1] && prop[0] === 'Extra info' ? 'y' :
                 prop[1]};
           }, {});
           player.createdAt = player.createdAt.split('T')[0];
