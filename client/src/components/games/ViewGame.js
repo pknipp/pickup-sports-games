@@ -8,7 +8,7 @@ import { time } from 'faker';
 
 const ViewGame = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender,
-    // genders
+    genders
   } = useContext(Context);
   const gameProps = ['Location', 'dateTime', 'Extra info', 'Minimum skill', 'Maximum skill'];
   const userProps = ['Email', 'Nickname', 'Cell',
@@ -79,7 +79,7 @@ const ViewGame = ({ match }) => {
         let sizes = newGame.sizes || [];
 
         let bools = [
-          // ...genders,
+          ...genders,
           ...positions, ...sizes];
         let newColumns = [...columns2, ...bools];
         let newPlayers = newGame.players;

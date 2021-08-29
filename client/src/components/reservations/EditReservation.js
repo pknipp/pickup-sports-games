@@ -7,7 +7,7 @@ import Context from '../../context';
 const EditReservation = ({ match }) => {
   const resGameId = match.params.resGameId;
   const [reservationId, gameId] = resGameId.split('-').map(id => Number(id));
-  const { fetchWithCSRF, currentUser, rerender, setRerender } = useContext(Context);
+  const { fetchWithCSRF, currentUser, rerender, setRerender, genders } = useContext(Context);
   const [bools, setBools] = useState([[]]);
   const nullReservation = bools.reduce((pojo, prop) => {
     return {...pojo, [prop]: false};
@@ -32,7 +32,7 @@ const EditReservation = ({ match }) => {
       newReservation.game.dateTime = moment(newReservation.game.dateTime).local().format().slice(0,-9);
 
       setReservation(newReservation);
-      const newBools = newReservation.game.bools || [];
+      const newBools = [...genders, ...(newReservation.game.bools || [])];
       for (let i = 0; i < newBools.length; i++) {
         const boolVal = newReservation.bools % 2;
         newBools[i] = [newBools[i], !!boolVal];
