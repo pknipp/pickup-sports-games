@@ -55,6 +55,7 @@ const EditReservation = ({ match }) => {
       body: JSON.stringify(reservation)
     });
     let newReservation = (await res.json()).reservation;
+    newReservation.game.dateTime = moment(newReservation.game.dateTime).local().format().slice(0,-9);
     if (reservation.id) {
       // PUT route
       setMessage("Success");

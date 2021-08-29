@@ -7,13 +7,18 @@ const { authenticated } = require('./security-utils');
 const gameType = require('../../db/models/gameType');
 
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
-    try {
-        req.body.ownerId = req.user.id;
-        let reservation = await Reservation.create(req.body);
-        res.status(201).send({reservation})
-    } catch (e) {
-        res.status(400).send(e)
-    }
+    // try {
+    req.body.ownerId = req.user.id;
+    let reservation = await Reservation.create(req.body);
+
+    let game = (await Game.findByPk(reservation.gameId)).dataValues;
+    game.Sport = (await GameType.findByPk(game.gameTypeId)).Sport;
+    reservation = {...reservation.dataValues, game};
+
+    res.status(201).send({reservation})
+    // } catch (e) {
+        // res.status(400).send(e)
+    // }
 }));
 
 router.get('', [authenticated], asyncHandler(async(req, res) => {
@@ -26,9 +31,9 @@ router.get('/:resGameId', async(req, res) => {
     const [reservationId, gameId] = req.params.resGameId.split('-').map(id => Number(id));
     let reservation = (reservationId && (await Reservation.findByPk(reservationId)).dataValues) || {};
     const game = (await Game.findByPk(gameId)).dataValues;
-    const gameType = (await GameType.findByPk(game.gameTypeId)).dataValues;
-    game.Sport = gameType.Sport;
-    game.bools = [...JSON.parse(gameType.positions || '[]'), ...JSON.parse(gameType.sizes || '[]')];
+    const gT = await GameType.findByPk(game.gameTypeId);
+    game.Sport = gT.Sport;
+    game.bools = [...JSON.parse(gT.positions || '[]'), ...JSON.parse(gT.sizes || '[]')];
     reservation.game = game;
     res.json({reservation});
 })
@@ -39,6 +44,7 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     Object.keys(req.body).forEach(key => reservation[key] = req.body[key]);
     await reservation.save();
     let game = (await Game.findByPk(reservation.gameId)).dataValues;
+    game.Sport = (await GameType.findByPk(game.gameTypeId)).Sport;
     reservation = {...reservation.dataValues, game};
     res.status(200).json({reservation});
 }));
