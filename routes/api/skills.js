@@ -14,7 +14,7 @@ router.get('', [authenticated], asyncHandler(async (req, res, next) => {
     const gameTypes = [];
     for (let skill of await Skill.findAll({where: {userId: req.user.id}})) {
         let gameType = (await GameType.findByPk(skill.gameTypeId)).dataValues;
-        gameTypes.push({...gameType, skills: JSON.parse(gameType.skills), skill: skill.skill});
+        gameTypes.push({...gameType, skills: JSON.parse(gameType.skills), Skill: skill.skill});
     }
     res.json({gameTypes});
 }));

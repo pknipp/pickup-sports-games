@@ -2,22 +2,24 @@ const express = require('express');
 const asyncHandler = require('express-async-handler');
 const { Op } = require('sequelize');
 
-const { GameType } = require('../../db/models');
+const { GameType, Skill } = require('../../db/models');
+const { authenticated } = require('./security-utils');
 
 const router = express.Router();
 
-router.get('', asyncHandler(async(req, res, next) => {
+router.get('', [authenticated], asyncHandler(async(req, res, next) => {
+    let userId = req.user.id;
     let gameTypes = (await GameType.findAll({})).map(gameType => gameType.dataValues);
-    gameTypes.forEach((gameType, index) => {
-        // Why cannot I use the following pattern to DRY this code?
-        // ['skills', 'sizes', 'positions'].forEach(key => {
-        //     let val = gameType[key];
-        //     val = val && JSON.parse(val);
-        // });
-        gameType.skills = gameType.skills && JSON.parse(gameType.skills);
-        gameType.sizes = gameType.sizes && JSON.parse(gameType.sizes);
-        gameType.positions = gameType.positions && JSON.parse(gameType.positions);
-    });
+    for (let i = 0; i < gameTypes.length; i++) {
+        let gT = gameTypes[i];
+        let gameTypeId = gT.id;
+    // gameTypes.forEach(async (gameType, index) => {
+        ['skills', 'sizes', 'positions'].forEach(key => {
+            let val = gT[key];
+            gT[key] = val && JSON.parse(val);
+        });
+        gT.skill = (await Skill.findOne({where: {userId, gameTypeId}})).dataValues.skill;
+    };
     res.json({gameTypes});
 }));
 

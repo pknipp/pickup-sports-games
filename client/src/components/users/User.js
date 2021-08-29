@@ -37,8 +37,9 @@ const User = () => {
 
   useEffect(() => {
     (async() => {
-      const res = await fetch('/api/skills');
+      const res = await fetch('/api/gameTypes');
       let newGameTypes = (await res.json()).gameTypes.sort((a, b) => a.id - b.id);
+      console.log(newGameTypes);
       setGameTypes(newGameTypes);
     })();
   }, [currentUser.id]);
@@ -126,13 +127,13 @@ const User = () => {
           type="number" placeholder="Cell" name="Cell" value={params.Cell}
           onChange={e => setParams({...params, Cell: Number(e.target.value)})}
         />
-        <span>{gameTypeId ? gameTypes[gameTypeId - 1].name : ""} skill-level:</span>
+        <span>{gameTypeId ? gameTypes[gameTypeId - 1].Sport : ""} skill-level:</span>
 
         <select
           onChange={e => {
             let val = Number(e.target.value);
             if (gameTypeId) {
-              if (val <= gameTypes[gameTypeId - 1].skills.length) {
+              if (val === gameTypes[gameTypeId - 1].skills.length + 1) {
                 setSkill(val);
               } else {
                 setGameTypeId(0);
@@ -151,7 +152,7 @@ const User = () => {
               >
                   {index ? (
                     gameTypeId && index === gameTypes[gameTypeId - 1].skills.length + 1 ? 'CANCEL' :
-                    gameTypeId ? gameTypes[gameTypeId - 1].skills[index - 1] : gameType.Sport)
+                    gameTypeId ? gameTypes[gameTypeId - 1].skills[index] : gameType.Sport)
                   : `Select ${gameTypeId ? "level" : "sport"}`}
               </option>
           ))}
