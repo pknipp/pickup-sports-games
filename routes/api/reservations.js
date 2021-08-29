@@ -33,7 +33,8 @@ router.get('/:resGameId', async(req, res) => {
     const game = (await Game.findByPk(gameId)).dataValues;
     const gT = await GameType.findByPk(game.gameTypeId);
     game.Sport = gT.Sport;
-    game.bools = [...JSON.parse(gT.positions || '[]'), ...JSON.parse(gT.sizes || '[]')];
+    game.positions = JSON.parse(gT.positions || '[]');
+    game.sizes = JSON.parse(gT.sizes || '[]');
     reservation.game = game;
     res.json({reservation});
 })

@@ -53,7 +53,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [rerender, setRerender] = useState(0);
   const contextValue = {fetchWithCSRF, currentUser, setCurrentUser, rerender, setRerender,
-    genders: ["men's", "women's", "mixed", "gender neutral"]
+    genderBools: ["men's", "women's", "mixed", "gender neutral"]
   };
 
   const loadUser = () => {

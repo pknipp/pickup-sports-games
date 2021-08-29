@@ -8,7 +8,7 @@ import { time } from 'faker';
 
 const ViewGame = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender,
-    genders
+    genderBools
   } = useContext(Context);
   const gameProps = ['Location', 'dateTime', 'Extra info', 'Minimum skill', 'Maximum skill'];
   const userProps = ['Email', 'Nickname', 'Cell',
@@ -75,12 +75,12 @@ const ViewGame = ({ match }) => {
         setSkills(newSkills);
         // Recode following line to handle non-sequential gameType ids.
         newGame.Sport = newGame.Sports[newGame.gameTypeId - 1].Sport;
-        let positions = newGame.positions || [];
-        let sizes = newGame.sizes || [];
+        let positionBools = newGame.positions || [];
+        let sizeBools = newGame.sizes || [];
 
         let bools = [
-          ...genders,
-          ...positions, ...sizes];
+          ...genderBools,
+          ...positionBools, ...sizeBools];
         let newColumns = [...columns2, ...bools];
         let newPlayers = newGame.players;
         newPlayers.forEach(player => player.Skill = newSkills[player.Skill]);
