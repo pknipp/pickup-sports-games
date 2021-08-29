@@ -30,7 +30,7 @@ const ViewGame = ({ match }) => {
     'Email',
     'Cell',
     ['createdAt', 'Member since'],
-    ['updatedAt', 'Reservation last modified'],
+    ['updatedAt', 'Reservation date/time'],
     ['Misc info', 'Misc info?'],
     'Skill',
   ];
