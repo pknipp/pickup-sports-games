@@ -12,7 +12,6 @@ DRY up setSkills invocation in EditGame, and ensure that it'll work if gameTypes
 Figure out which time to display: local or zulu.
 
 MVP goals:
-    Sort skills properly on ViewGame page.
     What to do if EditGame changes things (like Sport):
         - cancel reservations?
         - trigger email to players?

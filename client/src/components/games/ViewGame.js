@@ -49,7 +49,7 @@ const ViewGame = ({ match }) => {
       sort: true,
       headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
       sortFunc: (a, b, order, dataField) => {
-        let diff = a === 'unknown' ? -1 : b === 'unknown' ? 1 : a < b ? -1 : a > b ? 1 : 0;
+        let diff = a === 'none' ? -1 : b === 'none' ? 1 : a < b ? -1 : a > b ? 1 : 0;
         return diff * (order === 'asc' ? 1 : -1);
       },
     }
@@ -57,7 +57,7 @@ const ViewGame = ({ match }) => {
 
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
-  const [skills, setSkills] = useState([]);
+  // const [skills, setSkills] = useState([]);
 
   let history = useHistory();
 
@@ -71,8 +71,9 @@ const ViewGame = ({ match }) => {
         const res = await fetch(`/api/games/${game.id}`);
         let newGame = (await res.json()).game;
         // Recode following to handle non-sequential gameType ids.
-        let newSkills = ['unknown', ...newGame.Sports[newGame.gameTypeId - 1].skills];
-        setSkills(newSkills);
+        let gameSkills = ['none', ...newGame.Sports[newGame.gameTypeId - 1].skills];
+        let rowSkills =['unknown',...newGame.Sports[newGame.gameTypeId - 1].skills];
+        // setSkills(newSkills);
         // Recode following line to handle non-sequential gameType ids.
         newGame.Sport = newGame.Sports[newGame.gameTypeId - 1].Sport;
         let positionBools = newGame.positions || [];
@@ -84,7 +85,7 @@ const ViewGame = ({ match }) => {
         let newColumns = [...columns2, ...bools];
         let newPlayers = newGame.players;
         newPlayers.forEach(player => {
-          player.Skill = newSkills[player.Skill];
+          player.Skill = rowSkills[player.Skill];
           // Combine 3 boolean-encoded integers into a single one.
           player.bools = (player.sizeBools * 2 ** positionBools.length + player.positionBools) * 2 ** genderBools.length + player.genderBools;
         });
@@ -99,8 +100,8 @@ const ViewGame = ({ match }) => {
             headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
             sortFunc: (a, b, order, dataField) => {
               let diff;
-              if (newSkills.includes(a)) {
-                diff = a === b ? 0 : newSkills.indexOf(a) < newSkills.indexOf(b) ? -1 : 1;
+              if (rowSkills.includes(a)) {
+                diff = a === b ? 0 : rowSkills.indexOf(a) < rowSkills.indexOf(b) ? -1 : 1;
               } else {
                 diff = a === b ? 0 : a < b ? -1 : 1;
               }
@@ -110,12 +111,20 @@ const ViewGame = ({ match }) => {
           }
         });
 
-        setColumns(newColumns.map(column => ({...column, style: (cell, row) => (
-          {color:
-              newGame.minSkill && (row.skill === "unknown" || row.skill < newGame.minSkill) ? 'red' :
-              newGame.maxSkill && row.skill !== "unknown" && row.skill > newGame.maxSkill ? 'blue' : 'black'
-          }
-        )})));
+        if (newGame.Sports) {
+          ["Minimum skill", "Maximum skill"].forEach(key => {
+            let gameTypeIndex = newGame.Sports.map(sport => sport.id).indexOf(newGame.gameTypeId);
+            newGame[key] = ["none", ...newGame.Sports[gameTypeIndex].skills][newGame[key]];
+          })
+        }
+
+        setColumns(newColumns.map(column => ({...column, style: (cell, row) => {
+          // console.log(row.Skill, newSkills.indexOf(row.Skill), newGame["Minimum skill"], newSkills.indexOf(newGame["Minimum skill"]));
+          return {color:
+            newGame["Minimum skill"] && rowSkills.indexOf(row.Skill) < gameSkills.indexOf(newGame["Minimum skill"]) ? 'red' :
+            newGame["Maximum skill"] && rowSkills.indexOf(row.Skill) > gameSkills.indexOf(newGame["Maximum skill"]) ? 'blue' : 'black'
+          };
+        }})));
 
         newPlayers = newPlayers.map(player => {
           player = Object.entries(player).reduce((player, prop) => {
@@ -123,7 +132,7 @@ const ViewGame = ({ match }) => {
               [prop[0]]:
                 prop[1] === true ? "x" :
                 prop[1] === false ? "" :
-                prop[1] === 0 ? "unknown" :
+                prop[1] === 0 ? "none" :
                 prop[1] && prop[0] === 'Extra info' ? 'y' :
                 prop[1]};
           }, {});
@@ -145,12 +154,6 @@ const ViewGame = ({ match }) => {
           if (newGame[key] === null) newGame[key] = '';
         });
         newGame.dateTime = moment(newGame.dateTime).local().format().slice(0,-9);
-        if (newGame.Sports) {
-          ["Minimum skill", "Maximum skill"].forEach(key => {
-            let gameTypeIndex = newGame.Sports.map(sport => sport.id).indexOf(newGame.gameTypeId);
-            newGame[key] = ["none", ...newGame.Sports[gameTypeIndex].skills][newGame[key]];
-          })
-        }
         setGame(newGame);
     })();
   }, [game.id]);
