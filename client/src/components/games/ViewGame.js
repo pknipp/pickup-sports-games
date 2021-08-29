@@ -98,7 +98,13 @@ const ViewGame = ({ match }) => {
             sort: true,
             headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
             sortFunc: (a, b, order, dataField) => {
-              let diff = a === 'unknown' ? -1 : b === 'unknown' ? 1 : a < b ? -1 : a > b ? 1 : 0;
+              let diff;
+              if (newSkills.includes(a)) {
+                diff = a === b ? 0 : newSkills.indexOf(a) < newSkills.indexOf(b) ? -1 : 1;
+              } else {
+                diff = a === b ? 0 : a < b ? -1 : 1;
+              }
+              // let diff = a === 'unknown' ? -1 : b === 'unknown' ? 1 : a < b ? -1 : a > b ? 1 : 0;
               return diff * (order === 'asc' ? 1 : -1);
             },
           }
@@ -143,7 +149,12 @@ const ViewGame = ({ match }) => {
     })();
   }, [game.id]);
 
-
+  if (game.Sports) {
+    ["Minimum skill", "Maximum skill"].forEach(key => {
+      let gameTypeIndex = game.Sports.map(sport => sport.id).indexOf(game.gameTypeId);
+      game[key + ' string'] = ["none", ...game.Sports[gameTypeIndex].skills][game[key]];
+    })
+  }
   return (
     <div className="simple">
         <h4>Game details:</h4>
@@ -155,8 +166,8 @@ const ViewGame = ({ match }) => {
                 game.Location,
                 game.dateTime.split('T')[0],
                 game.dateTime.split('T')[1],
-                game['Minimum skill'] || 'none',
-                game['Maximum skill'] || 'none',
+                game['Minimum skill string'],
+                game['Maximum skill string'],
                 game['Extra info']
               ].reduce((pojo, value, index) => {
                 return {...pojo, [String(index)]: value};
