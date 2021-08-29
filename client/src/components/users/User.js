@@ -29,18 +29,10 @@ const User = () => {
 
   let history = useHistory();
 
-  // useEffect(() => {
-  //   (async() => {
-  //     setGameTypes(await (await (await fetch('/api/gameTypes')).json()).gameTypes);
-  //   })();
-  // }, []);
-
   useEffect(() => {
     (async() => {
       const res = await fetch('/api/gameTypes');
-      let newGameTypes = (await res.json()).gameTypes.sort((a, b) => a.id - b.id);
-      console.log(newGameTypes);
-      setGameTypes(newGameTypes);
+      setGameTypes((await res.json()).gameTypes.sort((a, b) => a.id - b.id));
     })();
   }, [currentUser.id]);
 
@@ -128,32 +120,33 @@ const User = () => {
           onChange={e => setParams({...params, Cell: Number(e.target.value)})}
         />
         <span>{gameTypeId ? gameTypes[gameTypeId - 1].Sport : ""} skill-level:</span>
-
         <select
           onChange={e => {
             let val = Number(e.target.value);
             if (gameTypeId) {
               if (val === gameTypes[gameTypeId - 1].skills.length + 1) {
-                setSkill(val);
-              } else {
                 setGameTypeId(0);
+              } else {
+                setSkill(val);
               }
             } else {
               setGameTypeId(val);
-              setSkill(gameTypes[gameTypeId].Skill);
+              setSkill(gameTypes[val].Skill);
             }
           }}
-          value={gameTypeId && Skill}
+          value={gameTypeId && gameTypes[gameTypeId - 1].Skill}
         >
-          {[null, ...(gameTypeId ? [...gameTypes[gameTypeId - 1].skills, 'Cancel'] : gameTypes)].map((gameType, index) => (
+          {[null, ...(gameTypeId ? [...gameTypes[gameTypeId - 1].skills, 'Cancel'] : gameTypes)].map((element, index) => (
               <option
                   key={`${index}`}
                   value={index}
               >
                   {index ? (
-                    gameTypeId && index === gameTypes[gameTypeId - 1].skills.length + 1 ? 'CANCEL' :
-                    gameTypeId ? gameTypes[gameTypeId - 1].skills[index] : gameType.Sport)
-                  : `Select ${gameTypeId ? "level" : "sport"}`}
+                    gameTypeId ? (
+                      index === gameTypes[gameTypeId - 1].skills.length + 1 ?
+                        'CANCEL' : gameTypes[gameTypeId - 1].skills[index - 1]
+                    ) : gameTypes[index - 1].Sport
+                  ) : `Select ${gameTypeId ? "level" : "sport"}`}
               </option>
           ))}
         </select>

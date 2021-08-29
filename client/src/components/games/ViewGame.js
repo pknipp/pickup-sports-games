@@ -74,10 +74,6 @@ const ViewGame = ({ match }) => {
         setSkills(newSkills);
         // Recode following line to handle non-sequential gameType ids.
         newGame.Sport = newGame.Sports[newGame.gameTypeId - 1].Sport;
-        console.log(newGame);
-        // newGame["Created at"] = newGame.createdAt;
-        // newGame["Updated at"] = newGame.updatedAt;
-        // let bools = newGame.bools;
         let positions = newGame.positions || [];
         let sizes = newGame.sizes || [];
 
@@ -133,7 +129,6 @@ const ViewGame = ({ match }) => {
           // player.photo = 'photo';
           return player;
         });
-        // console.log("newPlayers = ", newPlayers);
         setPlayers(newPlayers);
         // React does not like null value, which might be stored in db.
         Object.keys(newGame).forEach(key => {
