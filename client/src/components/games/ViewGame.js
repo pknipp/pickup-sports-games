@@ -145,16 +145,16 @@ const ViewGame = ({ match }) => {
           if (newGame[key] === null) newGame[key] = '';
         });
         newGame.dateTime = moment(newGame.dateTime).local().format().slice(0,-9);
+        if (newGame.Sports) {
+          ["Minimum skill", "Maximum skill"].forEach(key => {
+            let gameTypeIndex = newGame.Sports.map(sport => sport.id).indexOf(newGame.gameTypeId);
+            newGame[key] = ["none", ...newGame.Sports[gameTypeIndex].skills][newGame[key]];
+          })
+        }
         setGame(newGame);
     })();
   }, [game.id]);
 
-  if (game.Sports) {
-    ["Minimum skill", "Maximum skill"].forEach(key => {
-      let gameTypeIndex = game.Sports.map(sport => sport.id).indexOf(game.gameTypeId);
-      game[key + ' string'] = ["none", ...game.Sports[gameTypeIndex].skills][game[key]];
-    })
-  }
   return (
     <div className="simple">
         <h4>Game details:</h4>
@@ -166,8 +166,8 @@ const ViewGame = ({ match }) => {
                 game.Location,
                 game.dateTime.split('T')[0],
                 game.dateTime.split('T')[1],
-                game['Minimum skill string'],
-                game['Maximum skill string'],
+                game['Minimum skill'],
+                game['Maximum skill'],
                 game['Extra info']
               ].reduce((pojo, value, index) => {
                 return {...pojo, [String(index)]: value};
