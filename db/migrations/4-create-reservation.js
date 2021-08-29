@@ -9,7 +9,10 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       ['Extra info']: {type: Sequelize.TEXT},
-      bools: {allowNull: false, type: Sequelize.INTEGER},
+      // bools: {allowNull: false, type: Sequelize.INTEGER},
+      ...['genderBools', 'positionBools', 'sizeBools'].reduce((pojo, key) => {
+        return {...pojo, [key]: {allowNull: false, type: Sequelize.INTEGER}};
+      }, {}),
       ...[['playerId', 'Users'], ['gameId', "Games"]].reduce((pojo, fk) => {
         return {...pojo, [fk[0]]: {
           allowNull: false,

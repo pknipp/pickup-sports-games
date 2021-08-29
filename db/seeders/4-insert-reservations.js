@@ -12,8 +12,12 @@ for (let iUser = 0; iUser < numberOfUsers; iUser++) {
       const reservation = {playerId: 1 + iUser, gameId: i + 1};
       let gt = gameTypes[games[i].gameTypeId - 1];
       // Why is JSON.parse needed in the following?
-      let boolsLength = 4 + (gt.positions ? JSON.parse(gt.positions).length : 0) + (gt.sizes ? JSON.parse(gt.sizes).length : 0);
-      reservation.bools = Math.floor(Math.random() * 2 ** boolsLength);
+      let gendersLength = 4;
+      let positionsLength =  gt.positions ? JSON.parse(gt.positions).length : 0;
+      let sizesLength = gt.sizes ? JSON.parse(gt.sizes).length : 0;
+      reservation.genderBools = Math.floor(Math.random() * 2 ** gendersLength);
+      reservation.positionBools = Math.floor(Math.random() * 2 ** positionsLength);
+      reservation.sizeBools = Math.floor(Math.random() * 2 ** sizesLength);
       let updatedAt = faker.date.past(0.1);
       if (Math.random() < reservationProb) reservation['Extra info'] = faker.lorem.words();
       [reservation.createdAt, reservation.updatedAt] = [faker.date.past(0.1, updatedAt), updatedAt];

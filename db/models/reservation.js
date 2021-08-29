@@ -7,7 +7,10 @@ module.exports = (sequelize, DataTypes) => {
       ...['playerId','gameId'].reduce((pojo, fk) => {
         return {...pojo, [fk]: {type: DataTypes.INTEGER, allowNull: false}};
       }, {}),
-      bools: {allowNull: false, defaultValue: 0, type: DataTypes.INTEGER},
+      ...['genderBools', 'positionBools', 'sizeBools'].reduce((pojo, key) => {
+        return {...pojo, [key]: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0}}
+      }, {}),
+      // bools: {allowNull: false, defaultValue: 0, type: DataTypes.INTEGER},
       ['Extra info']: {allowNull: true, type: DataTypes.TEXT},
     },
   );
