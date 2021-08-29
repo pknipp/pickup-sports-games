@@ -7,7 +7,9 @@ import Context from '../../context';
 const EditReservation = ({ match }) => {
   const resGameId = match.params.resGameId;
   const [reservationId, gameId] = resGameId.split('-').map(id => Number(id));
-  const { fetchWithCSRF, currentUser, rerender, setRerender, genderBools } = useContext(Context);
+  const { fetchWithCSRF, currentUser, rerender, setRerender, genderBools, setGenderBools } = useContext(Context);
+  const [positionBools, setPositionBools] = useState([[]]);
+  const [sizeBools, setSizeBools] = useState([[]]);
   const [bools, setBools] = useState([[]]);
   const nullReservation = bools.reduce((pojo, prop) => {
     return {...pojo, [prop]: false};
@@ -35,6 +37,38 @@ const EditReservation = ({ match }) => {
       // Do I need the || ... in the two places, below?
       const newBools = [...genderBools, ...(newReservation.game.positions || []), ...(newReservation.game.sizes || [])];
       // Least significant end of array is genderBools; most significant is sizeBools.
+
+      let newGenderBools = [...genderBools];
+      for (let i = 0; i < newGenderBools.length; i++) {
+        const genderBoolVal = newReservation.genderBools % 2;
+        // First element is the column heading, second element is the boolean itself.
+        newGenderBools[i] = [newGenderBools[i], !!genderBoolVal];
+        newReservation.genderBools -= genderBoolVal;
+        newReservation.genderBools /= 2;
+      }
+      setGenderBools(newGenderBools);
+
+      // Do we need the || in either of the following lines?
+      let newPositionBools = newReservation.game.positions || [];
+      for (let i = 0; i < newPositionBools.length; i++) {
+        const positionBoolVal = newReservation.positionBools % 2;
+        // First element is the column heading, second element is the boolean itself.
+        newPositionBools[i] = [newPositionBools[i], !!positionBoolVal];
+        newReservation.positionBools -= positionBoolVal;
+        newReservation.positionBools /= 2;
+      }
+      setPositionBools(newPositionBools);
+
+      let newSizeBools = newReservation.game.sizes || [];
+      for (let i = 0; i < newSizeBools.length; i++) {
+        const sizeBoolVal = newReservation.sizeBools % 2;
+        // First element is the column heading, second element is the boolean itself.
+        newSizeBools[i] = [newSizeBools[i], !!sizeBoolVal];
+        newReservation.sizeBools -= sizeBoolVal;
+        newReservation.sizeBools /= 2;
+      }
+      setSizeBools(newSizeBools);
+
       for (let i = 0; i < newBools.length; i++) {
         const boolVal = newReservation.bools % 2;
         // First element is the column heading, second element is the boolean itself.
@@ -90,9 +124,10 @@ const EditReservation = ({ match }) => {
           {reservation.game.dateTime.split('T')[0]} at &nbsp;
           {reservation.game.dateTime.split('T')[1]}.
         </h3>
-        <span><h4>Your preferences:</h4></span>
+        <span><h4>Specify below your preferences for ...</h4></span>
+        <span><h4>... gender (trans-inclusive):</h4></span>
         <div>
-        {bools.map((bool, index) => (
+        {genderBools.map((bool, index) => (
           <div key={index} className="checkboxPair">
             <div><span>{bool[0]}:</span></div>
             <div><input
@@ -108,6 +143,50 @@ const EditReservation = ({ match }) => {
           </div>
         ))}
         </div>
+
+        {!positionBools.length ? null :
+        <>
+        <span><h4>... game positions:</h4></span>
+        <div>
+        {positionBools.map((bool, index) => (
+          <div key={index} className="checkboxPair">
+            <div><span>{bool[0]}:</span></div>
+            <div><input
+              name={bool[0]}
+              type="checkbox"
+              checked={bool[1]}
+              onChange={e => {
+                const newBools = [...bools];
+                newBools[index][1] = e.target.checked;
+                setBools(newBools);
+              }}
+            /></div>
+          </div>
+        ))}
+        </div>
+        </>}
+
+        {!sizeBools.length ? null :
+        <>
+        <span><h4>... team sizes:</h4></span>
+        <div>
+        {sizeBools.map((bool, index) => (
+          <div key={index} className="checkboxPair">
+            <div><span>{bool[0]}:</span></div>
+            <div><input
+              name={bool[0]}
+              type="checkbox"
+              checked={bool[1]}
+              onChange={e => {
+                const newBools = [...bools];
+                newBools[index][1] = e.target.checked;
+                setBools(newBools);
+              }}
+            /></div>
+          </div>
+        ))}
+        </div>
+        </>}
 
         <span><h4>Extra info about your reservation (optional):</h4></span>
         <input
