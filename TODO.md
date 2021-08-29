@@ -12,7 +12,7 @@ DRY up setSkills invocation in EditGame, and ensure that it'll work if gameTypes
 Figure out which time to display: local or zulu.
 
 MVP goals:
-    What to do if EditGame changes things (like Sport):
+    More drastic things to do if EditGame changes gameTypeId:
         - cancel reservations?
         - trigger email to players?
     Separate contexts into auth, gender, etc.

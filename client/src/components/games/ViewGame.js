@@ -121,8 +121,8 @@ const ViewGame = ({ match }) => {
         setColumns(newColumns.map(column => ({...column, style: (cell, row) => {
           // console.log(row.Skill, newSkills.indexOf(row.Skill), newGame["Minimum skill"], newSkills.indexOf(newGame["Minimum skill"]));
           return {color:
-            newGame["Minimum skill"] && rowSkills.indexOf(row.Skill) < gameSkills.indexOf(newGame["Minimum skill"]) ? 'red' :
-            newGame["Maximum skill"] && rowSkills.indexOf(row.Skill) > gameSkills.indexOf(newGame["Maximum skill"]) ? 'blue' : 'black'
+            newGame["Minimum skill"] !== "none" && rowSkills.indexOf(row.Skill) < gameSkills.indexOf(newGame["Minimum skill"]) ? 'red' :
+            newGame["Maximum skill"] !== "none" && rowSkills.indexOf(row.Skill) > gameSkills.indexOf(newGame["Maximum skill"]) ? 'blue' : 'black'
           };
         }})));
 

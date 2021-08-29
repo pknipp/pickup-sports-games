@@ -1,7 +1,7 @@
 ﻿module.exports = {
-    numberOfGames: 40,
-    skillProb: 0.7,
-    miscProb: 0.5,
+    numberOfGames: 80,
+    skillProb: 0.8,
+    miscProb: 0.6,
     cities: [
     'New York City, NY',
     'Los Angeles, CA',
