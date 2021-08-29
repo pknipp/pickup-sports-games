@@ -15,12 +15,6 @@ MVP goals:
     What to do if EditGame changes things (like Sport):
         - cancel reservations?
         - trigger email to players?
-    Partition booleans into three categories: gender, number, and position
-        genderBooleans (defined in context and hence not stored in db)
-            heading will include parenthetical "trans-inclusive"
-        sizeBooleans: defined in db.gameTypes, allow to be null (e.g., soccer and softball)
-        positionBooleans: defined in db.gameTypes, allow to be null (e.g., tennis and basketball)
-    In EditReservation, issue warning if user fails to submit at least 1 true for each of the 3 sets of booleans
     Separate contexts into auth, gender, etc.
     Other sports to include:
         hockey, ultimate, badminton, pingpong, squash, sailing, running, bowling, golf, lacrosse

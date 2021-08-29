@@ -8,9 +8,9 @@ const EditReservation = ({ match }) => {
   const resGameId = match.params.resGameId;
   const [reservationId, gameId] = resGameId.split('-').map(id => Number(id));
   const { fetchWithCSRF, currentUser, rerender, setRerender, genderBools, setGenderBools } = useContext(Context);
-  const [positionBools, setPositionBools] = useState([[]]);
-  const [sizeBools, setSizeBools] = useState([[]]);
-  const [bools, setBools] = useState([[]]);
+  const [positionBools, setPositionBools] = useState([]);
+  const [sizeBools, setSizeBools] = useState([]);
+  const [bools, setBools] = useState([]);
   const nullReservation = bools.reduce((pojo, prop) => {
     return {...pojo, [prop]: false};
   }, {id: 0, playerId: 0, gameId: 0, game: {Location: '', dateTime: ''}});
@@ -83,10 +83,25 @@ const EditReservation = ({ match }) => {
 
 
   const handlePutPost = async e => {
-    reservation.bools = [...bools].reverse().reduce((tot, bool) => {
+    // reservation.bools = [...bools].reverse().reduce((tot, bool) => {
+    //   return 2 * tot + Number(bool[1]);
+    // }, 0);
+    reservation.genderBools = [...genderBools].reverse().reduce((tot, bool) => {
       return 2 * tot + Number(bool[1]);
     }, 0);
+    reservation.positionBools = [...positionBools].reverse().reduce((tot, bool) => {
+      return 2 * tot + Number(bool[1]);
+    }, 0);
+    reservation.sizeBools = [...sizeBools].reverse().reduce((tot, bool) => {
+      return 2 * tot + Number(bool[1]);
+    }, 0);
+    let sumLacking = ["gender", "position", "size"].reduce((sum, key) => {
+      return sum + Number(!reservation[key + "Bools"]);
+    }, 0) - [genderBools, positionBools, sizeBools].filter(arr => !arr.length).length;
+    let newMessage = !sumLacking ? '' :
+      "You need to select at least one checkbox from " + sumLacking + " of the groups above.";
     e.preventDefault();
+    if (newMessage) return setMessage(newMessage);
     const res = await fetch(`/api/reservations${reservation.id ? ('/' + reservation.id) : ''}`, { method: reservation.id ? 'PUT': 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(reservation)
@@ -124,8 +139,8 @@ const EditReservation = ({ match }) => {
           {reservation.game.dateTime.split('T')[0]} at &nbsp;
           {reservation.game.dateTime.split('T')[1]}.
         </h3>
-        <span><h4>Specify below your preferences for ...</h4></span>
-        <span><h4>... gender (trans-inclusive):</h4></span>
+        <span><h4>{reservationId ? "Below are" : "Specify below"} your willingnesses for ...</h4></span>
+        <span><h4>... gender (trans - inclusive):</h4></span>
         <div>
         {genderBools.map((bool, index) => (
           <div key={index} className="checkboxPair">
@@ -135,9 +150,9 @@ const EditReservation = ({ match }) => {
               type="checkbox"
               checked={bool[1]}
               onChange={e => {
-                const newBools = [...bools];
-                newBools[index][1] = e.target.checked;
-                setBools(newBools);
+                const newGenderBools = [...genderBools];
+                newGenderBools[index][1] = e.target.checked;
+                setGenderBools(newGenderBools);
               }}
             /></div>
           </div>
@@ -156,9 +171,9 @@ const EditReservation = ({ match }) => {
               type="checkbox"
               checked={bool[1]}
               onChange={e => {
-                const newBools = [...bools];
-                newBools[index][1] = e.target.checked;
-                setBools(newBools);
+                const newPositionBools = [...positionBools];
+                newPositionBools[index][1] = e.target.checked;
+                setPositionBools(newPositionBools);
               }}
             /></div>
           </div>
@@ -178,9 +193,9 @@ const EditReservation = ({ match }) => {
               type="checkbox"
               checked={bool[1]}
               onChange={e => {
-                const newBools = [...bools];
-                newBools[index][1] = e.target.checked;
-                setBools(newBools);
+                const newSizeBools = [...sizeBools];
+                newSizeBools[index][1] = e.target.checked;
+                setSizeBools(newSizeBools);
               }}
             /></div>
           </div>
