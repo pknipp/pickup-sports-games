@@ -32,9 +32,12 @@ const EditReservation = ({ match }) => {
       newReservation.game.dateTime = moment(newReservation.game.dateTime).local().format().slice(0,-9);
 
       setReservation(newReservation);
+      // Do I need the || ... in the two places, below?
       const newBools = [...genderBools, ...(newReservation.game.positions || []), ...(newReservation.game.sizes || [])];
+      // Least significant end of array is genderBools; most significant is sizeBools.
       for (let i = 0; i < newBools.length; i++) {
         const boolVal = newReservation.bools % 2;
+        // First element is the column heading, second element is the boolean itself.
         newBools[i] = [newBools[i], !!boolVal];
         newReservation.bools -= boolVal;
         newReservation.bools /= 2;

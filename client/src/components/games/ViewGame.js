@@ -83,7 +83,11 @@ const ViewGame = ({ match }) => {
           ...positionBools, ...sizeBools];
         let newColumns = [...columns2, ...bools];
         let newPlayers = newGame.players;
-        newPlayers.forEach(player => player.Skill = newSkills[player.Skill]);
+        newPlayers.forEach(player => {
+          player.Skill = newSkills[player.Skill];
+          // Combine 3 boolean-encoded integers into a single one.
+          player.bools = (player.sizeBools * 2 ** positionBools.length + player.positionBools) * 2 ** genderBools.length + player.genderBools;
+        });
         // Below sets the only prop of the columns prop which depends upon state.
 
         newColumns = newColumns.map((column, index) => {
