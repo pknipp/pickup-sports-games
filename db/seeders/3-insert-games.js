@@ -3,7 +3,7 @@ const faker = require('faker');
 
 const { numberOfUsers } = require('../seederData/users');
 const { gameTypes } = require('../seederData/gameTypes');
-const { numberOfGames, cities, skillProb, miscProb } = require('../seederData/games')
+const { numberOfGames, cities, skillProb, miscProb, extraInfos } = require('../seederData/games')
 
 const r = o => ({...o, createdAt: new Date(), updatedAt: new Date()});
 
@@ -17,7 +17,7 @@ for (let i = 0; i < numberOfGames; i++) {
   game['Minimum skill'] = (Math.random() < skillProb) ? 1 + Math.floor(Math.random() * 2) : 0;
   game['Maximum skill'] = (Math.random() < skillProb) ? 2 + Math.floor(Math.random() * 2) : 0;
   game.gameTypeId = 1 + Math.floor(Math.random() * gameTypes.length);
-  if (Math.random() < miscProb)  game['Extra info'] = faker.lorem.words();
+  if (Math.random() < miscProb)  game['Extra info'] = extraInfos[Math.floor(Math.random() * extraInfos.length)];
   games.push(game);
 }
 

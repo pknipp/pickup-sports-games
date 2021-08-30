@@ -146,7 +146,7 @@ const User = () => {
                       index === gameTypes[gameTypeId - 1].skills.length + 1 ?
                         'CANCEL' : gameTypes[gameTypeId - 1].skills[index - 1]
                     ) : gameTypes[index - 1].Sport
-                  ) : `Select ${gameTypeId ? "level" : "sport"}`}
+                  ) : `Select ${gameTypeId ? "level" : "sport first"}`}
               </option>
           ))}
         </select>

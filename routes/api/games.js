@@ -90,6 +90,7 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
     ['gameId', 'id', 'playerId', 'createdAt'].forEach(prop => delete reservation[prop]);
     ['First name', 'Last name', 'Address', 'tokenId', 'hashedPassword', 'updatedAt'].forEach(prop => delete player[prop]);
     player = {...player, ...reservation};
+    console.log("player = ", player);
     players.push(player);
   };
   res.json({game: {...game, owner: user, players}});

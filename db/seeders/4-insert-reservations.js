@@ -3,7 +3,7 @@ const faker = require('faker');
 const { numberOfUsers } = require('../seederData/users');
 const { gameTypes } = require('../seederData/gameTypes');
 const { games } = require('./3-insert-games');
-const { reservationProb } = require('../seederData/reservations');
+const { reservationProb, extraInfos } = require('../seederData/reservations');
 
 let reservations = [];
 for (let iUser = 0; iUser < numberOfUsers; iUser++) {
@@ -19,7 +19,7 @@ for (let iUser = 0; iUser < numberOfUsers; iUser++) {
       reservation.positionBools = Math.floor(Math.random() * 2 ** positionsLength);
       reservation.sizeBools = Math.floor(Math.random() * 2 ** sizesLength);
       let updatedAt = faker.date.past(0.1);
-      if (Math.random() < reservationProb) reservation['Extra info'] = faker.lorem.words();
+      if (Math.random() < reservationProb) reservation['Extra info'] = extraInfos[Math.floor(Math.random() * extraInfos.length)];
       [reservation.createdAt, reservation.updatedAt] = [faker.date.past(0.1, updatedAt), updatedAt];
       reservations.push(reservation);
     }

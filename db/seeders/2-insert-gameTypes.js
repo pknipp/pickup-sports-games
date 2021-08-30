@@ -6,13 +6,13 @@ const r = o => ({...o,
     updatedAt: new Date(),
     // ...(["positions", "skills", "sizes"].map(prop => ([prop]: JSON.stringify(o[prop]))),
     positions: JSON.stringify(o.positions),
-    skills: JSON.stringify(o.skills || ["beginner", "intermediate", "advanced"]),
+    skills: JSON.stringify(o.skills || ["low", "middle", "high"]),
     sizes: JSON.stringify(o.sizes),
 });
 
 for (let i = 0; i < gameTypes.length; i++) {
     gameTypes[i] = r(gameTypes[i]);
-}; 
+};
 gameTypes.sort((a, b) => a.Sport < b.Sport ? -1 : a.Sport > b.Sport ? 1 : 0);
 
 module.exports = {

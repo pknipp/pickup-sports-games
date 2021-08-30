@@ -30,8 +30,8 @@ const ViewGame = ({ match }) => {
     'Email',
     'Cell',
     ['createdAt', 'Member since'],
-    ['updatedAt', 'Reservation date/time'],
-    ['Extra info', 'Misc info?'],
+    ['updatedAt', 'When signed up'],
+    ['Extra info', 'Misc info? (hover)'],
     'Skill',
   ];
 
@@ -72,7 +72,7 @@ const ViewGame = ({ match }) => {
         let newGame = (await res.json()).game;
         // Recode following to handle non-sequential gameType ids.
         let gameSkills = ['none', ...newGame.Sports[newGame.gameTypeId - 1].skills];
-        let rowSkills =['unknown',...newGame.Sports[newGame.gameTypeId - 1].skills];
+        let rowSkills =['???',...newGame.Sports[newGame.gameTypeId - 1].skills];
         // setSkills(newSkills);
         // Recode following line to handle non-sequential gameType ids.
         newGame.Sport = newGame.Sports[newGame.gameTypeId - 1].Sport;
@@ -105,7 +105,6 @@ const ViewGame = ({ match }) => {
               } else {
                 diff = a === b ? 0 : a < b ? -1 : 1;
               }
-              // let diff = a === 'unknown' ? -1 : b === 'unknown' ? 1 : a < b ? -1 : a > b ? 1 : 0;
               return diff * (order === 'asc' ? 1 : -1);
             },
           }
@@ -128,17 +127,20 @@ const ViewGame = ({ match }) => {
 
         newPlayers = newPlayers.map(player => {
           player = Object.entries(player).reduce((player, prop) => {
+            console.log("player = ", player);
             return {...player,
               [prop[0]]:
                 prop[1] === true ? "x" :
                 prop[1] === false ? "" :
                 prop[1] === 0 ? "none" :
-                prop[1] && prop[0] === 'Extra info' ? 'y' :
+                prop[1] && prop[0] === 'Extra info' ? <span className="ttip" data-toggle="tooltip" title={prop[1]}>y</span> :
                 prop[1]};
           }, {});
           player.createdAt = player.createdAt.split('T')[0];
           let updatedAt = player.updatedAt.split('T');
           player.updatedAt = updatedAt[0].slice(5) + ' ' + updatedAt[1].slice(0, -8);
+          let Cell = player.Cell;
+          player.Cell = `(${Cell.slice(0,3)})${Cell.slice(3,6)}-${Cell.slice(6)}`;
           bools.forEach((bool, index) => {
             player[bool] = player.bools % 2;
             player.bools -= player[bool];

@@ -7,7 +7,6 @@ DRY up code associated with multiplicity of columns in Users table
 in model files check associations between tables
 in model files insert a many-to-many relationship between Users and Games
 allow any player to add a photo to a Game?
-Have users login w/nickName rather than email, and NOT require that email be unique? (White space'll prob be a problem).
 DRY up setSkills invocation in EditGame, and ensure that it'll work if gameTypes' ids aren't simply [1, 2, ..., 7]
 Figure out which time to display: local or zulu.
 
@@ -16,12 +15,12 @@ MVP goals:
         - cancel reservations?
         - trigger email to players?
     Separate contexts into auth, gender, etc.
+    Create a 4th category of booleans: "other" or "distance".  This'll get used for race-type sports: running, biking.
     Other sports to include:
-        hockey, ultimate, badminton, pingpong, squash, sailing, running, bowling, golf, lacrosse
+        hockey, ultimate, badminton, pingpong, squash, sailing, running, bowling, golf, lacrosse, running, biking
     Flesh out README.md
     Continue making front-end prettier.
     Eliminate bug ("000:000") which appears when destination = origin
-    Use Tooltip to render reservations/extraInfo on GameView
 
 stretch goals:
     implement photo capability

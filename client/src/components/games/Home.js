@@ -49,6 +49,9 @@ const Home = () => {
                     game["Travel time"] = hours + ":" + minutes;
                     let newGame = {...game, ["Game date"]: GameDate, ["Game time"]: GameTime};
                     ['dateTime', 'duration'].forEach(key => delete newGame[key]);
+                    newGame['Extra info'] = newGame['Extra info'] && <span className="ttip" data-toggle="tooltip" title={newGame['Extra info']}>
+                        yes (hover)
+                    </span>;
                     newAllGames.push(newGame);
                 });
                 setAllGames(newAllGames);
@@ -98,7 +101,9 @@ const Home = () => {
         });
         setGames(newGames);
         let newColumns = (!newGames.length ? [] : Object.keys(newGames[0]).filter(col => {
-            return !["id", "reservationId", "Minimum skill", "Maximum skill", "Extra info", !selectedOption ? 'Game organizer' : 'view'].includes(col);
+            return !["id", "reservationId", "Minimum skill", "Maximum skill",
+            // "Extra info",
+            !selectedOption ? 'Game organizer' : 'view'].includes(col);
         }).map(col => {
             let text = ['edit', 'view'].includes(col) ? '' : col
             return {dataField: col, text, sort: !!text};
