@@ -181,10 +181,10 @@ const ViewGame = ({ match }) => {
         />
         <br/>
         <h4>Game lineup:</h4>
-        {game['Minimum skill'] || game['Maximum skill'] ? <div>Key for color of player:
-          {game['Minimum skill'] ? <span style={{color: 'red'}}> insufficiently </span> : null}
-          {game['Minimum skill'] && game['Maximum skill'] ? 'or ' : null}
-          {game['Maximum skill'] ? <span style={{color: 'blue'}}> excessively </span> : null}
+        {game['Minimum skill'] !== "none" || game['Maximum skill'] !== "none" ? <div>Key for color of player:
+          {game['Minimum skill'] !== "none" ? <span style={{color: 'red'}}> insufficiently </span> : null}
+          {game['Minimum skill'] !== "none" && game['Maximum skill'] !== "none" ? 'or ' : null}
+          {game['Maximum skill'] !== "none" ? <span style={{color: 'blue'}}> excessively </span> : null}
           skilled</div>
         : null}
         <br/>
