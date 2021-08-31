@@ -3,7 +3,7 @@ const { check, validationResult } = require('express-validator');
 const Sequelize = require('sequelize');
 const router = require('express').Router();
 
-const { User, Game, Reservation, Skill } = require('../../db/models');
+const { User, Event, Reservation, Skill } = require('../../db/models');
 const { authenticated, generateToken } = require('./security-utils');
 const { uploadFile } = require('../../s3helper.js');
 const checkLocation = require('./checkLocation');
@@ -99,11 +99,11 @@ router.put('', [authenticated, email, password],
       user.tokenId = jti;
       res.cookie("token", token);
       await user.save();
-      if (req.body.gameTypeId) {
+      if (req.body.sportId) {
         let skill = await Skill.findOne({where: {
           [Sequelize.Op.and]: [
             {userId: user.id},
-            {gameTypeId: req.body.gameTypeId }
+            {sportId: req.body.sportId }
           ]
         }});
         skill.Skill = req.body.Skill;

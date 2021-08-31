@@ -5,10 +5,10 @@ import moment from 'moment';
 import Context from '../../context';
 import fetch from 'node-fetch';
 
-const EditGame = ({ match }) => {
+const EditEvent = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender } = useContext(Context);
   const properties = [
-    'gameTypeId',
+    'sportId',
     'Location',
     'dateTime',
     'Extra info',
@@ -16,10 +16,10 @@ const EditGame = ({ match }) => {
     'Maximum skill'
   ];
 
-  const [gameTypes, setGameTypes] = useState([]);
-  const [game, setGame] = useState(properties.reduce((pojo, prop) => {
+  const [sports, setSports] = useState([]);
+  const [event, setEvent] = useState(properties.reduce((pojo, prop) => {
     return {[prop]: '', Sports: [], ...pojo};
-  }, {id: Number(match.params.gameId)}));
+  }, {id: Number(match.params.eventId)}));
   const [wantsToPlay, setWantsToPlay] = useState(false);
   const [skills, setSkills] = useState([]);
   const [message, setMessage] = useState('');
@@ -29,61 +29,61 @@ const EditGame = ({ match }) => {
 
   // useEffect(() => {
   //   (async() => {
-  //     let newGameTypes = (await (await fetch('/api/gameTypes')).json()).gameTypes;
-  //     console.log("1st ue says that newGameTypes = ", newGameTypes);
-  //     setGameTypes(newGameTypes);
+  //     let newSports = (await (await fetch('/api/sports')).json()).sports;
+  //     console.log("1st ue says that newSports = ", newSports);
+  //     setSports(newSports);
   //   })();
   // }, []);
 
   useEffect(() => {
     (async() => {
-      // Put following in the separate useEffect?
-      let newGameTypes = (await (await fetch('/api/gameTypes')).json()).gameTypes;
-      setGameTypes(newGameTypes);
-      if (game.id) {
-        const res = await fetch(`/api/games/${game.id}`);
-        let newGame = (await res.json()).game;
+      // Put following line in a separate useEffect?
+      let newSports = (await (await fetch('/api/sports')).json()).sports;
+      setSports(newSports);
+      if (event.id) {
+        const res = await fetch(`/api/events/${event.id}`);
+        let newEvent = (await res.json()).event;
         // React does not like null value, which might be stored in db.
-        Object.keys(newGame).forEach(key => {
-          if (newGame[key] === null) newGame[key] = '';
+        Object.keys(newEvent).forEach(key => {
+          if (newEvent[key] === null) newEvent[key] = '';
         });
-        newGame.dateTime = moment(newGame.dateTime).local().format().slice(0, -6);
-        setGame(newGame);
-        // Put following in separate useEffect, and allow for non-sequential gameTypeIds?
-        setSkills(["none", ...newGameTypes[newGame.gameTypeId - 1].skills]);
+        newEvent.dateTime = moment(newEvent.dateTime).local().format().slice(0, -6);
+        setEvent(newEvent);
+        // Put following in separate useEffect, and allow for non-sequential sportIds?
+        setSkills(["none", ...newSports[newEvent.sportId - 1].skills]);
       }
     })();
-  }, [game.id]);
+  }, [event.id]);
 
   const handlePutPost = async e => {
     e.preventDefault();
-    game['Minimum skill'] = isNaN(game['Minimum skill']) ? 0 : Number(game['Minimum skill']);
-    game['Maximum skill'] = isNaN(game['Maximum skill']) ? 0 : Number(game['Maximum skill']);
-    const res = await fetch(`/api/games${game.id ? ('/' + game.id) : ''}`, { method: game.id ? 'PUT': 'POST',
+    event['Minimum skill'] = isNaN(event['Minimum skill']) ? 0 : Number(event['Minimum skill']);
+    event['Maximum skill'] = isNaN(event['Maximum skill']) ? 0 : Number(event['Maximum skill']);
+    const res = await fetch(`/api/events${event.id ? ('/' + event.id) : ''}`, { method: event.id ? 'PUT': 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(game)
+      body: JSON.stringify(event)
     });
     let {id, newMessage} = await res.json();
     // React likes '' but does not like null.
-    // Object.entries(newGame).forEach(([key, value]) => {
-    //   if (value === null) newGame[key] = '';
+    // Object.entries(newEvent).forEach(([key, value]) => {
+    //   if (value === null) newEvent[key] = '';
     // });
-    // newGame.dateTime = moment(newGame.dateTime).local().format().slice(0, -6);
+    // newEvent.dateTime = moment(newEvent.dateTime).local().format().slice(0, -6);
     setMessage(newMessage || "Success!");
-    setGame({...game, id});
+    setEvent({...event, id});
     if (!newMessage) history.push(wantsToPlay ? `/reservations/0-${id}` : '/');
     setRerender(rerender + 1);
   };
 
   const handleDelete = async e => {
     e.preventDefault();
-    const res = await fetch(`/api/games/${game.id}`, { method: 'DELETE'});
+    const res = await fetch(`/api/events/${event.id}`, { method: 'DELETE'});
     if (res.ok) {
-      let nullGame = properties.reduce((pojo, prop) => {
+      let nullEvent = properties.reduce((pojo, prop) => {
         return {[prop]: '', ...pojo};
       }, {wantsToPlay: false});
-      [nullGame.id, nullGame.ownerId] = [0, 0];
-      setGame(nullGame);
+      [nullEvent.id, nullEvent.ownerId] = [0, 0];
+      setEvent(nullEvent);
       setRerender(rerender + 1);
       history.push('/');
     }
@@ -93,7 +93,7 @@ const EditGame = ({ match }) => {
     <div className="simple">
       <form className="auth" onSubmit={handlePutPost}>
         <h4>
-          {game.id ?
+          {event.id ?
             "Change the event details?"
           :
             "Choose the event details."
@@ -103,51 +103,50 @@ const EditGame = ({ match }) => {
         <select
           onChange={e => {
             let index = Number(e.target.value);
-            let newGameTypeId = index && gameTypes[index - 1].id;
-            let isSameGameType = Number(game.gameTypeId === newGameTypeId);
-            let newGame = {...game};
-            // The follows UNspecifies the max/min skill levels, if the gameType is changed.
-            ["Minimum skill", "Maximum skill"].forEach(key => newGame[key] = isSameGameType && newGame[key]);
-            // The following prevents state changes until a gameType is selected.
+            let newSportId = index && sports[index - 1].id;
+            let isSameSport = Number(event.sportId === newSportId);
+            let newEvent = {...event};
+            // The follows UNspecifies the max/min skill levels, if the sport is changed.
+            ["Minimum skill", "Maximum skill"].forEach(key => newEvent[key] = isSameSport && newEvent[key]);
+            // The following prevents state changes until a sport is selected.
             if (index) {
-              setGame({...newGame, gameTypeId: newGameTypeId});
-              setSkills(["unspecified", ...gameTypes[index - 1].skills]);
+              setEvent({...newEvent, sportId: newSportId});
+              setSkills(["unspecified", ...sports[index - 1].skills]);
             }
           }}
-          value={1 + gameTypes.map(gameType => gameType.id).indexOf(game.gameTypeId)}
+          value={1 + sports.map(sport => sport.id).indexOf(event.sportId)}
         >
-          {["Select sport", ...gameTypes].map((gameType, index) => (
+          {["Select sport", ...sports].map((sport, index) => (
               <option
-                  key={`${index && gameTypes[index - 1].id}`}
+                  key={`${index && sports[index - 1].id}`}
                   value={index}
               >
-                  {index ? gameTypes[index - 1].Sport : "Select sport"}
+                  {index ? sports[index - 1].Name : "Select sport"}
               </option>
           ))}
         </select>
 
         <span>Event location:</span>
         <input
-          type="text" placeholder="Location" name="Location" value={game.Location}
-          onChange={e => setGame({...game, Location: e.target.value})}
+          type="text" placeholder="Location" name="Location" value={event.Location}
+          onChange={e => setEvent({...event, Location: e.target.value})}
         />
         <span>Date/time:</span>
         <input
           type="datetime-local"
-          value={game.dateTime}
+          value={event.dateTime}
           onChange={e => {
-            console.log("dateTime = ", e.target.value);
-            setGame({...game, dateTime: e.target.value});
+            setEvent({...event, dateTime: e.target.value});
           }}
         />
 
-        {!game.gameTypeId ? null :
+        {!event.sportId ? null :
           <>
             <span>Lower limit of skill-level:</span>
 
             <select
-              onChange={e => setGame({...game, ['Minimum skill']: Number(e.target.value)})}
-              value={game['Minimum skill']}
+              onChange={e => setEvent({...event, ['Minimum skill']: Number(e.target.value)})}
+              value={event['Minimum skill']}
             >
               {skills.map((skill, index) => (
                   <option
@@ -162,8 +161,8 @@ const EditGame = ({ match }) => {
             <span>Upper limit of skill-level:</span>
 
             <select
-              onChange={e => setGame({...game, ['Maximum skill']: !Number(e.target.value) ? 'none' : e.target.value})}
-              value={Number(game['Maximum skill'])}
+              onChange={e => setEvent({...event, ['Maximum skill']: !Number(e.target.value) ? 'none' : e.target.value})}
+              value={Number(event['Maximum skill'])}
             >
               {skills.map((skill, index) => (
                   <option
@@ -178,12 +177,12 @@ const EditGame = ({ match }) => {
         }
 
         <span>Extra info (optional):</span>
-        <input
-          type="text" placeholder="Extra Info about event" name="Extra info" value={game['Extra info']}
-          onChange={e => setGame({...game, ['Extra info']: e.target.value})}
+        <textarea
+          placeholder="Extra Info about event" name="Extra info" value={event['Extra info']}
+          onChange={e => setEvent({...event, ['Extra info']: e.target.value})}
         />
 
-        {game.id ? null :
+        {event.id ? null :
           <>
           <br/>
           <span>Select box if you want to participate in this event.
@@ -199,11 +198,11 @@ const EditGame = ({ match }) => {
         }
 
         <button color="primary" variant="outlined" type="submit">
-          {game.id ? "Update " : "Create "}event
+          {event.id ? "Update " : "Create "}event
         </button>
         <span style={{color: "red", paddingLeft:"10px"}}>{message}</span>
       </form>
-      {!game.id ? null :
+      {!event.id ? null :
         <form className="auth" onSubmit={handleDelete}>
           <button color="primary" variant="outlined" type="submit">
             Delete event
@@ -214,4 +213,4 @@ const EditGame = ({ match }) => {
   );
 }
 
-export default EditGame;
+export default EditEvent;

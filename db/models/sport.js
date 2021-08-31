@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   );
 
-  GameType.associate = function(models) {
+  Sport.associate = function(models) {
     Sport.hasMany(models.Event, {foreignKey: 'sportId'});
   };
 

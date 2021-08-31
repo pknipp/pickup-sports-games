@@ -1,19 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const { Game, Reservation, User, GameType } = require("../../db/models");
+const { Event, Reservation, User, Sport } = require("../../db/models");
 const { Op } = require('sequelize');
 const asyncHandler = require('express-async-handler');
 const { authenticated } = require('./security-utils');
-const gameType = require('../../db/models/gameType');
 
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
-    // try {
     req.body.ownerId = req.user.id;
     let reservation = await Reservation.create(req.body);
-
-    let game = (await Game.findByPk(reservation.gameId)).dataValues;
-    game.Sport = (await GameType.findByPk(game.gameTypeId)).Sport;
-    reservation = {...reservation.dataValues, game};
+    let event = (await Event.findByPk(reservation.eventId)).dataValues;
+    event.Sport = (await Sport.findByPk(event.sportId)).Name;
+    reservation = {...reservation.dataValues, event};
 
     res.status(201).send({reservation})
     // } catch (e) {
@@ -27,15 +24,15 @@ router.get('', [authenticated], asyncHandler(async(req, res) => {
     res.json({reservations});
 }));
 
-router.get('/:resGameId', async(req, res) => {
-    const [reservationId, gameId] = req.params.resGameId.split('-').map(id => Number(id));
+router.get('/:resEventId', async(req, res) => {
+    const [reservationId, eventId] = req.params.resEventId.split('-').map(id => Number(id));
     let reservation = (reservationId && (await Reservation.findByPk(reservationId)).dataValues) || {};
-    const game = (await Game.findByPk(gameId)).dataValues;
-    const gT = await GameType.findByPk(game.gameTypeId);
-    game.Sport = gT.Sport;
-    game.positions = JSON.parse(gT.positions || '[]');
-    game.sizes = JSON.parse(gT.sizes || '[]');
-    reservation.game = game;
+    const event = (await Event.findByPk(eventId)).dataValues;
+    const sport = await Sport.findByPk(event.sportId);
+    event.Sport = sport.Name;
+    event.positions = JSON.parse(sport.positions || '[]');
+    event.sizes = JSON.parse(sport.sizes || '[]');
+    reservation.event = event;
     res.json({reservation});
 })
 
@@ -44,9 +41,9 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     if (reservation.playerId !== req.user.id) res.status(401).send("Unauthorized Access");
     Object.keys(req.body).forEach(key => reservation[key] = req.body[key]);
     await reservation.save();
-    let game = (await Game.findByPk(reservation.gameId)).dataValues;
-    game.Sport = (await GameType.findByPk(game.gameTypeId)).Sport;
-    reservation = {...reservation.dataValues, game};
+    let event = (await Event.findByPk(reservation.eventId)).dataValues;
+    event.Sport = (await Sport.findByPk(event.sportId)).Name;
+    reservation = {...reservation.dataValues, event};
     res.status(200).json({reservation});
 }));
 

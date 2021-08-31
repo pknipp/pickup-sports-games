@@ -41,9 +41,9 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   User.associate = function(models) {
-    User.hasMany(models.Game, {foreignKey: 'ownerId'});
+    User.hasMany(models.Event, {foreignKey: 'ownerId'});
     User.hasMany(models.Reservation, {foreignKey: 'playerId'});
-    // insert a belongsToMany relationship between User and Game, via Reservations
+    // insert a belongsToMany relationship between User and Event, via Reservations
   };
 
   User.prototype.toSafeObject = function () {

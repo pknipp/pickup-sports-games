@@ -6,10 +6,10 @@ import LogOut from './components/session/LogOut';
 import User from './components/users/User';
 // import Container from "./components/Container";
 import NavBar from "./components/NavBar";
-import EditGame from "./components/games/EditGame";
-import ViewGame from "./components/games/ViewGame";
+import EditEvent from "./components/events/EditEvent";
+import ViewEvent from "./components/events/ViewEvent";
 import EditReservation from "./components/reservations/EditReservation";
-import Home from "./components/games/Home";
+import Home from "./components/events/Home";
 import Context from './context';
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
@@ -83,9 +83,9 @@ const App = () => {
             <ProtectedRoute exact path="/" component={Home}/>
             <ProtectedRoute exact path="/edituser" component={User}/>
             <ProtectedRoute path="/logout" component={LogOut}/>
-            <Route exact path="/editGames/:gameId" component={EditGame} />
-            <Route exact path="/viewGames/:gameId" component={ViewGame} />
-            <Route exact path="/reservations/:resGameId" component={EditReservation} />
+            <Route exact path="/editEvents/:eventId" component={EditEvent} />
+            <Route exact path="/viewEvents/:eventId" component={ViewEvent} />
+            <Route exact path="/reservations/:resEventId" component={EditReservation} />
           </Switch>
           <span>
             <br/><br/>
