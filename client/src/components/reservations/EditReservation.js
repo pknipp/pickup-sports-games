@@ -5,19 +5,19 @@ import moment from 'moment';
 import Context from '../../context';
 
 const EditReservation = ({ match }) => {
-  const resGameId = match.params.resGameId;
-  const [reservationId, gameId] = resGameId.split('-').map(id => Number(id));
+  const resEventId = match.params.resEventId;
+  const [reservationId, eventId] = resEventId.split('-').map(id => Number(id));
   const { fetchWithCSRF, currentUser, rerender, setRerender, genderBools, setGenderBools } = useContext(Context);
   const [positionBools, setPositionBools] = useState([]);
   const [sizeBools, setSizeBools] = useState([]);
   const [bools, setBools] = useState([]);
   const nullReservation = bools.reduce((pojo, prop) => {
     return {...pojo, [prop]: false};
-  }, {id: 0, playerId: 0, gameId: 0, game: {Location: '', dateTime: ''}});
+  }, {id: 0, playerId: 0, eventId: 0, event: {Location: '', dateTime: ''}});
   const [reservation, setReservation] = useState({...nullReservation,
     playerId: currentUser.id,
     id: reservationId,
-    gameId
+    eventId
   });
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
@@ -26,16 +26,16 @@ const EditReservation = ({ match }) => {
 
   useEffect(() => {
     (async() => {
-      const res = await fetch(`/api/reservations/${resGameId}`);
+      const res = await fetch(`/api/reservations/${resEventId}`);
       let newReservation = {...reservation, ...(await res.json()).reservation};
       Object.keys(newReservation).forEach(key => {
         if (newReservation[key] === null) newReservation[key] = key === 'Extra info' ? '' : false;
       })
-      newReservation.game.dateTime = moment(newReservation.game.dateTime).local().format().slice(0,-9);
+      newReservation.event.dateTime = moment(newReservation.event.dateTime).local().format().slice(0,-9);
 
       setReservation(newReservation);
       // Do I need the || ... in the two places, below?
-      const newBools = [...genderBools, ...(newReservation.game.positions || []), ...(newReservation.game.sizes || [])];
+      const newBools = [...genderBools, ...(newReservation.event.positions || []), ...(newReservation.event.sizes || [])];
       // Least significant end of array is genderBools; most significant is sizeBools.
 
       let newGenderBools = [...genderBools];
@@ -49,7 +49,7 @@ const EditReservation = ({ match }) => {
       setGenderBools(newGenderBools);
 
       // Do we need the || in either of the following lines?
-      let newPositionBools = newReservation.game.positions || [];
+      let newPositionBools = newReservation.event.positions || [];
       for (let i = 0; i < newPositionBools.length; i++) {
         const positionBoolVal = newReservation.positionBools % 2;
         // First element is the column heading, second element is the boolean itself.
@@ -59,7 +59,7 @@ const EditReservation = ({ match }) => {
       }
       setPositionBools(newPositionBools);
 
-      let newSizeBools = newReservation.game.sizes || [];
+      let newSizeBools = newReservation.event.sizes || [];
       for (let i = 0; i < newSizeBools.length; i++) {
         const sizeBoolVal = newReservation.sizeBools % 2;
         // First element is the column heading, second element is the boolean itself.
@@ -107,7 +107,7 @@ const EditReservation = ({ match }) => {
       body: JSON.stringify(reservation)
     });
     let newReservation = (await res.json()).reservation;
-    newReservation.game.dateTime = moment(newReservation.game.dateTime).local().format().slice(0,-9);
+    newReservation.event.dateTime = moment(newReservation.event.dateTime).local().format().slice(0,-9);
     if (reservation.id) {
       // PUT route
       setMessage("Success");
@@ -135,9 +135,9 @@ const EditReservation = ({ match }) => {
     <div className="simple">
       <form className="auth" onSubmit={handlePutPost}>
         <h3>
-          {reservation.id ? "Change" : "Choose"} your reservation details for {reservation.game.Sport && reservation.game.Sport.toLowerCase()} at {reservation.game.Location} on &nbsp;
-          {reservation.game.dateTime.split('T')[0]} at &nbsp;
-          {reservation.game.dateTime.split('T')[1]}.
+          {reservation.id ? "Change" : "Choose"} your reservation details for {reservation.event.Sport && reservation.event.Sport.toLowerCase()} at {reservation.event.Location} on &nbsp;
+          {reservation.event.dateTime.split('T')[0]} at &nbsp;
+          {reservation.event.dateTime.split('T')[1]}.
         </h3>
         <span><h4>{reservationId ? "Below are" : "Specify below"} your willingnesses for ...</h4></span>
         <span><h4>... gender (trans - inclusive):</h4></span>
@@ -161,7 +161,7 @@ const EditReservation = ({ match }) => {
 
         {!positionBools.length ? null :
         <>
-        <span><h4>... game positions:</h4></span>
+        <span><h4>... event positions:</h4></span>
         <div>
         {positionBools.map((bool, index) => (
           <div key={index} className="checkboxPair">
