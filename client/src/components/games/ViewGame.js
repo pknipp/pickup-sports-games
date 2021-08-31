@@ -17,10 +17,10 @@ const ViewGame = ({ match }) => {
   const topColumns = [
     'Sport',
     'Location',
-    'date',
-    'time',
-    'lower limit of skill-level',
-    'upper limit of skill-level',
+    'Date',
+    'Time',
+    'Lower limit of skill-level',
+    'Upper limit of skill-level',
     'Extra info'
   ].map((text, index) => ({dataField: String(index), text}));
 
@@ -162,7 +162,7 @@ const ViewGame = ({ match }) => {
 
   return (
     <div className="simple">
-        <h4>Game details:</h4>
+        <h4>Event details:</h4>
         <BootstrapTable
           keyField='id'
           data={[
@@ -182,7 +182,7 @@ const ViewGame = ({ match }) => {
           columns={topColumns.slice(...(game['Extra info'] ? [0] : [0, -1]))}
         />
         <br/>
-        <h4>Game lineup:</h4>
+        <h4>Event lineup:</h4>
         {game['Minimum skill'] !== "none" || game['Maximum skill'] !== "none" ? <div>Key for color of player:
           {game['Minimum skill'] !== "none" ? <span style={{color: 'red'}}> insufficiently </span> : null}
           {game['Minimum skill'] !== "none" && game['Maximum skill'] !== "none" ? 'or ' : null}
