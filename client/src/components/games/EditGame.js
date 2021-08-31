@@ -135,7 +135,10 @@ const EditGame = ({ match }) => {
         <input
           type="datetime-local"
           value={game.dateTime}
-          onChange={e => setGame({...game, dateTime: e.target.value})}
+          onChange={e => {
+            console.log("dateTime = ", e.target.value);
+            setGame({...game, dateTime: e.target.value});
+          }}
         />
 
         <span>Lower limit of skill-level:</span>
