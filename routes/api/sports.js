@@ -17,7 +17,8 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
             let val = sport[key];
             sport[key] = val && JSON.parse(val);
         });
-        sport.Skill = (await Skill.findOne({where: {userId, sportId}})).dataValues.skill;
+        let skill = await Skill.findOne({where: {userId, sportId}});
+        sport.Skill = Number(skill) && skill.dataValues.skill;
     };
     res.json({sports});
 }));

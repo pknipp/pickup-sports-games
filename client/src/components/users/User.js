@@ -24,19 +24,19 @@ const User = () => {
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
   const [Skill, setSkill] = useState(0);
-  const [gameTypes, setGameTypes] = useState([]);
-  const [gameTypeId, setGameTypeId] = useState(0);
+  const [sports, setSports] = useState([]);
+  const [sportId, setSportId] = useState(0);
 
   let history = useHistory();
 
   useEffect(() => {
     (async() => {
       if (currentUser) {
-        const res = await fetch('/api/gameTypes');
-        setGameTypes((await res.json()).gameTypes.sort((a, b) => a.id - b.id));
+        const data = await (await fetch('/api/sports')).json();
+        setSports((data.sports || []).sort((a, b) => a.id - b.id));
       }
     })();
-  }, [currentUser && currentUser.id]);
+  }, []);
 
   const handlePutPost = async e => {
     e.preventDefault();
@@ -45,7 +45,7 @@ const User = () => {
                   params.password !== params.password2 ? "Passwords must match" : "";
     setMessage(message);
     if (!message) {
-      let newParams = {...params, gameTypeId, Skill}
+      let newParams = {...params, sportId, Skill}
       const res = await fetch(`/api/users`, { method: currentUser ? 'PUT': 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newParams)
@@ -121,37 +121,37 @@ const User = () => {
           type="number" placeholder="Cell" name="Cell" value={params.Cell}
           onChange={e => setParams({...params, Cell: Number(e.target.value)})}
         />
-        <span>{gameTypeId ? gameTypes[gameTypeId - 1].Sport : ""} skill-level:</span>
+        {!currentUser ? null : <><span>{sportId ? sports[sportId - 1].Name : ""} skill-level:</span>
         <select
           onChange={e => {
             let val = Number(e.target.value);
-            if (gameTypeId) {
-              if (val === gameTypes[gameTypeId - 1].skills.length + 1) {
-                setGameTypeId(0);
+            if (sportId) {
+              if (val === sports[sportId - 1].skills.length + 1) {
+                setSportId(0);
               } else {
                 setSkill(val);
               }
             } else {
-              setGameTypeId(val);
-              setSkill(gameTypes[val].Skill);
+              setSportId(val);
+              setSkill(sports[val].Skill);
             }
           }}
-          value={gameTypeId && gameTypes[gameTypeId - 1].Skill}
+          value={sportId && sports[sportId - 1].Skill}
         >
-          {[null, ...(gameTypeId ? [...gameTypes[gameTypeId - 1].skills, 'Cancel'] : gameTypes)].map((element, index) => (
+          {[null, ...(sportId ? [...sports[sportId - 1].skills, 'Cancel'] : sports)].map((element, index) => (
               <option
                   key={`${index}`}
                   value={index}
               >
                   {index ? (
-                    gameTypeId ? (
-                      index === gameTypes[gameTypeId - 1].skills.length + 1 ?
-                        'CANCEL' : gameTypes[gameTypeId - 1].skills[index - 1]
-                    ) : gameTypes[index - 1].Sport
-                  ) : `Select ${gameTypeId ? "level" : "sport first"}`}
+                    sportId ? (
+                      index === sports[sportId - 1].skills.length + 1 ?
+                        'CANCEL' : sports[sportId - 1].skills[index - 1]
+                    ) : sports[index - 1].Name
+                  ) : `Select ${sportId ? "level" : "sport first"}`}
               </option>
           ))}
-        </select>
+        </select></>}
 
         {/* <span>Photo url:</span>
         <input type="text" placeholder="Photo url" name="photo" value={params.photo}

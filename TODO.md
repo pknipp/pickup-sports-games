@@ -13,9 +13,6 @@ Figure out which time to display: local or zulu.
 MVP goals:
     Other sports to include:
         hockey, ultimate, badminton, pingpong, squash, sailing, running, bowling, golf, lacrosse, running, biking
-    change "game" to "event", everywhere, in order to allow for the fact that some of these may be "practices"
-    change "gameType" to "sport" everywhere.
-    change gameType.Sport to sport.Name in db
     change "genders", "sizes", "positions" (and "other") from variables (arrays) to keys of "bools", largely in order
         to allow for the DRY-ing of code
     In Reservations and GameTypes tables, combine different bools columns into the stringification of a pojo whose

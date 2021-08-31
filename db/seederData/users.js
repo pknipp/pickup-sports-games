@@ -1,5 +1,5 @@
 module.exports = {
-  numberOfUsers: 20,
+  numberOfUsers: 15,
   people :[
     ['Aaron', 'Pittsburgh PA'],
     ['Ben', 'Denver CO'],

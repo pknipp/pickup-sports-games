@@ -3,7 +3,7 @@ const { check, validationResult } = require('express-validator');
 const Sequelize = require('sequelize');
 const router = require('express').Router();
 
-const { User, Event, Reservation, Skill } = require('../../db/models');
+const { User, Event, Reservation, Skill, Sport } = require('../../db/models');
 const { authenticated, generateToken } = require('./security-utils');
 const { uploadFile } = require('../../s3helper.js');
 const checkLocation = require('./checkLocation');
@@ -17,6 +17,7 @@ const password = check('password').not().isEmpty().withMessage('Provide a passwo
 
 router.post('', [email, password],
   asyncHandler(async (req, res, next) => {
+    try {
     let [user, message, status] = [{}, '', 400];
     const errors = validationResult(req).errors;
     if (errors.length) {
@@ -38,6 +39,8 @@ router.post('', [email, password],
           user.tokenId = jti;
           res.cookie("token", token);
           await user.save();
+          sportIds = (await Sport.findAll({})).map(sport => sport.dataValues.id);
+          sportIds.forEach(async sportId => await Skill.create({userId: user.id, sportId, skill: 0}));
           user = user.toSafeObject();
           status = 201;
         } else {
@@ -46,10 +49,14 @@ router.post('', [email, password],
       }
     }
     res.status(status).json({user: {...user, message}});
+  } catch(e) {
+    console.log("error = ", e);
+  }
   }));
 
 router.put('', [authenticated, email, password],
   asyncHandler(async (req, res, next) => {
+    try {
     let [user, message, status] = [req.user, '', 200];
     const errors = validationResult(req).errors;
     if (user.id === 1) {
@@ -111,6 +118,9 @@ router.put('', [authenticated, email, password],
       }
     }
     res.status(status).json({ user: { ...user.toSafeObject(), message } });
+  } catch(e){
+    console.log("error is ", e);
+  }
   })
 );
 
