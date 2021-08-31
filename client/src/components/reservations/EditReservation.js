@@ -135,7 +135,7 @@ const EditReservation = ({ match }) => {
     <div className="simple">
       <form className="auth" onSubmit={handlePutPost}>
         <h3>
-          {reservation.id ? "Change" : "Choose"} your reservation details for the {reservation.game.Sport && reservation.game.Sport.toLowerCase()} game at {reservation.game.Location} on &nbsp;
+          {reservation.id ? "Change" : "Choose"} your reservation details for {reservation.game.Sport && reservation.game.Sport.toLowerCase()} at {reservation.game.Location} on &nbsp;
           {reservation.game.dateTime.split('T')[0]} at &nbsp;
           {reservation.game.dateTime.split('T')[1]}.
         </h3>
@@ -204,8 +204,9 @@ const EditReservation = ({ match }) => {
         </>}
 
         <span><h4>Extra info about your reservation (optional):</h4></span>
-        <input
-          type="text" placeholder="Extra info" name="Extra info" value={reservation['Extra info']}
+
+        <textarea
+          placeholder="Extra info" name="Extra info" value={reservation['Extra info']}
           onChange={e => setReservation({...reservation, ['Extra info']: e.target.value})}
         />
 
