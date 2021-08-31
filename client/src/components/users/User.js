@@ -31,10 +31,12 @@ const User = () => {
 
   useEffect(() => {
     (async() => {
-      const res = await fetch('/api/gameTypes');
-      setGameTypes((await res.json()).gameTypes.sort((a, b) => a.id - b.id));
+      if (currentUser) {
+        const res = await fetch('/api/gameTypes');
+        setGameTypes((await res.json()).gameTypes.sort((a, b) => a.id - b.id));
+      }
     })();
-  }, [currentUser.id]);
+  }, [currentUser && currentUser.id]);
 
   const handlePutPost = async e => {
     e.preventDefault();
