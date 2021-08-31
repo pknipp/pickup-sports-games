@@ -9,7 +9,7 @@ const NavBar = () => {
   const head = (
     <h1>
         <p align="center">
-            Welcome {currentUser ? currentUser.Nickname : ""} to sports meetup!
+            Welcome {currentUser ? currentUser.Nickname : ""} to pickup sports games!
         </p>
     </h1>
 );
@@ -18,7 +18,7 @@ const NavBar = () => {
     <>
         <h1>
             <p align="center">
-                Welcome {currentUser ? currentUser.Nickname : ""} to sports meetup!
+                Welcome {currentUser ? currentUser.Nickname : ""} to pickup sports games!
             </p>
         </h1>
         <p align="center">{!currentUser ? null :

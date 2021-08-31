@@ -7,8 +7,8 @@ import Context from '../../context';
 const Home = () => {
     const options = [
         ["games organized by you", "Edit game details", "View game details"],
-        ["games for which you are registered to play", "Edit reservation"],
-        ["games for which you are not registered to play", "Make reservation"]
+        ["games for which you are registered", "Edit reservation"],
+        ["games for which you are not registered", "Make reservation"]
     ];
     // let allKeys = [
     //     ['sport', 'Sport'],
