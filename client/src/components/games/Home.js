@@ -6,21 +6,10 @@ import Context from '../../context';
 
 const Home = () => {
     const options = [
-        ["games organized by you", "Edit game details", "View game details"],
-        ["games for which you are registered", "Edit reservation"],
-        ["games for which you are not registered", "Make reservation"]
+        ["events organized by you", "Edit event details", "View event details"],
+        ["events for which you are registered", "Edit reservation"],
+        ["events for which you are not registered", "Make reservation"]
     ];
-    // let allKeys = [
-    //     ['sport', 'Sport'],
-    //     ['date', 'Game date'],
-    //     ['time', 'Start time'],
-    //     ['address', 'Address'],
-    //     ['duration', 'Travel time (hr:min)'],
-    //     ['count', 'Player reservations'],
-    //     ['owner', 'Game organizer'],
-    //     ['edit', ''],
-    //     ['view', '']
-    // ];
     const { currentUser, gender } = useContext(Context);
     const [loading, setLoading] = useState(true);
     const [allGames, setAllGames] = useState([]);
@@ -114,7 +103,7 @@ const Home = () => {
     return (
         <div className="simple">
             <div className="welcome">
-                <h4>Below are tabulated games of interest to you.</h4>
+                <h4>Below are tabulated the events which may interest you.</h4>
             </div>
             <br/>
             <div>
@@ -134,7 +123,7 @@ const Home = () => {
             {selectedOption ? null :
                 <div>
                     <NavLink exact to={"/editGames/0"} className="nav" activeClassName="active">
-                        <div>Create new Game</div>
+                        <div>Create new event</div>
                     </NavLink>
                 </div>
             }
