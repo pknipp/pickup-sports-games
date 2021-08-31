@@ -67,7 +67,7 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   const eventId = Number(req.params.id);
   const event = (await Event.findByPk(eventId)).dataValues;
   let sportId = event.sportId;
-  event.Sports = (await Sport.findAll()).map(sport => ({id: sport.id, Sport: sport.Name, skills: JSON.parse(sport.skills)}));
+  event.Sports = (await Sport.findAll()).map(sport => ({id: sport.id, Name: sport.Name, skills: JSON.parse(sport.skills)}));
   const sport = await Sport.findByPk(sportId);
   event.positions = sport.positions && JSON.parse(sport.positions);
   event.sizes     = sport.sizes     && JSON.parse(sport.sizes);

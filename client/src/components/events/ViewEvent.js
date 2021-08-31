@@ -6,11 +6,11 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import Context from '../../context';
 import { time } from 'faker';
 
-const ViewGame = ({ match }) => {
+const ViewEvent = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender,
     genderBools
   } = useContext(Context);
-  const gameProps = ['Location', 'dateTime', 'Extra info', 'Minimum skill', 'Maximum skill'];
+  const eventProps = ['Location', 'dateTime', 'Extra info', 'Minimum skill', 'Maximum skill'];
   const userProps = ['Email', 'Nickname', 'Cell',
   // 'photo'
   ];
@@ -35,9 +35,9 @@ const ViewGame = ({ match }) => {
     'Skill',
   ];
 
-  const [game, setGame] = useState(gameProps.reduce((pojo, prop) => {
+  const [event, setEvent] = useState(eventProps.reduce((pojo, prop) => {
     return {[prop]: '', ...pojo};
-  }, {id: Number(match.params.gameId)}));
+  }, {id: Number(match.params.eventId)}));
   const [players, setPlayers] = useState([]);
   const [bools, setBools] = useState([[]]);
 
@@ -68,22 +68,22 @@ const ViewGame = ({ match }) => {
 
   useEffect(() => {
     (async() => {
-        const res = await fetch(`/api/games/${game.id}`);
-        let newGame = (await res.json()).game;
-        // Recode following to handle non-sequential gameType ids.
-        let gameSkills = ['none', ...newGame.Sports[newGame.gameTypeId - 1].skills];
-        let rowSkills =['???',...newGame.Sports[newGame.gameTypeId - 1].skills];
+        const res = await fetch(`/api/events/${event.id}`);
+        let newEvent = (await res.json()).event;
+        // Recode following to handle non-sequential sport ids.
+        let eventSkills = ['none', ...newEvent.Sports[newEvent.sportId - 1].skills];
+        let rowSkills =['???',...newEvent.Sports[newEvent.sportId - 1].skills];
         // setSkills(newSkills);
-        // Recode following line to handle non-sequential gameType ids.
-        newGame.Sport = newGame.Sports[newGame.gameTypeId - 1].Sport;
-        let positionBools = newGame.positions || [];
-        let sizeBools = newGame.sizes || [];
+        // Recode following line to handle non-sequential sport ids.
+        newEvent.Sport = newEvent.Sports[newEvent.sportId - 1].Name;
+        let positionBools = newEvent.positions || [];
+        let sizeBools = newEvent.sizes || [];
 
         let bools = [
           ...genderBools,
           ...positionBools, ...sizeBools];
         let newColumns = [...columns2, ...bools];
-        let newPlayers = newGame.players;
+        let newPlayers = newEvent.players;
         newPlayers.forEach(player => {
           player.Skill = rowSkills[player.Skill];
           // Combine 3 boolean-encoded integers into a single one.
@@ -110,24 +110,23 @@ const ViewGame = ({ match }) => {
           }
         });
 
-        if (newGame.Sports) {
+        if (newEvent.Sports) {
           ["Minimum skill", "Maximum skill"].forEach(key => {
-            let gameTypeIndex = newGame.Sports.map(sport => sport.id).indexOf(newGame.gameTypeId);
-            newGame[key] = ["none", ...newGame.Sports[gameTypeIndex].skills][newGame[key]];
+            let sportIndex = newEvent.Sports.map(sport => sport.id).indexOf(newEvent.sportId);
+            newEvent[key] = ["none", ...newEvent.Sports[sportIndex].skills][newEvent[key]];
           })
         }
 
         setColumns(newColumns.map(column => ({...column, style: (cell, row) => {
-          // console.log(row.Skill, newSkills.indexOf(row.Skill), newGame["Minimum skill"], newSkills.indexOf(newGame["Minimum skill"]));
+          // console.log(row.Skill, newSkills.indexOf(row.Skill), newEvent["Minimum skill"], newSkills.indexOf(newEvent["Minimum skill"]));
           return {color:
-            newGame["Minimum skill"] !== "none" && rowSkills.indexOf(row.Skill) < gameSkills.indexOf(newGame["Minimum skill"]) ? 'red' :
-            newGame["Maximum skill"] !== "none" && rowSkills.indexOf(row.Skill) > gameSkills.indexOf(newGame["Maximum skill"]) ? 'blue' : 'black'
+            newEvent["Minimum skill"] !== "none" && rowSkills.indexOf(row.Skill) < eventSkills.indexOf(newEvent["Minimum skill"]) ? 'red' :
+            newEvent["Maximum skill"] !== "none" && rowSkills.indexOf(row.Skill) > eventSkills.indexOf(newEvent["Maximum skill"]) ? 'blue' : 'black'
           };
         }})));
 
         newPlayers = newPlayers.map(player => {
           player = Object.entries(player).reduce((player, prop) => {
-            console.log("player = ", player);
             return {...player,
               [prop[0]]:
                 prop[1] === true ? "x" :
@@ -152,13 +151,13 @@ const ViewGame = ({ match }) => {
         });
         setPlayers(newPlayers);
         // React does not like null value, which might be stored in db.
-        Object.keys(newGame).forEach(key => {
-          if (newGame[key] === null) newGame[key] = '';
+        Object.keys(newEvent).forEach(key => {
+          if (newEvent[key] === null) newEvent[key] = '';
         });
-        newGame.dateTime = moment(newGame.dateTime).local().format().slice(0,-9);
-        setGame(newGame);
+        newEvent.dateTime = moment(newEvent.dateTime).local().format().slice(0,-9);
+        setEvent(newEvent);
     })();
-  }, [game.id]);
+  }, [event.id]);
 
   return (
     <div className="simple">
@@ -167,26 +166,26 @@ const ViewGame = ({ match }) => {
           keyField='id'
           data={[
             {id: 1, ...[
-                game.Sport,
-                game.Location,
-                game.dateTime.split('T')[0],
-                game.dateTime.split('T')[1],
-                game['Minimum skill'],
-                game['Maximum skill'],
-                game['Extra info']
+                event.Sport,
+                event.Location,
+                event.dateTime.split('T')[0],
+                event.dateTime.split('T')[1],
+                event['Minimum skill'],
+                event['Maximum skill'],
+                event['Extra info']
               ].reduce((pojo, value, index) => {
                 return {...pojo, [String(index)]: value};
               }, {})
             }
           ]}
-          columns={topColumns.slice(...(game['Extra info'] ? [0] : [0, -1]))}
+          columns={topColumns.slice(...(event['Extra info'] ? [0] : [0, -1]))}
         />
         <br/>
         <h4>Event lineup:</h4>
-        {game['Minimum skill'] !== "none" || game['Maximum skill'] !== "none" ? <div>Key for color of player:
-          {game['Minimum skill'] !== "none" ? <span style={{color: 'red'}}> insufficiently </span> : null}
-          {game['Minimum skill'] !== "none" && game['Maximum skill'] !== "none" ? 'or ' : null}
-          {game['Maximum skill'] !== "none" ? <span style={{color: 'blue'}}> excessively </span> : null}
+        {event['Minimum skill'] !== "none" || event['Maximum skill'] !== "none" ? <div>Key for color of player:
+          {event['Minimum skill'] !== "none" ? <span style={{color: 'red'}}> insufficiently </span> : null}
+          {event['Minimum skill'] !== "none" && event['Maximum skill'] !== "none" ? 'or ' : null}
+          {event['Maximum skill'] !== "none" ? <span style={{color: 'blue'}}> excessively </span> : null}
           skilled</div>
         : null}
         <br/>
@@ -201,4 +200,4 @@ const ViewGame = ({ match }) => {
   );
 }
 
-export default ViewGame;
+export default ViewEvent;
