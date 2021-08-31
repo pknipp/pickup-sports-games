@@ -94,9 +94,9 @@ const EditGame = ({ match }) => {
       <form className="auth" onSubmit={handlePutPost}>
         <h4>
           {game.id ?
-            "Change the Game details?"
+            "Change the event details?"
           :
-            "Choose the Game details."
+            "Choose the event details."
           }
         </h4>
         <span>Sport:</span>
@@ -126,7 +126,7 @@ const EditGame = ({ match }) => {
           ))}
         </select>
 
-        <span>Game location:</span>
+        <span>Event location:</span>
         <input
           type="text" placeholder="Location" name="Location" value={game.Location}
           onChange={e => setGame({...game, Location: e.target.value})}
@@ -141,42 +141,41 @@ const EditGame = ({ match }) => {
           }}
         />
 
-        <span>Lower limit of skill-level:</span>
+        {!game.gameTypeId ? null :
+          <>
+            <span>Lower limit of skill-level:</span>
 
-        <select
-          onChange={e => setGame({...game, ['Minimum skill']: Number(e.target.value)})}
-          value={game['Minimum skill']}
-        >
-          {skills.map((skill, index) => (
-              <option
-                  key={`${index}`}
-                  value={index}
-              >
-                  {skill}
-              </option>
-          ))}
-        </select>
+            <select
+              onChange={e => setGame({...game, ['Minimum skill']: Number(e.target.value)})}
+              value={game['Minimum skill']}
+            >
+              {skills.map((skill, index) => (
+                  <option
+                      key={`${index}`}
+                      value={index}
+                  >
+                      {skill}
+                  </option>
+              ))}
+            </select>
 
-        <span>Upper limit of skill-level:</span>
+            <span>Upper limit of skill-level:</span>
 
-        {/* <input
-          type="number" placeholder="maxSkill" name="maxSkill" value={game.maxSkill}
-          onChange={e => setGame({...game, maxSkill: Number(e.target.value)})}
-        /> */}
-
-        <select
-          onChange={e => setGame({...game, ['Maximum skill']: !Number(e.target.value) ? 'none' : e.target.value})}
-          value={Number(game['Maximum skill'])}
-        >
-          {skills.map((skill, index) => (
-              <option
-                  key={`${index}`}
-                  value={index || 'none'}
-              >
-                  {skill}
-              </option>
-          ))}
-        </select>
+            <select
+              onChange={e => setGame({...game, ['Maximum skill']: !Number(e.target.value) ? 'none' : e.target.value})}
+              value={Number(game['Maximum skill'])}
+            >
+              {skills.map((skill, index) => (
+                  <option
+                      key={`${index}`}
+                      value={index || 'none'}
+                  >
+                      {skill}
+                  </option>
+              ))}
+            </select>
+          </>
+        }
 
         <span>Extra info (optional):</span>
         <input
@@ -187,7 +186,7 @@ const EditGame = ({ match }) => {
         {game.id ? null :
           <>
           <br/>
-          <span>You want to play in this game.
+          <span>Select box if you want to participate in this event.
             <input
               name="wantsToPlay"
               type="checkbox"
@@ -200,14 +199,14 @@ const EditGame = ({ match }) => {
         }
 
         <button color="primary" variant="outlined" type="submit">
-          {game.id ? "Update game" : "Create game"}
+          {game.id ? "Update " : "Create "}event
         </button>
         <span style={{color: "red", paddingLeft:"10px"}}>{message}</span>
       </form>
       {!game.id ? null :
         <form className="auth" onSubmit={handleDelete}>
           <button color="primary" variant="outlined" type="submit">
-            Delete game
+            Delete event
           </button>
         </form>
       }
