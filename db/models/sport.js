@@ -2,10 +2,10 @@
 const {Model} = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  const GameType = sequelize.define(
-    "GameType",
+  const Sport = sequelize.define(
+    "Sport",
     {
-      ['Sport']: {allowNull: false, type: DataTypes.TEXT},
+      Name: {allowNull: false, type: DataTypes.TEXT},
       positions: {allowNull: true, type: DataTypes.TEXT},
       skills: {allowNull: false, type: DataTypes.TEXT},
       sizes: {allowNull: true, type: DataTypes.TEXT},
@@ -13,8 +13,8 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   GameType.associate = function(models) {
-    GameType.hasMany(models.Game, {foreignKey: 'gameTypeId'});
+    Sport.hasMany(models.Event, {foreignKey: 'sportId'});
   };
 
-  return GameType;
+  return Sport;
 };

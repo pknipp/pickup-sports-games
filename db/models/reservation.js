@@ -4,7 +4,7 @@ const {Model, INTEGER} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   const Reservation = sequelize.define("Reservation",
     {
-      ...['playerId','gameId'].reduce((pojo, fk) => {
+      ...['playerId','eventId'].reduce((pojo, fk) => {
         return {...pojo, [fk]: {type: DataTypes.INTEGER, allowNull: false}};
       }, {}),
       ...['genderBools', 'positionBools', 'sizeBools'].reduce((pojo, key) => {
@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Reservation.associate = function(models) {
-    Reservation.belongsTo(models.Game, {foreignKey: 'gameId', onDelete: 'CASCADE'});
+    Reservation.belongsTo(models.Event, {foreignKey: 'eventId', onDelete: 'CASCADE'});
     Reservation.belongsTo(models.User, {foreignKey: 'playerId', onDelete: 'CASCADE'});
   };
 

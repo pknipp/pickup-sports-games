@@ -2,11 +2,11 @@
 const {Model} = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  const Game = sequelize.define(
-    "Game",
+  const Event = sequelize.define(
+    "Event",
     {
       ownerId: {allowNull: false, type: DataTypes.INTEGER},
-      gameTypeId: {allowNull: false, type: DataTypes.INTEGER},
+      sportId: {allowNull: false, type: DataTypes.INTEGER},
       ...['Minimum skill', 'Maximum skill'].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: DataTypes.INTEGER}});
       }, {}),
@@ -16,11 +16,11 @@ module.exports = (sequelize, DataTypes) => {
     },
   );
 
-  Game.associate = function(models) {
-    Game.hasMany(models.Reservation, {foreignKey: 'gameId'});
-    Game.belongsTo(models.User, {foreignKey: 'ownerId', onDelete: 'CASCADE'});
-    Game.belongsTo(models.GameType, {foreignKey: 'gameTypeId', onDelete: 'CASCADE'});
+  Event.associate = function(models) {
+    Event.hasMany(models.Reservation, {foreignKey: 'eventId'});
+    Event.belongsTo(models.User, {foreignKey: 'ownerId', onDelete: 'CASCADE'});
+    Event.belongsTo(models.Sport, {foreignKey: 'sportId', onDelete: 'CASCADE'});
   };
 
-  return Game;
+  return Event;
 };
