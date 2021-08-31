@@ -1,9 +1,9 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable("GameTypes", {
+    return queryInterface.createTable("Sports", {
       id: {allowNull: false, autoIncrement: true, primaryKey: true, type: Sequelize.INTEGER},
-      ['Sport']: {allowNull: false, type: Sequelize.TEXT},
+      Name: {allowNull: false, type: Sequelize.TEXT},
       positions: {allownull: true, type: Sequelize.TEXT},
       sizes: {allowNull: true, type: Sequelize.TEXT},
       skills: {allowNull: false, type: Sequelize.TEXT,
@@ -14,5 +14,5 @@ module.exports = {
       }, {})
     });
   },
-  down: queryInterface => queryInterface.dropTable('GameTypes')
+  down: queryInterface => queryInterface.dropTable('Sports')
 };
