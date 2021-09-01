@@ -35,6 +35,7 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     const allVenues = [];
     events.forEach(async event => {
         allVenues.push(event.Location);
+        event.skills = JSON.parse((await Sport.findByPk(event.sportId)).skills);
         event["Event organizer"] = (await User.findByPk(event.ownerId)).dataValues.Nickname;
         event.Sport = (await Sport.findByPk(event.sportId)).dataValues.Name;
         let reservations = await Reservation.findAll({where: {eventId: event.id}});

@@ -41,6 +41,9 @@ const Home = () => {
                     newEvent['Extra info'] = newEvent['Extra info'] && <span className="ttip" data-toggle="tooltip" title={newEvent['Extra info']}>
                         yes (hover)
                     </span>;
+                    ['Maximum skill', 'Minimum skill'].forEach(key => {
+                        newEvent[key] = !newEvent[key] ? 'none' : event.skills[newEvent[key] - 1];
+                    })
                     newAllEvents.push(newEvent);
                 });
                 setAllEvents(newAllEvents);
@@ -90,12 +93,12 @@ const Home = () => {
         });
         setEvents(newEvents);
         let newColumns = (!newEvents.length ? [] : Object.keys(newEvents[0]).filter(col => {
-            return !["id", "reservationId", "Minimum skill", "Maximum skill",
-            // "Extra info",
+            return !["id", "reservationId", "skills",
+            // "Minimum skill", "Maximum skill", "Extra info",
             !selectedOption ? 'Event organizer' : 'view'].includes(col);
         }).map(col => {
             let text = ['edit', 'view'].includes(col) ? '' : col
-            return {dataField: col, text, sort: !!text};
+            return {dataField: col, text, sort: !!text && !text.includes("skill")};
         }));
         setColumns(newColumns);
     }, [allEvents, selectedOption]);
