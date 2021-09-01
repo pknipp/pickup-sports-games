@@ -15,7 +15,7 @@ const Home = () => {
     const [allEvents, setAllEvents] = useState([]);
     const [events, setEvents] = useState([]);
     const [keys, setKeys] = useState([]);
-    const [selectedOption, setSelectedOption] = useState(0);
+    const [selectedOption, setSelectedOption] = useState(2);
     const [columns, setColumns] = useState(keys.map(key => ({dataField: key, text: key, sort: true})));
     const [message, setMessage] = useState('');
 
