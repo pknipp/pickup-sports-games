@@ -5,9 +5,9 @@ const r = o => ({...o,
     createdAt: new Date(),
     updatedAt: new Date(),
     // ...(["positions", "skills", "sizes"].map(prop => ([prop]: JSON.stringify(o[prop]))),
-    positions: JSON.stringify(o.positions),
+    bools: JSON.stringify(o.bools),
     skills: JSON.stringify(o.skills || ["low", "middle", "high"]),
-    sizes: JSON.stringify(o.sizes),
+    // sizes: JSON.stringify(o.sizes),
 });
 
 for (let i = 0; i < sports.length; i++) {

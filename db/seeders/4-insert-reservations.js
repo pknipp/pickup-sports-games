@@ -12,12 +12,12 @@ for (let iUser = 0; iUser < numberOfUsers; iUser++) {
       const reservation = {playerId: 1 + iUser, eventId: i + 1};
       let sport = sports[events[i].sportId - 1];
       // Why is JSON.parse needed in the following?
-      let gendersLength = 4;
-      let positionsLength =  sport.positions ? JSON.parse(sport.positions).length : 0;
-      let sizesLength = sport.sizes ? JSON.parse(sport.sizes).length : 0;
-      reservation.genderBools = 1 + Math.floor(Math.random() * (2 ** gendersLength - 1));
-      reservation.positionBools = positionsLength && 1 + Math.floor(Math.random() * (2 ** positionsLength - 1));
-      reservation.sizeBools = sizesLength && 1 + Math.floor(Math.random() * (2 ** sizesLength - 1));
+      // console.log(events[i].sportId - 1, "typeof sport.bools = ", typeof sport.bools);
+      sport.bools = typeof(sport.bools) === 'string' ? JSON.parse(sport.bools) : sport.bools;
+      reservation.bools = Object.keys(sport.bools).reduce((pojo, key) => {
+        return {...pojo, [key]: 1 + Math.floor(Math.random() * (2 ** sport.bools[key].length - 1))};
+      }, {gender: 1 + Math.floor(Math.random() * (2 ** 4 - 1))});
+      reservation.bools = JSON.stringify(reservation.bools);
       let updatedAt = faker.date.past(0.1);
       if (Math.random() < reservationProb) reservation['Extra info'] = extraInfos[Math.floor(Math.random() * extraInfos.length)];
       [reservation.createdAt, reservation.updatedAt] = [faker.date.past(0.1, updatedAt), updatedAt];
@@ -25,6 +25,7 @@ for (let iUser = 0; iUser < numberOfUsers; iUser++) {
     }
   }
 }
+// console.log(reservations);
 
 module.exports = {
   up: async (queryInterface, Sequelize) => queryInterface.bulkInsert('Reservations', reservations),
