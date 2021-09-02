@@ -27,11 +27,12 @@ router.get('', [authenticated], asyncHandler(async(req, res) => {
 router.get('/:resEventId', async(req, res) => {
     const [reservationId, eventId] = req.params.resEventId.split('-').map(id => Number(id));
     let reservation = (reservationId && (await Reservation.findByPk(reservationId)).dataValues) || {};
+    reservation.bools = JSON.parse(reservation.bools);
     const event = (await Event.findByPk(eventId)).dataValues;
     const sport = await Sport.findByPk(event.sportId);
     event.Sport = sport.Name;
-    event.positions = JSON.parse(sport.positions || '[]');
-    event.sizes = JSON.parse(sport.sizes || '[]');
+    event.bools = JSON.parse(sport.bools);
+    // event.sizes = JSON.parse(sport.sizes || '[]');
     reservation.event = event;
     res.json({reservation});
 })

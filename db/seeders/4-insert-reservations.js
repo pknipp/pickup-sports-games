@@ -16,7 +16,7 @@ for (let iUser = 0; iUser < numberOfUsers; iUser++) {
       sport.bools = typeof(sport.bools) === 'string' ? JSON.parse(sport.bools) : sport.bools;
       reservation.bools = Object.keys(sport.bools).reduce((pojo, key) => {
         return {...pojo, [key]: 1 + Math.floor(Math.random() * (2 ** sport.bools[key].length - 1))};
-      }, {gender: 1 + Math.floor(Math.random() * (2 ** 4 - 1))});
+      }, {genders: 1 + Math.floor(Math.random() * (2 ** 4 - 1))});
       reservation.bools = JSON.stringify(reservation.bools);
       let updatedAt = faker.date.past(0.1);
       if (Math.random() < reservationProb) reservation['Extra info'] = extraInfos[Math.floor(Math.random() * extraInfos.length)];
