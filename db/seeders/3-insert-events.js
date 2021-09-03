@@ -20,7 +20,6 @@ for (let i = 0; i < numberOfEvents; i++) {
   if (Math.random() < miscProb)  event['Extra info'] = extraInfos[Math.floor(Math.random() * extraInfos.length)];
   events.push(event);
 }
-// console.log(events);
 
 module.exports = {
   // sportId of events'll be needed when seeding Reservations
