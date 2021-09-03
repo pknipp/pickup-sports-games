@@ -1,12 +1,12 @@
 'use strict';
-const { sports } = require('../seederData/sports');
+const { sports } = JSON.parse(JSON.stringify(require('../seederData/sports')));
 
 const r = o => ({...o,
     createdAt: new Date(),
     updatedAt: new Date(),
     // ...(["positions", "skills", "sizes"].map(prop => ([prop]: JSON.stringify(o[prop]))),
-    bools: JSON.stringify(o.bools),
-    skills: JSON.stringify(o.skills || ["low", "middle", "high"]),
+    bools: JSON.stringify(JSON.parse(JSON.stringify(o.bools))),
+    skills: JSON.stringify(JSON.parse(JSON.stringify(o.skills || ["low", "middle", "high"]))),
     // sizes: JSON.stringify(o.sizes),
 });
 

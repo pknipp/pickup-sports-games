@@ -31,12 +31,14 @@ const EditReservation = ({ match }) => {
   useEffect(() => {
     (async() => {
       const res = await fetch(`/api/reservations/${resEventId}`);
-      let newReservation = {...reservation, ...(await res.json()).reservation};
+      const data = await res.json();
+      console.log("data = ", data);
+      let newReservation = {...reservation, ...data.reservation};
       Object.keys(newReservation).forEach(key => {
         if (newReservation[key] === null) newReservation[key] = key === 'Extra info' ? '' : false;
       })
       newReservation.event.dateTime = moment(newReservation.event.dateTime).local().format().slice(0,-9);
-      console.log(newReservation);
+      console.log("newReservation = ", newReservation);
 
       setReservation(newReservation);
       // Do I need the || ... in the two places, below?
@@ -44,14 +46,14 @@ const EditReservation = ({ match }) => {
       console.log(newBoolTypes);
       let newBools = [...bools];
       // Least significant end of array is genderBools; most significant is sizeBools.
-      Object.keys(newBoolTypes).sort().forEach(boolType => {
-        newBoolTypes[boolType].forEach(bool => {
-          const boolVal = newReservation.bools[boolType] % 2;
-          newBools.push([bool, !! boolVal]);
-          newReservation.bools[boolType] -= boolVal;
-          newReservation.bools[boolType] /= 2;
-        })
-      });
+      // Object.keys(newBoolTypes).sort().forEach(boolType => {
+      //   newBoolTypes[boolType].forEach(bool => {
+      //     const boolVal = newReservation.bools[boolType] % 2;
+      //     newBools.push([bool, !! boolVal]);
+      //     newReservation.bools[boolType] -= boolVal;
+      //     newReservation.bools[boolType] /= 2;
+      //   })
+      // });
       setBools(newBools);
 
 
