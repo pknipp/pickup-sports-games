@@ -11,7 +11,7 @@ const EditReservation = ({ match }) => {
   const { fetchWithCSRF, currentUser, rerender, setRerender, genders } = useContext(Context);
   // const [positionBools, setPositionBools] = useState([]);
   // const [sizeBools, setSizeBools] = useState([]);
-  const [boolTypes, setBoolTypes] = useState({genders});
+  let [boolTypes, setBoolTypes] = useState({genders});
   const [bools, setBools] = useState([]);
   const nullReservation =
   // Object.keys(boolTypes).reduce((pojo, prop) => {
@@ -33,28 +33,35 @@ const EditReservation = ({ match }) => {
     (async() => {
       let newReservation = (await (await fetch(`/api/reservations/${resEventId}`)).json()).reservation;
       // {...reservation, ...data.reservation};
+      // console.log("newReservation.boolVals = ", newReservation.boolVals)
       console.log("newReservation = ", newReservation)
       Object.keys(newReservation).forEach(key => {
         if (newReservation[key] === null) newReservation[key] = key === 'Extra info' ? '' : false;
       })
       newReservation.event.dateTime = moment(newReservation.event.dateTime).local().format().slice(0,-9);
 
-      setReservation(newReservation);
+      // setReservation(newReservation);
       // Do I need the || ... in the two places, below?
-      const newBoolTypes = {...boolTypes, ...newReservation.event.bools};
-      console.log(newBoolTypes);
+      // let newBoolTypes = {...boolTypes, ...newReservation.event.boolTypes};
+      let newBoolTypes = {genders, ...newReservation.event.boolTypes};
+      console.log("before decoding: newBoolTypes = ", newBoolTypes);
+      console.log(newReservation);
       // let newBools = [...bools];
       // Least significant end of array is genderBools; most significant is sizeBools.
-      let newBools = [];
-      Object.keys(newBoolTypes).forEach(boolType => {
-        newBoolTypes[boolType].forEach(bool => {
-          const boolVal = newReservation.bools[boolType] % 2;
-          newBools.push([bool, !! boolVal]);
-          newReservation.bools[boolType] -= boolVal;
-          newReservation.bools[boolType] /= 2;
+      Object.entries(newBoolTypes).forEach(([boolType, boolArray]) => {
+        console.log("boolType = ", boolType, " and boolArray = ", boolArray);
+        boolArray.forEach((bool, i) => {
+          console.log("bool = ", bool);
+          const boolVal = newReservation.boolVals[boolType] % 2;
+          console.log("boolVal = ", boolVal);
+          boolArray[i] = [bool, !!boolVal];
+          // newBoolTypes[boolType] = [bool, !! boolVal];
+          newReservation.boolVals[boolType] -= boolVal;
+          newReservation.boolVals[boolType] /= 2;
         })
       });
-      setBools(newBools);
+      console.log("after decoding: newBoolTypes = ", newBoolTypes);
+      // setBools(newBools);
 
 
       // for (let i = 0; i < newBools.length; i++) {

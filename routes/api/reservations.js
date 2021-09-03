@@ -27,12 +27,12 @@ router.get('', [authenticated], asyncHandler(async(req, res) => {
 router.get('/:resEventId', async(req, res) => {
     const [reservationId, eventId] = req.params.resEventId.split('-').map(id => Number(id));
     let reservation = (reservationId && (await Reservation.findByPk(reservationId)).dataValues) || {};
-    reservation.bools = reservation.bools && JSON.parse(reservation.bools);
+    reservation.boolVals = reservation.boolVals && JSON.parse(reservation.boolVals);
     console.log("reservation = ", reservation);
     const event = (await Event.findByPk(eventId)).dataValues;
     const sport = await Sport.findByPk(event.sportId);
     event.Sport = sport.Name;
-    event.bools = JSON.parse(sport.bools);
+    event.boolTypes = JSON.parse(sport.boolTypes);
     reservation.event = event;
     res.json({reservation});
 })
