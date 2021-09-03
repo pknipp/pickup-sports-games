@@ -27,13 +27,12 @@ people.slice(0, numberOfUsers - 1).forEach(person => {
 
 users.forEach(user => {
   user.Cell = 10 ** 9 + Math.floor(Math.random() * 9 * 10 ** 9);
-  // user.skill = Math.floor(Math.random() * 10);
   user.Photo = `${user["First name"]}'s photoURL`;
   user.hashedPassword = createPassword();
   const updatedAt = faker.date.past(1);
   user.updatedAt = updatedAt;
   user.createdAt = faker.date.past(1, updatedAt);
-  // The following line was not an adequate replacement for the previous 2 oines.
+  // The following line was not an adequate replacement for the previous 2 ones.
   // user = {...user, updatedAt, createdAt: faker.date.past(1, updatedAt)};
 })
 
