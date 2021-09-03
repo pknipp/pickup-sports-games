@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 
 import Context from '../../context';
+import fetch from 'node-fetch';
 
 const EditReservation = ({ match }) => {
   const resEventId = match.params.resEventId;
@@ -30,30 +31,29 @@ const EditReservation = ({ match }) => {
 
   useEffect(() => {
     (async() => {
-      const res = await fetch(`/api/reservations/${resEventId}`);
-      const data = await res.json();
-      console.log("data = ", data);
-      let newReservation = {...reservation, ...data.reservation};
+      let newReservation = (await (await fetch(`/api/reservations/${resEventId}`)).json()).reservation;
+      // {...reservation, ...data.reservation};
+      console.log("newReservation = ", newReservation)
       Object.keys(newReservation).forEach(key => {
         if (newReservation[key] === null) newReservation[key] = key === 'Extra info' ? '' : false;
       })
       newReservation.event.dateTime = moment(newReservation.event.dateTime).local().format().slice(0,-9);
-      console.log("newReservation = ", newReservation);
 
       setReservation(newReservation);
       // Do I need the || ... in the two places, below?
       const newBoolTypes = {...boolTypes, ...newReservation.event.bools};
       console.log(newBoolTypes);
-      let newBools = [...bools];
+      // let newBools = [...bools];
       // Least significant end of array is genderBools; most significant is sizeBools.
-      // Object.keys(newBoolTypes).sort().forEach(boolType => {
-      //   newBoolTypes[boolType].forEach(bool => {
-      //     const boolVal = newReservation.bools[boolType] % 2;
-      //     newBools.push([bool, !! boolVal]);
-      //     newReservation.bools[boolType] -= boolVal;
-      //     newReservation.bools[boolType] /= 2;
-      //   })
-      // });
+      let newBools = [];
+      Object.keys(newBoolTypes).forEach(boolType => {
+        newBoolTypes[boolType].forEach(bool => {
+          const boolVal = newReservation.bools[boolType] % 2;
+          newBools.push([bool, !! boolVal]);
+          newReservation.bools[boolType] -= boolVal;
+          newReservation.bools[boolType] /= 2;
+        })
+      });
       setBools(newBools);
 
 

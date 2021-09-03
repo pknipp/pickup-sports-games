@@ -4,7 +4,7 @@ let { sports } = JSON.parse(JSON.stringify(require('../seederData/sports')));
 const r = o => ({...o,
     createdAt: new Date(),
     updatedAt: new Date(),
-    bools: JSON.stringify(o.bools),
+    boolTypes: JSON.stringify(o.boolTypes),
     skills: JSON.stringify(o.skills || ["low", "middle", "high"]),
 });
 
