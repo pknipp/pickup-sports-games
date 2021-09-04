@@ -144,6 +144,7 @@ const EditReservation = ({ match }) => {
     }
   }
 
+  console.log("boolTypes = ", boolTypes);
   return (
     <div className="simple">
       <form className="auth" onSubmit={handlePutPost}>
@@ -153,25 +154,24 @@ const EditReservation = ({ match }) => {
           {reservation.event && reservation.event.dateTime.split('T')[1]}.
         </h3>
         <span><h4>{reservationId ? "Below are" : "Specify below"} your willingnesses for ...</h4></span>
-        <span><h4>... gender (trans - inclusive):</h4></span>
+        {/* <span><h4>... gender (trans - inclusive):</h4></span> */}
         <div>
           {Object.entries(boolTypes).map(([boolType, boolArray], index) => (
-            <div key={index} className="checkboxPair">
-              <span>{boolType}:</span>
+            <div key={index}><br/>
+              <div><h4>...{boolType}{boolType === "genders" ? " (trans-inclusive)" : ""}:</h4></div>
               {boolArray.map((bool, i) => (
                 <div key={String(index) + String(i)} className="checkboxPair">
-                  <div>
-                    <input
-                      name={bool[0]}
-                      type="checkbox"
-                      checked={bool[1]}
-                      onChange={e => {
-                        const newBoolTypes = JSON.parse(JSON.stringify(boolTypes));
-                        newBoolTypes[boolType][index][1] = e.target.checked;
-                        setBoolTypes(newBoolTypes);
-                      }}
-                    />
-                  </div>
+                  <span>{bool[0]}</span>
+                  <input
+                    name={bool[0]}
+                    type="checkbox"
+                    checked={bool[1]}
+                    onChange={e => {
+                      const newBoolTypes = JSON.parse(JSON.stringify(boolTypes));
+                      newBoolTypes[boolType][index][1] = e.target.checked;
+                      setBoolTypes(newBoolTypes);
+                    }}
+                  />
                 </div>
               ))}
             </div>
