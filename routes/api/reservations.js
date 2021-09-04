@@ -7,6 +7,7 @@ const { authenticated } = require('./security-utils');
 
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     req.body.ownerId = req.user.id;
+    req.body.boolVals = JSON.stringify(req.body.boolVals);
     let reservation = await Reservation.create(req.body);
     let event = (await Event.findByPk(reservation.eventId)).dataValues;
     event.Sport = (await Sport.findByPk(event.sportId)).Name;

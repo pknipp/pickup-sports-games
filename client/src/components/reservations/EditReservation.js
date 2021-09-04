@@ -14,9 +14,9 @@ const EditReservation = ({ match }) => {
   // Object.keys(boolTypes).reduce((pojo, prop) => {
     // return {...pojo, [prop]: false};
   // },
-    {id: 0, playerId: 0, eventId: 0, event: {Location: '', dateTime: ''}};
+    {id: 0, playerId: 0, eventId: 0, event: {Location: '', dateTime: ''}, boolVals: {genders: 0}};
   const [reservation, setReservation] = useState({
-    // ...nullReservation,
+    ...nullReservation,
     playerId: currentUser.id,
     id: reservationId,
     eventId
@@ -28,7 +28,7 @@ const EditReservation = ({ match }) => {
 
   useEffect(() => {
     (async() => {
-      let newReservation = (await (await fetch(`/api/reservations/${resEventId}`)).json()).reservation;
+      let newReservation = {...reservation, ...(await (await fetch(`/api/reservations/${resEventId}`)).json()).reservation};
       Object.keys(newReservation).forEach(key => {
         if (newReservation[key] === null) newReservation[key] = key === 'Extra info' ? '' : false;
       })
@@ -55,7 +55,7 @@ const EditReservation = ({ match }) => {
     e.preventDefault();
     // Encode the array of booleans for each booleanType as a base-2 integer, for storing in db.
     Object.entries(boolTypes).forEach(([boolType, bools]) => {
-      reservation.boolVals[boolType] = bools.reduce((tot, bool) => 2 * tot + Number(bool[1]), 0);
+      reservation.boolVals[boolType] = [...bools].reverse().reduce((tot, bool) => 2 * tot + Number(bool[1]), 0);
     });
     let haveNoBools = Object.values(reservation.boolVals).reduce((sum, value) => sum + Number(!value), 0);
     let newMessage = !haveNoBools ? '' :
@@ -83,7 +83,7 @@ const EditReservation = ({ match }) => {
     e.preventDefault();
     const res = await fetch(`/api/reservations/${reservation.id}`, { method: 'DELETE'});
     if (res.ok) {
-      setReservation(JSON.parse(JSON.stringify(nullReservation)));
+      setReservation(nullReservation);
       // Is the following unnecessary?
       setRerender(rerender + 1);
       history.push('/');

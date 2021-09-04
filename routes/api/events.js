@@ -29,6 +29,7 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
 }));
 
 router.get('', [authenticated], asyncHandler(async(req, res, next) => {
+    try {
     const user = req.user;
     // transform Query return to an array of pojos, to enable us to attach properties to each
     const events = (await Event.findAll({})).map(event => event.dataValues);
@@ -61,6 +62,9 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
       nBundle++;
     }
     res.json({events});
+  } catch(e) {
+    console.log(e);
+  }
 }));
 
 router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
