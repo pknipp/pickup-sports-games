@@ -39,11 +39,14 @@ router.get('/:resEventId', async(req, res) => {
 router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     let reservation = await Reservation.findByPk(Number(req.params.id));
     if (reservation.playerId !== req.user.id) res.status(401).send("Unauthorized Access");
+    req.body.boolVals = JSON.stringify(req.body.boolVals);
     Object.keys(req.body).forEach(key => reservation[key] = req.body[key]);
     await reservation.save();
     let event = (await Event.findByPk(reservation.eventId)).dataValues;
     event.Sport = (await Sport.findByPk(event.sportId)).Name;
-    reservation = {...reservation.dataValues, event};
+    reservation = reservation.dataValues;
+    reservation.boolVals = JSON.parse(reservation.boolVals);
+    reservation.event = event;
     res.status(200).json({reservation});
 }));
 

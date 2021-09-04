@@ -9,10 +9,7 @@ const EditReservation = ({ match }) => {
   const resEventId = match.params.resEventId;
   const [reservationId, eventId] = resEventId.split('-').map(id => Number(id));
   const { fetchWithCSRF, currentUser, rerender, setRerender, genders } = useContext(Context);
-  // const [positionBools, setPositionBools] = useState([]);
-  // const [sizeBools, setSizeBools] = useState([]);
   let [boolTypes, setBoolTypes] = useState({genders});
-  const [bools, setBools] = useState([]);
   const nullReservation =
   // Object.keys(boolTypes).reduce((pojo, prop) => {
     // return {...pojo, [prop]: false};
@@ -38,11 +35,11 @@ const EditReservation = ({ match }) => {
       newReservation.event.dateTime = moment(newReservation.event.dateTime).local().format().slice(0,-9);
 
       let newBoolTypes = {genders, ...newReservation.event.boolTypes};
-      // Least significant end of array is genderBools; most significant is sizeBools.
-      Object.entries(newBoolTypes).forEach(([boolType, boolArray]) => {
-        boolArray.forEach((bool, i) => {
+      // Decode base-2 integer in db to determine boolean array for each boolType.
+      Object.entries(newBoolTypes).forEach(([boolType, bools]) => {
+        bools.forEach((bool, i) => {
           const boolVal = newReservation.boolVals[boolType] % 2;
-          boolArray[i] = [bool, !!boolVal];
+          bools[i] = [bool, !!boolVal];
           newReservation.boolVals[boolType] -= boolVal;
           newReservation.boolVals[boolType] /= 2;
         })
@@ -55,42 +52,31 @@ const EditReservation = ({ match }) => {
 
 
   const handlePutPost = async e => {
-    // reservation.bools = [...bools].reverse().reduce((tot, bool) => {
-    //   return 2 * tot + Number(bool[1]);
-    // }, 0);
-    // Object.keys(reservation.bools).sort().reduce
-    // reservation.genderBools = [...genderBools].reverse().reduce((tot, bool) => {
-    //   return 2 * tot + Number(bool[1]);
-    // }, 0);
-    // reservation.positionBools = [...positionBools].reverse().reduce((tot, bool) => {
-    //   return 2 * tot + Number(bool[1]);
-    // }, 0);
-    // reservation.sizeBools = [...sizeBools].reverse().reduce((tot, bool) => {
-    //   return 2 * tot + Number(bool[1]);
-    // }, 0);
-    // let sumLacking = ["gender", "position", "size"].reduce((sum, key) => {
-    //   return sum + Number(!reservation[key + "Bools"]);
-    // }, 0) - [genderBools, positionBools, sizeBools].filter(arr => !arr.length).length;
-    // let newMessage = !sumLacking ? '' :
-    //   "You need to select at least one checkbox from " + sumLacking + " of the groups above.";
-    // e.preventDefault();
-    // if (newMessage) return setMessage(newMessage);
-    // const res = await fetch(`/api/reservations${reservation.id ? ('/' + reservation.id) : ''}`, { method: reservation.id ? 'PUT': 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(reservation)
-    // });
-    // let newReservation = (await res.json()).reservation;
-    // newReservation.event.dateTime = moment(newReservation.event.dateTime).local().format().slice(0,-9);
-    // if (reservation.id) {
-    //   // PUT route
-    //   setMessage("Success");
-    // } else {
-    //   // POST route
-    //   history.push('/');
-    // }
-    // setReservation(newReservation);
+    e.preventDefault();
+    // Encode the array of booleans for each booleanType as a base-2 integer, for storing in db.
+    Object.entries(boolTypes).forEach(([boolType, bools]) => {
+      reservation.boolVals[boolType] = bools.reduce((tot, bool) => 2 * tot + Number(bool[1]), 0);
+    });
+    let haveNoBools = Object.values(reservation.boolVals).reduce((sum, value) => sum + Number(!value), 0);
+    let newMessage = !haveNoBools ? '' :
+      "You need to select at least one checkbox from " + haveNoBools + " of the groups above.";
+    if (newMessage) return setMessage(newMessage);
+    const res = await fetch(`/api/reservations${reservation.id ? ('/' + reservation.id) : ''}`, { method: reservation.id ? 'PUT': 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reservation)
+    });
+    let newReservation = (await res.json()).reservation;
+    newReservation.event.dateTime = moment(newReservation.event.dateTime).local().format().slice(0,-9);
+    if (reservation.id) {
+      // PUT route
+      setMessage("Success");
+    } else {
+      // POST route
+      history.push('/');
+    }
+    setReservation(newReservation);
     // // Is the following line necessary?
-    // setRerender(rerender + 1);
+    setRerender(rerender + 1);
   };
 
   const handleDelete = async e => {
@@ -104,7 +90,6 @@ const EditReservation = ({ match }) => {
     }
   }
 
-  console.log("boolTypes = ", boolTypes);
   return (
     <div className="simple">
       <form className="auth" onSubmit={handlePutPost}>
