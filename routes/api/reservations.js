@@ -28,7 +28,6 @@ router.get('/:resEventId', async(req, res) => {
     const [reservationId, eventId] = req.params.resEventId.split('-').map(id => Number(id));
     let reservation = (reservationId && (await Reservation.findByPk(reservationId)).dataValues) || {};
     reservation.boolVals = reservation.boolVals && JSON.parse(reservation.boolVals);
-    console.log("reservation = ", reservation);
     const event = (await Event.findByPk(eventId)).dataValues;
     const sport = await Sport.findByPk(event.sportId);
     event.Sport = sport.Name;
