@@ -32,36 +32,23 @@ const EditReservation = ({ match }) => {
   useEffect(() => {
     (async() => {
       let newReservation = (await (await fetch(`/api/reservations/${resEventId}`)).json()).reservation;
-      // {...reservation, ...data.reservation};
-      // console.log("newReservation.boolVals = ", newReservation.boolVals)
-      console.log("newReservation = ", newReservation)
       Object.keys(newReservation).forEach(key => {
         if (newReservation[key] === null) newReservation[key] = key === 'Extra info' ? '' : false;
       })
       newReservation.event.dateTime = moment(newReservation.event.dateTime).local().format().slice(0,-9);
 
-      // setReservation(newReservation);
-      // Do I need the || ... in the two places, below?
-      // let newBoolTypes = {...boolTypes, ...newReservation.event.boolTypes};
       let newBoolTypes = {genders, ...newReservation.event.boolTypes};
-      console.log("before decoding: newBoolTypes = ", newBoolTypes);
-      console.log(newReservation);
-      // let newBools = [...bools];
       // Least significant end of array is genderBools; most significant is sizeBools.
       Object.entries(newBoolTypes).forEach(([boolType, boolArray]) => {
-        console.log("boolType = ", boolType, " and boolArray = ", boolArray);
         boolArray.forEach((bool, i) => {
-          console.log("bool = ", bool);
           const boolVal = newReservation.boolVals[boolType] % 2;
-          console.log("boolVal = ", boolVal);
           boolArray[i] = [bool, !!boolVal];
-          // newBoolTypes[boolType] = [bool, !! boolVal];
           newReservation.boolVals[boolType] -= boolVal;
           newReservation.boolVals[boolType] /= 2;
         })
       });
       console.log("after decoding: newBoolTypes = ", newBoolTypes);
-      // setBools(newBools);
+      setBoolTypes(newBoolTypes);
 
 
       // for (let i = 0; i < newBools.length; i++) {
@@ -168,66 +155,28 @@ const EditReservation = ({ match }) => {
         <span><h4>{reservationId ? "Below are" : "Specify below"} your willingnesses for ...</h4></span>
         <span><h4>... gender (trans - inclusive):</h4></span>
         <div>
-        {/* {genderBools.map((bool, index) => (
-          <div key={index} className="checkboxPair">
-            <div><span>{bool[0]}:</span></div>
-            <div><input
-              name={bool[0]}
-              type="checkbox"
-              checked={bool[1]}
-              onChange={e => {
-                const newGenderBools = [...genderBools];
-                newGenderBools[index][1] = e.target.checked;
-                setGenderBools(newGenderBools);
-              }}
-            /></div>
-          </div>
-        ))} */}
+          {Object.entries(boolTypes).map(([boolType, boolArray], index) => (
+            <div key={index} className="checkboxPair">
+              <span>{boolType}:</span>
+              {boolArray.map((bool, i) => (
+                <div key={String(index) + String(i)} className="checkboxPair">
+                  <div>
+                    <input
+                      name={bool[0]}
+                      type="checkbox"
+                      checked={bool[1]}
+                      onChange={e => {
+                        const newBoolTypes = JSON.parse(JSON.stringify(boolTypes));
+                        newBoolTypes[boolType][index][1] = e.target.checked;
+                        setBoolTypes(newBoolTypes);
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
-
-        {/* {!positionBools.length ? null :
-        <>
-        <span><h4>... event positions:</h4></span>
-        <div>
-        {positionBools.map((bool, index) => (
-          <div key={index} className="checkboxPair">
-            <div><span>{bool[0]}:</span></div>
-            <div><input
-              name={bool[0]}
-              type="checkbox"
-              checked={bool[1]}
-              onChange={e => {
-                const newPositionBools = [...positionBools];
-                newPositionBools[index][1] = e.target.checked;
-                setPositionBools(newPositionBools);
-              }}
-            /></div>
-          </div>
-        ))}
-        </div>
-        </>} */}
-
-        {/* {!sizeBools.length ? null :
-        <>
-        <span><h4>... team sizes:</h4></span>
-        <div>
-        {sizeBools.map((bool, index) => (
-          <div key={index} className="checkboxPair">
-            <div><span>{bool[0]}:</span></div>
-            <div><input
-              name={bool[0]}
-              type="checkbox"
-              checked={bool[1]}
-              onChange={e => {
-                const newSizeBools = [...sizeBools];
-                newSizeBools[index][1] = e.target.checked;
-                setSizeBools(newSizeBools);
-              }}
-            /></div>
-          </div>
-        ))}
-        </div>
-        </>} */}
 
         <span><h4>Extra info about your reservation (optional):</h4></span>
 
@@ -242,11 +191,11 @@ const EditReservation = ({ match }) => {
         <span style={{color: "red", paddingLeft:"10px"}}>{message}</span>
       </form>
       {!reservation.id ? null :
-        <form className="auth" onSubmit={handleDelete}>
-          <button color="primary" variant="outlined" type="submit">
-            Cancel reservation
-          </button>
-        </form>
+      <form className="auth" onSubmit={handleDelete}>
+        <button color="primary" variant="outlined" type="submit">
+          Cancel reservation
+        </button>
+      </form>
       }
     </div>
   );
