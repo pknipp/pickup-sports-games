@@ -22,6 +22,8 @@ const EditEvent = ({ match }) => {
   }, {id: Number(match.params.eventId)}));
   const [wantsToPlay, setWantsToPlay] = useState(false);
   const [skills, setSkills] = useState([]);
+  const [minSkill, setMinSkill] = useState(0);
+  const [maxSkill, setMaxSkill] = useState(0);
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
 
@@ -50,15 +52,17 @@ const EditEvent = ({ match }) => {
         newEvent.dateTime = moment(newEvent.dateTime).local().format().slice(0, -6);
         setEvent(newEvent);
         // Put following in separate useEffect, and allow for non-sequential sportIds?
-        setSkills([...newSports[newEvent.sportId - 1].skills]);
+        let newSkills = [...newSports[newEvent.sportId - 1].skills];
+        setSkills(newSkills);
+        setMinSkill(newEvent["Minimum skill"]);
+        setMaxSkill(newEvent["Maximum skill"]);
       }
     })();
   }, [event.id]);
 
   const handlePutPost = async e => {
     e.preventDefault();
-    // event['Minimum skill'] = isNaN(event['Minimum skill']) ? 0 : Number(event['Minimum skill']);
-    // event['Maximum skill'] = isNaN(event['Maximum skill']) ? 0 : Number(event['Maximum skill']);
+    [event["Minimum skill"], event["Maximum skill"]] = [minSkill, maxSkill];
     const res = await fetch(`/api/events${event.id ? ('/' + event.id) : ''}`, { method: event.id ? 'PUT': 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(event)
@@ -145,8 +149,8 @@ const EditEvent = ({ match }) => {
             <span>Lower limit of skill-level:</span>
 
             <select
-              onChange={e => setEvent({...event, ['Minimum skill']: Number(e.target.value)})}
-              value={event['Minimum skill']}
+              onChange={e => setMinSkill(Number(e.target.value))}
+              value={minSkill}
             >
               {skills.map((skill, index) => (
                   <option
@@ -161,8 +165,8 @@ const EditEvent = ({ match }) => {
             <span>Upper limit of skill-level:</span>
 
             <select
-              onChange={e => setEvent({...event, ['Maximum skill']: Number(e.target.value)})}
-              value={event['Maximum skill']}
+              onChange={e => setMaxSkill(Number(e.target.value))}
+              value={maxSkill}
             >
               {skills.map((skill, index) => (
                   <option
