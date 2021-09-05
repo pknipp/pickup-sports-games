@@ -42,7 +42,7 @@ const Home = () => {
                         yes (hover)
                     </span>;
                     ['Maximum skill', 'Minimum skill'].forEach(key => {
-                        newEvent[key] = !newEvent[key] ? 'none' : event.skills[newEvent[key] - 1];
+                        newEvent[key] = event.skills[newEvent[key]];
                     })
                     newAllEvents.push(newEvent);
                 });

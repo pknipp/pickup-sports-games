@@ -48,8 +48,7 @@ const ViewEvent = ({ match }) => {
       sort: true,
       headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
       sortFunc: (a, b, order, dataField) => {
-        let diff = a === 'none' ? -1 : b === 'none' ? 1 : a < b ? -1 : a > b ? 1 : 0;
-        return diff * (order === 'asc' ? 1 : -1);
+        return (a < b ? -1 : a > b ? 1 : 0) * (order === 'asc' ? 1 : -1);
       },
     }
   }));
@@ -69,14 +68,13 @@ const ViewEvent = ({ match }) => {
         const res = await fetch(`/api/events/${event.id}`);
         let newEvent = (await res.json()).event;
         // Recode following to handle non-sequential sport ids.
-        let eventSkills = ['none', ...newEvent.Sports[newEvent.sportId - 1].skills];
-        let rowSkills =['???',...newEvent.Sports[newEvent.sportId - 1].skills];
+        let skills = [...newEvent.Sports[newEvent.sportId - 1].skills];
         let newBoolTypes = {genders, ...newEvent.boolTypes};
         // Recode following line to handle non-sequential sport ids.
         newEvent.Sport = newEvent.Sports[newEvent.sportId - 1].Name;
         let newPlayers = newEvent.players;
         newPlayers.forEach(player => {
-          player.Skill = rowSkills[player.Skill];
+          player.Skill = skills[player.Skill];
           Object.entries(newBoolTypes).forEach(([boolType, bools]) => {
             bools.forEach((bool, i) => {
               const boolVal = player.boolVals[boolType] % 2;
@@ -103,8 +101,8 @@ const ViewEvent = ({ match }) => {
             headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
             sortFunc: (a, b, order, dataField) => {
               let diff;
-              if (rowSkills.includes(a)) {
-                diff = a === b ? 0 : rowSkills.indexOf(a) < rowSkills.indexOf(b) ? -1 : 1;
+              if (skills.includes(a)) {
+                diff = a === b ? 0 : skills.indexOf(a) < skills.indexOf(b) ? -1 : 1;
               } else {
                 diff = a === b ? 0 : a < b ? -1 : 1;
               }
@@ -115,17 +113,16 @@ const ViewEvent = ({ match }) => {
         console.log("newColumns = ", newColumns);
 
         if (newEvent.Sports) {
+          let sportIndex = newEvent.Sports.map(sport => sport.id).indexOf(newEvent.sportId);
           ["Minimum skill", "Maximum skill"].forEach(key => {
-            let sportIndex = newEvent.Sports.map(sport => sport.id).indexOf(newEvent.sportId);
-            newEvent[key] = ["none", ...newEvent.Sports[sportIndex].skills][newEvent[key]];
+            newEvent[key] = skills[newEvent[key]];
           })
         }
 
         setColumns(newColumns.map(column => ({...column, style: (cell, row) => {
-          // console.log(row.Skill, newSkills.indexOf(row.Skill), newEvent["Minimum skill"], newSkills.indexOf(newEvent["Minimum skill"]));
           return {color:
-            newEvent["Minimum skill"] !== "none" && rowSkills.indexOf(row.Skill) < eventSkills.indexOf(newEvent["Minimum skill"]) ? 'red' :
-            newEvent["Maximum skill"] !== "none" && rowSkills.indexOf(row.Skill) > eventSkills.indexOf(newEvent["Maximum skill"]) ? 'blue' : 'black'
+            newEvent["Minimum skill"] !== skills.indexOf(row.Skill) < skills.indexOf(newEvent["Minimum skill"]) ? 'red' :
+            newEvent["Maximum skill"] !== skills.indexOf(row.Skill) > skills.indexOf(newEvent["Maximum skill"]) ? 'blue' : 'black'
           };
         }})));
 

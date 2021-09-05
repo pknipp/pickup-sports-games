@@ -3,7 +3,7 @@ const faker = require('faker');
 
 const { numberOfUsers } = require('../seederData/users');
 const { sports } = require('../seederData/sports');
-const { numberOfEvents, cities, skillProb, miscProb, extraInfos } = require('../seederData/events')
+const { numberOfEvents, cities, miscProb, extraInfos } = require('../seederData/events')
 
 const r = o => ({...o, createdAt: new Date(), updatedAt: new Date()});
 
@@ -15,7 +15,7 @@ for (let i = 0; i < numberOfEvents; i++) {
     dateTime: faker.date.future()
   });
   event.sportId = 1 + Math.floor(Math.random() * sports.length);
-  let nSkills = sports[event.sportId - 1].skills?.length || 3;
+  let nSkills = sports[event.sportId - 1].skills?.length || 4;
   let minSkill = Math.floor(Math.random() * nSkills);
   event['Minimum skill'] = minSkill;
   event['Maximum skill'] = minSkill + Math.floor(Math.random() * (nSkills - minSkill));
