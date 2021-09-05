@@ -82,11 +82,10 @@ const ViewEvent = ({ match }) => {
         let newPlayers = newEvent.players;
         newPlayers.forEach(player => {
           player.Skill = rowSkills[player.Skill];
-          player.bools = [];
           Object.entries(newBoolTypes).forEach(([boolType, bools]) => {
             bools.forEach((bool, i) => {
               const boolVal = player.boolVals[boolType] % 2;
-              player.bools.push(!!boolVal);
+              player[bool] = !!boolVal;
               player.boolVals[boolType] -= boolVal;
               player.boolVals[boolType] /= 2;
             })
@@ -97,7 +96,6 @@ const ViewEvent = ({ match }) => {
           return [...bools, ...boolArray];
         }, []);
         let newColumns = [...columns2, ...bools];
-
 
         // Below sets the only prop of the columns prop which depends upon state.
 
@@ -119,6 +117,7 @@ const ViewEvent = ({ match }) => {
             },
           }
         });
+        console.log("newColumns = ", newColumns);
 
         if (newEvent.Sports) {
           ["Minimum skill", "Maximum skill"].forEach(key => {
@@ -135,6 +134,7 @@ const ViewEvent = ({ match }) => {
           };
         }})));
 
+        console.log(newPlayers[0]);
         newPlayers = newPlayers.map(player => {
           player = Object.entries(player).reduce((player, prop) => {
             return {...player,
@@ -150,13 +150,14 @@ const ViewEvent = ({ match }) => {
           player.updatedAt = updatedAt[0].slice(5) + ' ' + updatedAt[1].slice(0, -8);
           let Cell = player.Cell;
           player.Cell = `(${Cell.slice(0,3)})${Cell.slice(3,6)}-${Cell.slice(6)}`;
-          bools.forEach((bool, index) => {
-            player[bool] = player.bools % 2;
-            player.bools -= player[bool];
-            player[bool] = player[bool] ? 'x' : '';
-            player.bools /= 2;
-          })
+          // bools.forEach((bool, index) => {
+          //   player[bool] = player.bools % 2;
+          //   player.bools -= player[bool];
+          //   player[bool] = player[bool] ? 'x' : '';
+          //   player.bools /= 2;
+          // })
           // player.photo = 'photo';
+          console.log("player = ", player);
           return player;
         });
         setPlayers(newPlayers);
