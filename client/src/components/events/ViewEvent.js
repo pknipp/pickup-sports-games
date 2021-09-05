@@ -5,6 +5,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 
 import Context from '../../context';
 import { time } from 'faker';
+// import skills from '../../../../db/seederData/skills';
 
 const ViewEvent = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender, genders } = useContext(Context);
@@ -39,6 +40,7 @@ const ViewEvent = ({ match }) => {
   const [players, setPlayers] = useState([]);
   const [boolTypes, setBoolTypes] = useState({genders});
   const [bools, setBools] = useState([[]]);
+  const [skills, setSkills] = useState([]);
 
   const [columns, setColumns] = useState(columns2.map((column, index) => {
     return {
@@ -68,13 +70,13 @@ const ViewEvent = ({ match }) => {
         const res = await fetch(`/api/events/${event.id}`);
         let newEvent = (await res.json()).event;
         // Recode following to handle non-sequential sport ids.
-        let skills = [...newEvent.Sports[newEvent.sportId - 1].skills];
+        let newSkills = [...newEvent.Sports[newEvent.sportId - 1].skills];
         let newBoolTypes = {genders, ...newEvent.boolTypes};
         // Recode following line to handle non-sequential sport ids.
         newEvent.Sport = newEvent.Sports[newEvent.sportId - 1].Name;
         let newPlayers = newEvent.players;
         newPlayers.forEach(player => {
-          player.Skill = skills[player.Skill];
+          player.Skill = newSkills[player.Skill];
           Object.entries(newBoolTypes).forEach(([boolType, bools]) => {
             bools.forEach((bool, i) => {
               const boolVal = player.boolVals[boolType] % 2;
@@ -101,8 +103,8 @@ const ViewEvent = ({ match }) => {
             headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
             sortFunc: (a, b, order, dataField) => {
               let diff;
-              if (skills.includes(a)) {
-                diff = a === b ? 0 : skills.indexOf(a) < skills.indexOf(b) ? -1 : 1;
+              if (newSkills.includes(a)) {
+                diff = a === b ? 0 : newSkills.indexOf(a) < newSkills.indexOf(b) ? -1 : 1;
               } else {
                 diff = a === b ? 0 : a < b ? -1 : 1;
               }
@@ -110,19 +112,18 @@ const ViewEvent = ({ match }) => {
             },
           }
         });
-        console.log("newColumns = ", newColumns);
 
         if (newEvent.Sports) {
           let sportIndex = newEvent.Sports.map(sport => sport.id).indexOf(newEvent.sportId);
           ["Minimum skill", "Maximum skill"].forEach(key => {
-            newEvent[key] = skills[newEvent[key]];
+            newEvent[key] = newSkills[newEvent[key]];
           })
         }
 
         setColumns(newColumns.map(column => ({...column, style: (cell, row) => {
           return {color:
-            newEvent["Minimum skill"] !== skills.indexOf(row.Skill) < skills.indexOf(newEvent["Minimum skill"]) ? 'red' :
-            newEvent["Maximum skill"] !== skills.indexOf(row.Skill) > skills.indexOf(newEvent["Maximum skill"]) ? 'blue' : 'black'
+            newSkills.indexOf(row.Skill) < newSkills.indexOf(newEvent["Minimum skill"]) ? 'red' :
+            newSkills.indexOf(row.Skill) > newSkills.indexOf(newEvent["Maximum skill"]) ? 'blue' : 'black'
           };
         }})));
 
@@ -177,10 +178,10 @@ const ViewEvent = ({ match }) => {
         />
         <br/>
         <h4>Event lineup:</h4>
-        {event['Minimum skill'] !== "none" || event['Maximum skill'] !== "none" ? <div>Key for color of player:
-          {event['Minimum skill'] !== "none" ? <span style={{color: 'red'}}> insufficiently </span> : null}
-          {event['Minimum skill'] !== "none" && event['Maximum skill'] !== "none" ? 'or ' : null}
-          {event['Maximum skill'] !== "none" ? <span style={{color: 'blue'}}> excessively </span> : null}
+        {event['Minimum skill'] !== skills[0] || event['Maximum skill'] !== skills[skills.length - 1] ? <div>Key for color of player:
+          {event['Minimum skill'] !== skills[0] ? <span style={{color: 'red'}}> insufficiently </span> : null}
+          {event['Minimum skill'] !== skills[0] && event['Maximum skill'] !== skills[skills.length - 1] ? 'or ' : null}
+          {event['Maximum skill'] !== skills[skills.length - 1] ? <span style={{color: 'blue'}}> excessively </span> : null}
           skilled</div>
         : null}
         <br/>
