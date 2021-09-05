@@ -75,8 +75,6 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   event.Sports = (await Sport.findAll()).map(sport => ({id: sport.id, Name: sport.Name, skills: JSON.parse(sport.skills)}));
   const sport = await Sport.findByPk(sportId);
   event.boolTypes = sport.boolTypes && JSON.parse(sport.boolTypes);
-  // event.positions = sport.positions && JSON.parse(sport.positions);
-  // event.sizes     = sport.sizes     && JSON.parse(sport.sizes);
   if (event.ownerId !== user.id) return next({ status: 401, message: "You are not authorized." });
   const reservations = await Reservation.findAll({where: {eventId}});
   let players = [];
@@ -88,7 +86,6 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
     ['eventId', 'id', 'playerId', 'createdAt'].forEach(prop => delete reservation[prop]);
     ['First name', 'Last name', 'Address', 'tokenId', 'hashedPassword', 'updatedAt'].forEach(prop => delete player[prop]);
     player = {...player, ...reservation};
-    // console.log("player = ", player);
     players.push(player);
   };
   res.json({event: {...event, owner: user, players}});

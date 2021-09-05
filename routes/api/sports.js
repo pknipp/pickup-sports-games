@@ -13,10 +13,7 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     for (let i = 0; i < sports.length; i++) {
         let sport = sports[i];
         let sportId = sport.id;
-        ['skills', 'sizes', 'positions'].forEach(key => {
-            let val = sport[key];
-            sport[key] = val && JSON.parse(val);
-        });
+        sport.boolTypes = JSON.parse(sport.boolTypes);
         let skill = await Skill.findOne({where: {userId, sportId}});
         sport.Skill = Number(skill) && skill.dataValues.skill;
     };

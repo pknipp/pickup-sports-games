@@ -56,7 +56,6 @@ const ViewEvent = ({ match }) => {
 
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
-  // const [skills, setSkills] = useState([]);
 
   let history = useHistory();
 
@@ -72,13 +71,9 @@ const ViewEvent = ({ match }) => {
         // Recode following to handle non-sequential sport ids.
         let eventSkills = ['none', ...newEvent.Sports[newEvent.sportId - 1].skills];
         let rowSkills =['???',...newEvent.Sports[newEvent.sportId - 1].skills];
-        // setSkills(newSkills);
         let newBoolTypes = {genders, ...newEvent.boolTypes};
         // Recode following line to handle non-sequential sport ids.
         newEvent.Sport = newEvent.Sports[newEvent.sportId - 1].Name;
-        // let positionBools = newEvent.positions || [];
-        // let sizeBools = newEvent.sizes || [];
-
         let newPlayers = newEvent.players;
         newPlayers.forEach(player => {
           player.Skill = rowSkills[player.Skill];
@@ -134,30 +129,22 @@ const ViewEvent = ({ match }) => {
           };
         }})));
 
-        console.log(newPlayers[0]);
         newPlayers = newPlayers.map(player => {
-          player = Object.entries(player).reduce((player, prop) => {
+          player = Object.entries(player).reduce((player, [key, value]) => {
             return {...player,
-              [prop[0]]:
-                prop[1] === true ? "x" :
-                prop[1] === false ? "" :
-                prop[1] === 0 ? "none" :
-                prop[1] && prop[0] === 'Extra info' ? <span className="ttip" data-toggle="tooltip" title={prop[1]}>y</span> :
-                prop[1]};
+              [key]:
+                value === true ? "x" :
+                value === false ? "" :
+                value === 0 ? "none" :
+                value && key === 'Extra info' ? <span className="ttip" data-toggle="tooltip" title={value}>y</span> :
+                value};
           }, {});
           player.createdAt = player.createdAt.split('T')[0];
           let updatedAt = player.updatedAt.split('T');
           player.updatedAt = updatedAt[0].slice(5) + ' ' + updatedAt[1].slice(0, -8);
           let Cell = player.Cell;
           player.Cell = `(${Cell.slice(0,3)})${Cell.slice(3,6)}-${Cell.slice(6)}`;
-          // bools.forEach((bool, index) => {
-          //   player[bool] = player.bools % 2;
-          //   player.bools -= player[bool];
-          //   player[bool] = player[bool] ? 'x' : '';
-          //   player.bools /= 2;
-          // })
           // player.photo = 'photo';
-          console.log("player = ", player);
           return player;
         });
         setPlayers(newPlayers);
