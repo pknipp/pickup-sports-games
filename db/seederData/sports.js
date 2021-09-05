@@ -3,17 +3,17 @@
         {
             Name: "12-inch softball",
             boolTypes: {positions: ["infield", "outfield", "pitcher", "catcher"]},
-            skills: ["beginner", "HS JV", "HS varsity", "D-3 college", "D-1 college"],
+            skills: ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"],
         },
         {
             Name: "16-inch softball",
             boolTypes: {positions: ["infield", "outfield", "pitcher", "catcher"]},
-            skills: ["beginner", "HS JV", "HS varsity", "D-3 college", "D-1 college"],
+            skills: ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"],
         },
         {
             Name: "Basketball",
             boolTypes: {sizes: ["3 on 3", "5 on 5"]},
-            skills: ["beginner", "HS JV", "HS varsity", "D-3 college", "D-1 college"],
+            skills: ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"],
         },
         {
             Name: "Biking",
@@ -21,7 +21,7 @@
         },
         {
             Name: "Cross-country skiing",
-            boolTypes: {distances: ["5 K", "7 K", "10 K", "15 K"]},
+            boolTypes: {distances: ["5K", "7K", "10K", "15K"]},
         },
         {
             Name: "Flag football",
@@ -29,11 +29,11 @@
                 sizes: ["4 on 4", "7 on 7", "8 on 8"],
                 positions: ["QB", "receiver", "defense", "line", "running back"],
             },
-            skills: ["beginner", "HS JV", "HS varsity", "D-3 college", "D-1 college"],
+            skills: ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"],
         },
         {
             Name: "Running",
-            boolTypes: {distances: ["5 K", "7 K", "10 K", "15 K"]},
+            boolTypes: {distances: ["5K", "7K", "10K", "15K"]},
         },
         {
             Name: "Sailboat racing",
@@ -42,7 +42,7 @@
         {
             Name: "Soccer",
             boolTypes: {positions: ["goalie", "defense", "midfield", "forward", "wing"]},
-            skills: ["beginner", "HS JV", "HS varsity", "D-3 college", "D-1 college"],
+            skills: ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"],
         },
         {
             Name: "Tennis",
@@ -59,7 +59,7 @@
                 positions: ['setter', 'middle', 'right side', 'outside', 'libero'],
                 sizes: ['twos', 'fours', 'sixes'],
             },
-            skills: ["beginner", "HS JV", "HS varsity", "D-3 college", "D-1 college"],
+            skills: ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"],
         },
     ],
 };

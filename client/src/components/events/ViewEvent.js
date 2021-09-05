@@ -71,6 +71,7 @@ const ViewEvent = ({ match }) => {
         let newEvent = (await res.json()).event;
         // Recode following to handle non-sequential sport ids.
         let newSkills = [...newEvent.Sports[newEvent.sportId - 1].skills];
+        setSkills(newSkills);
         let newBoolTypes = {genders, ...newEvent.boolTypes};
         // Recode following line to handle non-sequential sport ids.
         newEvent.Sport = newEvent.Sports[newEvent.sportId - 1].Name;
@@ -180,7 +181,7 @@ const ViewEvent = ({ match }) => {
         <h4>Event lineup:</h4>
         {event['Minimum skill'] !== skills[0] || event['Maximum skill'] !== skills[skills.length - 1] ? <div>Key for color of player:
           {event['Minimum skill'] !== skills[0] ? <span style={{color: 'red'}}> insufficiently </span> : null}
-          {event['Minimum skill'] !== skills[0] && event['Maximum skill'] !== skills[skills.length - 1] ? 'or ' : null}
+          {event['Minimum skill'] !== skills[0] && event['Maximum skill'] !== skills[skills.length - 1] ? 'or ' : ' '}
           {event['Maximum skill'] !== skills[skills.length - 1] ? <span style={{color: 'blue'}}> excessively </span> : null}
           skilled</div>
         : null}
