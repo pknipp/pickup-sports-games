@@ -7,9 +7,7 @@ import Context from '../../context';
 import { time } from 'faker';
 
 const ViewEvent = ({ match }) => {
-  const { fetchWithCSRF, rerender, setRerender,
-    genderBools
-  } = useContext(Context);
+  const { fetchWithCSRF, rerender, setRerender, genders } = useContext(Context);
   const eventProps = ['Location', 'dateTime', 'Extra info', 'Minimum skill', 'Maximum skill'];
   const userProps = ['Email', 'Nickname', 'Cell',
   // 'photo'
@@ -39,6 +37,7 @@ const ViewEvent = ({ match }) => {
     return {[prop]: '', ...pojo};
   }, {id: Number(match.params.eventId)}));
   const [players, setPlayers] = useState([]);
+  const [boolTypes, setBoolTypes] = useState({genders});
   const [bools, setBools] = useState([[]]);
 
   const [columns, setColumns] = useState(columns2.map((column, index) => {
@@ -74,21 +73,32 @@ const ViewEvent = ({ match }) => {
         let eventSkills = ['none', ...newEvent.Sports[newEvent.sportId - 1].skills];
         let rowSkills =['???',...newEvent.Sports[newEvent.sportId - 1].skills];
         // setSkills(newSkills);
+        let newBoolTypes = {genders, ...newEvent.boolTypes};
         // Recode following line to handle non-sequential sport ids.
         newEvent.Sport = newEvent.Sports[newEvent.sportId - 1].Name;
-        let positionBools = newEvent.positions || [];
-        let sizeBools = newEvent.sizes || [];
+        // let positionBools = newEvent.positions || [];
+        // let sizeBools = newEvent.sizes || [];
 
-        let bools = [
-          ...genderBools,
-          ...positionBools, ...sizeBools];
-        let newColumns = [...columns2, ...bools];
         let newPlayers = newEvent.players;
         newPlayers.forEach(player => {
           player.Skill = rowSkills[player.Skill];
-          // Combine 3 boolean-encoded integers into a single one.
-          player.bools = (player.sizeBools * 2 ** positionBools.length + player.positionBools) * 2 ** genderBools.length + player.genderBools;
+          player.bools = [];
+          Object.entries(newBoolTypes).forEach(([boolType, bools]) => {
+            bools.forEach((bool, i) => {
+              const boolVal = player.boolVals[boolType] % 2;
+              player.bools.push(!!boolVal);
+              player.boolVals[boolType] -= boolVal;
+              player.boolVals[boolType] /= 2;
+            })
+          });
         });
+
+        let bools = Object.values(newBoolTypes).reduce((bools, boolArray) => {
+          return [...bools, ...boolArray];
+        }, []);
+        let newColumns = [...columns2, ...bools];
+
+
         // Below sets the only prop of the columns prop which depends upon state.
 
         newColumns = newColumns.map((column, index) => {
