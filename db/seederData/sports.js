@@ -1,19 +1,20 @@
-﻿module.exports = {
+﻿let skills = ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"];
+module.exports = {
     sports: [
         {
             Name: "12-inch softball",
             boolTypes: {positions: ["infield", "outfield", "pitcher", "catcher"]},
-            skills: ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"],
+            skills,
         },
         {
             Name: "16-inch softball",
             boolTypes: {positions: ["infield", "outfield", "pitcher", "catcher"]},
-            skills: ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"],
+            skills,
         },
         {
             Name: "Basketball",
             boolTypes: {sizes: ["3 on 3", "5 on 5"]},
-            skills: ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"],
+            skills,
         },
         {
             Name: "Biking",
@@ -29,7 +30,7 @@
                 sizes: ["4 on 4", "7 on 7", "8 on 8"],
                 positions: ["QB", "receiver", "defense", "line", "running back"],
             },
-            skills: ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"],
+            skills,
         },
         {
             Name: "Running",
@@ -42,7 +43,7 @@
         {
             Name: "Soccer",
             boolTypes: {positions: ["goalie", "defense", "midfield", "forward", "wing"]},
-            skills: ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"],
+            skills,
         },
         {
             Name: "Tennis",
@@ -59,7 +60,7 @@
                 positions: ['setter', 'middle', 'right side', 'outside', 'libero'],
                 sizes: ['twos', 'fours', 'sixes'],
             },
-            skills: ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"],
+            skills,
         },
     ],
 };

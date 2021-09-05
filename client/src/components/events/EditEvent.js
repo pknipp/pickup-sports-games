@@ -50,15 +50,15 @@ const EditEvent = ({ match }) => {
         newEvent.dateTime = moment(newEvent.dateTime).local().format().slice(0, -6);
         setEvent(newEvent);
         // Put following in separate useEffect, and allow for non-sequential sportIds?
-        setSkills(["none", ...newSports[newEvent.sportId - 1].skills]);
+        setSkills([...newSports[newEvent.sportId - 1].skills]);
       }
     })();
   }, [event.id]);
 
   const handlePutPost = async e => {
     e.preventDefault();
-    event['Minimum skill'] = isNaN(event['Minimum skill']) ? 0 : Number(event['Minimum skill']);
-    event['Maximum skill'] = isNaN(event['Maximum skill']) ? 0 : Number(event['Maximum skill']);
+    // event['Minimum skill'] = isNaN(event['Minimum skill']) ? 0 : Number(event['Minimum skill']);
+    // event['Maximum skill'] = isNaN(event['Maximum skill']) ? 0 : Number(event['Maximum skill']);
     const res = await fetch(`/api/events${event.id ? ('/' + event.id) : ''}`, { method: event.id ? 'PUT': 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(event)
@@ -111,7 +111,7 @@ const EditEvent = ({ match }) => {
             // The following prevents state changes until a sport is selected.
             if (index) {
               setEvent({...newEvent, sportId: newSportId});
-              setSkills(["unspecified", ...sports[index - 1].skills]);
+              setSkills([...sports[index - 1].skills]);
             }
           }}
           value={1 + sports.map(sport => sport.id).indexOf(event.sportId)}
@@ -161,13 +161,13 @@ const EditEvent = ({ match }) => {
             <span>Upper limit of skill-level:</span>
 
             <select
-              onChange={e => setEvent({...event, ['Maximum skill']: !Number(e.target.value) ? 'none' : e.target.value})}
-              value={Number(event['Maximum skill'])}
+              onChange={e => setEvent({...event, ['Maximum skill']: Number(e.target.value)})}
+              value={event['Maximum skill']}
             >
               {skills.map((skill, index) => (
                   <option
                       key={`${index}`}
-                      value={index || 'none'}
+                      value={index}
                   >
                       {skill}
                   </option>

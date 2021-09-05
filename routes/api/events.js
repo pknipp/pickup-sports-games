@@ -12,26 +12,23 @@ const checkLocation = require('./checkLocation');
 const router = express.Router();
 
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
-    let [event, message, status] = [{}, '', 201];
-    // try {
-        req.body.ownerId = req.user.id;
-        req.body.dateTime = faker.date.future();
-        let checked = await checkLocation(req.body.Location);
-        if (checked.success) {
-          req.body.Location = checked.Location;
-          event = (await Evebt.create(req.body)).dataValues;
-          event = {...event, count: 0, reservationId: 0};
-        } else {
-          event.message = `There is something wrong with your event's location (${req.body.Location}).`
-          status = 400;
-        }
-        res.status(201).json({id: event.id, message});
+  let [event, message, status] = [{}, '', 201];
+  req.body.ownerId = req.user.id;
+  req.body.dateTime = faker.date.future();
+  let checked = await checkLocation(req.body.Location);
+  if (checked.success) {
+    req.body.Location = checked.Location;
+    event = (await Event.create(req.body)).dataValues;
+    event = {...event, count: 0, reservationId: 0};
+  } else {
+    event.message = `There is something wrong with your event's location (${req.body.Location}).`
+    status = 400;
+  }
+  res.status(201).json({id: event.id, message});
 }));
 
 router.get('', [authenticated], asyncHandler(async(req, res, next) => {
-    try {
     const user = req.user;
-    // transform Query return to an array of pojos, to enable us to attach properties to each
     const events = (await Event.findAll({})).map(event => event.dataValues);
     const allVenues = [];
     events.forEach(async event => {
@@ -40,7 +37,6 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
         event["Event organizer"] = (await User.findByPk(event.ownerId)).dataValues.Nickname;
         event.Sport = (await Sport.findByPk(event.sportId)).dataValues.Name;
         let reservations = await Reservation.findAll({where: {eventId: event.id}});
-        // transform Query to an array of pojos, to enable us to compute array's length
         event["Player reservations"] = reservations.length;
         // Set reservationId to zero if no reservation for this event has been made by this user.
         event.reservationId = reservations.reduce((reservationId, reservation) => {
@@ -62,9 +58,6 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
       nBundle++;
     }
     res.json({events});
-  } catch(e) {
-    console.log(e);
-  }
 }));
 
 router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
