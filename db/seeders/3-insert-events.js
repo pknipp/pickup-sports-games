@@ -14,9 +14,12 @@ for (let i = 0; i < numberOfEvents; i++) {
     ['Location']: cities[Math.floor(cities.length * Math.random())],
     dateTime: faker.date.future()
   });
-  event['Minimum skill'] = (Math.random() < skillProb) ? 1 + Math.floor(Math.random() * 2) : 0;
-  event['Maximum skill'] = (Math.random() < skillProb) ? 2 + Math.floor(Math.random() * 2) : 0;
   event.sportId = 1 + Math.floor(Math.random() * sports.length);
+  let nSkills = sports[sportId - 1].skills.length;
+  let minSkill = (Math.random() < skillProb) ? 1 + Math.floor(Math.random() * 2) : 0;
+  event['Minimum skill'] = minSkill;
+  event['Maximum skill'] = (Math.random() < skillProb) ? 2 + Math.floor(Math.random() * 2) : 0;
+
   if (Math.random() < miscProb)  event['Extra info'] = extraInfos[Math.floor(Math.random() * extraInfos.length)];
   events.push(event);
 }

@@ -14,9 +14,8 @@ MVP goals:
 1. Ensure that dateTime is always handled consistently (ie, locally?), in Home, ViewEvent, EditEvent, EditReservation, and db.
 1. On Home component present columns in a more logical manner.
 1. On EditReservation component, include an input field for the user to create/update his/her skill (STRONGLY recommending this if it is presently set as 0, ie "unknown").
-1. Introduce a db table ("Preferences") which'll join Users with Sports.  Somewhere (Edituser?) ask the user to specify these, perhaps as a horizontal flex-layout of checkboxes. These preferences'll subsequently serve to filter the initial fetch (for events owned, reserved, and unreserved).
-1. Create a 4th category & 5th of booleans: "distance" & "other".  The 1st'll get used for race-type sports: running, biking, xc-skiing.  The 2nd may get used for, e.g. boat-class for sailing
-1. Other sports to include: hockey, ultimate, badminton, pingpong, squash, sailing, running, bowling, golf, lacrosse, running, biking, xc skiing, archery, cricket
+1. Introduce a db table ("Preferences") which'll join Users with Sports.  (Combine this with Skills table, as UserSports?) Somewhere (Edituser?) ask the user to specify these, perhaps as a horizontal flex-layout of checkboxes. These preferences'll subsequently serve to filter the initial fetch (for events owned, reserved, and unreserved).
+1. Other sports to include: hockey, badminton, pingpong, squash, running, bowling, golf, lacrosse, archery, cricket
 1. More drastic things to do if EditGame changes gameTypeId:
         - cancel reservations?
         - trigger email to players?
