@@ -96,7 +96,7 @@ const Home = () => {
             return !["id", "reservationId", "skills"].includes(col);
         });
         // order of columns to appear in table
-        let newColumns = [5,4,7,2,8,9,6,0,1,3,10,11].map(index => headings[index]).filter(col => {
+        let newColumns = [5,4,7,2,8,9,6,3,0,1,10,11].map(index => headings[index]).filter(col => {
             return ![selectedOption ? 'view' : 'Event organizer'].includes(col);
         }).map(col => {
             // Make clickable columns un-headed, to prevent sort-ability among other reasons.
