@@ -6,8 +6,8 @@ import Context from '../../context';
 
 const Home = () => {
     const options = [
-        ["events organized by you", "Edit event details", "View event details"],
-        ["events for which you are registered", "Edit reservation"],
+        ["events organized by you", "Update event details", "View event details"],
+        ["events for which you are registered", "Update reservation"],
         ["events for which you are not registered", "Make reservation"]
     ];
     const { currentUser, gender } = useContext(Context);
@@ -19,7 +19,7 @@ const Home = () => {
     const [columns, setColumns] = useState(keys.map(key => ({dataField: key, text: key, sort: true})));
     const [message, setMessage] = useState('');
 
-    const defaultSorted = [{dataField: 'date', order: 'asc'}];
+    const defaultSorted = [{dataField: 'Sport', order: 'asc'}];
 
     useEffect(() => {
         (async () => {
@@ -92,14 +92,18 @@ const Home = () => {
             )
         });
         setEvents(newEvents);
-        let newColumns = (!newEvents.length ? [] : Object.keys(newEvents[0]).filter(col => {
-            return !["id", "reservationId", "skills",
-            // "Minimum skill", "Maximum skill", "Extra info",
-            !selectedOption ? 'Event organizer' : 'view'].includes(col);
+        let headings = (!newEvents.length ? [] : Object.keys(newEvents[0])).filter(col => {
+            return !["id", "reservationId", "skills"].includes(col);
+        });
+        // order of columns to appear in table
+        let newColumns = [5,4,7,2,8,9,6,0,1,3,10,11].map(index => headings[index]).filter(col => {
+            return ![selectedOption ? 'view' : 'Event organizer'].includes(col);
         }).map(col => {
+            // Make clickable columns un-headed, to prevent sort-ability among other reasons.
             let text = ['edit', 'view'].includes(col) ? '' : col
+            // It makes sense to sort neither on clickable columns nor on max/minSkill columns.
             return {dataField: col, text, sort: !!text && !text.includes("skill")};
-        }));
+        });
         setColumns(newColumns);
     }, [allEvents, selectedOption]);
 

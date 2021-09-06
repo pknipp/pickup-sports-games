@@ -40,6 +40,7 @@ router.post('', [email, password],
           res.cookie("token", token);
           await user.save();
           sportIds = (await Sport.findAll({})).map(sport => sport.dataValues.id);
+          // Give a new user all minimum values of skill-level.
           sportIds.forEach(async sportId => await Skill.create({userId: user.id, sportId, skill: 0}));
           user = user.toSafeObject();
           status = 201;
@@ -60,7 +61,7 @@ router.put('', [authenticated, email, password],
     let [user, message, status] = [req.user, '', 200];
     const errors = validationResult(req).errors;
     if (user.id === 1) {
-      message = "You cannot edit our 'demo' user, whose details are needed in order to allow our site's visitors  to login easily.  Feel free to use the 'Signup' route to create a new user if you'd like to test out the   'Manage Account' route.";
+      message = "You cannot modify our 'demo' user's details, which are needed in order to allow our site's visitors  to login easily.  Feel free to use the 'Signup' route to create a new user if you'd like to test out the   'Manage Account' route.";
       status = 400;
     } else if (errors.length) {
       message = errors[0].msg;

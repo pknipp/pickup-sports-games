@@ -168,7 +168,7 @@ const User = () => {
           onChange={e => setParams({...params, password2: e.target.value})}
         />
         <button color="primary" variant="outlined" type="submit">
-          {currentUser ? "Edit account" : "Signup"}
+          {currentUser ? "Update account" : "Signup"}
         </button>
         <span style={{color: "red", paddingLeft:"10px"}}>{message}</span>
         {currentUser ? null :

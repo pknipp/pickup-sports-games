@@ -34,7 +34,7 @@ const NavBar = () => {
                     to="/edituser"
                     className="nav" activeClassName="active"
                 >
-                    Account Details
+                    Manage Account
                 </NavLink>
                 <NavLink to="/logout" className="nav" activeClassName="active"
                 >
