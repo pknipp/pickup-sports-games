@@ -152,7 +152,7 @@ const EditEvent = ({ match }) => {
               onChange={e => setMinSkill(Number(e.target.value))}
               value={minSkill}
             >
-              {skills.map((skill, index) => (
+              {skills.slice(0, maxSkill + 1).map((skill, index) => (
                   <option
                       key={`${index}`}
                       value={index}
@@ -168,10 +168,10 @@ const EditEvent = ({ match }) => {
               onChange={e => setMaxSkill(Number(e.target.value))}
               value={maxSkill}
             >
-              {skills.map((skill, index) => (
+              {skills.slice(minSkill).map((skill, index) => (
                   <option
                       key={`${index}`}
-                      value={index}
+                      value={index + minSkill}
                   >
                       {skill}
                   </option>
