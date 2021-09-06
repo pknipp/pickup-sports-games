@@ -63,7 +63,7 @@ const ViewEvent = ({ match }) => {
   // const createMarkup = header => ({__html: `<span>${header}</span>`});
   // const MyComponent = header => <div dangerouslySetInnerHTML={createMarkup(header)} />;
 
-  const defaultSorted = [{dataField: 'updatedAt', order: 'asc'}];
+  const defaultSorted = [{dataField: 'Nickname', order: 'asc'}];
 
   useEffect(() => {
     (async() => {
