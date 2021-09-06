@@ -11,6 +11,7 @@ const checkLocation = require('./checkLocation');
 
 const router = express.Router();
 
+// used by EditGame component
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
   let [event, message, status] = [{}, '', 201];
   req.body.userId = req.user.id;
@@ -27,15 +28,21 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
   res.status(201).json({id: event.id, message});
 }));
 
+// used by Home component (AKA ViewGames)
 router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     const user = req.user;
-    const events = (await Event.findAll({})).map(event => event.dataValues);
+    const favorites = await Favorite.findAll({where: {userId: user.id}});
+    const favoriteSportIds = favorites.map(favorite => favorite.sportId);
+    const events = (await Event.findAll({})).filter(event => {
+      return favoriteSportIds.includes(event.sportId);
+    }).map(event => event.dataValues);
     const allVenues = [];
     events.forEach(async event => {
         allVenues.push(event.Location);
-        event.skills = JSON.parse((await Sport.findByPk(event.sportId)).skills);
+        let sport = await Sport.findByPk(event.sportId);
+        event.Sport = sport.Name;
+        event.skills = JSON.parse(sport.skills);
         event["Event organizer"] = (await User.findByPk(event.userId)).dataValues.Nickname;
-        event.Sport = (await Sport.findByPk(event.sportId)).dataValues.Name;
         let reservations = await Reservation.findAll({where: {eventId: event.id}});
         event["Player reservations"] = reservations.length;
         // Set reservationId to zero if no reservation for this event has been made by this user.
@@ -60,12 +67,18 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     res.json({events});
 }));
 
+// Used by EditGame and ViewGame components
 router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   const user = req.user;
   const eventId = Number(req.params.id);
   const event = (await Event.findByPk(eventId)).dataValues;
   let sportId = event.sportId;
-  event.Sports = (await Sport.findAll()).map(sport => ({id: sport.id, Name: sport.Name, skills: JSON.parse(sport.skills)}));
+
+  const favorites = await Favorite.findAll({where: {userId: user.id}});
+  const favoriteSportIds = favorites.map(favorite => favorite.sportId);
+  event.Sports = (await Sport.findAll()).filter(sport => {
+    return favoriteSportIds.includes(sport.id);
+  }).map(sport => ({id: sport.id, Name: sport.Name, skills: JSON.parse(sport.skills)}));
   const sport = await Sport.findByPk(sportId);
   event.boolTypes = sport.boolTypes && JSON.parse(sport.boolTypes);
   if (event.userId !== user.id) return next({ status: 401, message: "You are not authorized." });
@@ -84,6 +97,7 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   res.json({event: {...event, owner: user, players}});
 }))
 
+// Used by EditGame component.
 // Do we want to allow an event owner to transfer event-"owner"ship to another user?
 router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     const eventId = Number(req.params.id);

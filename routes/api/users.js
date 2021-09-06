@@ -15,6 +15,7 @@ const email = check('Email').isEmail().withMessage('Give a valid email address')
 // const lastName = check('lastName').not().isEmpty().withMessage('Provide last name');
 const password = check('password').not().isEmpty().withMessage('Provide a password');
 
+// used in User component
 router.post('', [email, password],
   asyncHandler(async (req, res, next) => {
     try {
@@ -39,9 +40,9 @@ router.post('', [email, password],
           user.tokenId = jti;
           res.cookie("token", token);
           await user.save();
-          sportIds = (await Sport.findAll({})).map(sport => sport.dataValues.id);
-          // Give a new user all minimum values of skill-level.
-          sportIds.forEach(async sportId => await Favorite.create({userId: user.id, sportId, skill: 0}));
+          // sportIds = (await Sport.findAll({})).map(sport => sport.dataValues.id);
+          // // Give a new user all minimum values of skill-level.
+          // sportIds.forEach(async sportId => await Favorite.create({userId: user.id, sportId, skill: 0}));
           user = user.toSafeObject();
           status = 201;
         } else {
@@ -55,9 +56,9 @@ router.post('', [email, password],
   }
   }));
 
+// used in putPost handler of User component
 router.put('', [authenticated, email, password],
   asyncHandler(async (req, res, next) => {
-    try {
     let [user, message, status] = [req.user, '', 200];
     const errors = validationResult(req).errors;
     if (user.id === 1) {
@@ -108,28 +109,27 @@ router.put('', [authenticated, email, password],
       res.cookie("token", token);
       await user.save();
       if (req.body.sportId) {
-        let skill = await Favorite.findOne({where: {
+        let favorite = await Favorite.findOne({where: {
           [Sequelize.Op.and]: [
             {userId: user.id},
             {sportId: req.body.sportId }
           ]
         }});
-        skill.Skill = req.body.Skill;
-        await skill.save();
+        favorite.Skill = req.body.Skill;
+        await favorite.save();
       }
     }
     res.status(status).json({ user: { ...user.toSafeObject(), message } });
-  } catch(e){
-    console.log("error is ", e);
-  }
   })
 );
 
+// not used
 router.get('', asyncHandler(async (req, res, next) => {
   const users = await User.findAll();
   res.json({users});
 }));
 
+// used in User component
 router.delete("", [authenticated], asyncHandler(async (req, res) => {
   const user = req.user;
   if (user.id === 1) return res.json({ message: "You cannot delete my 'demo' user, because visitors to my site use that for testing purposes.  Create a new user via the 'Signup' route if you'd like to test out the deletion of a user." })

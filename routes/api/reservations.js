@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { Event, Reservation, User, Sport } = require("../../db/models");
+const { Event, Reservation, User, Sport, Favorite } = require("../../db/models");
 const { Op } = require('sequelize');
 const asyncHandler = require('express-async-handler');
 const { authenticated } = require('./security-utils');
 
+// Used by EditReservation component
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     req.body.userId = req.user.id;
     req.body.boolVals = JSON.stringify(req.body.boolVals);
@@ -19,12 +20,16 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     // }
 }));
 
+//Not used yet?
 router.get('', [authenticated], asyncHandler(async(req, res) => {
     const user = req.user;
+    // const favorites = await Favorite.findAll({where: {userId: user.id}});
+    // const favoriteSportIds = favorites.map(favorite => favorite.sportId);
     const reservations = await Reservation.findAll({});
     res.json({reservations});
 }));
 
+// used in EditReservation component
 router.get('/:resEventId', async(req, res) => {
     const [reservationId, eventId] = req.params.resEventId.split('-').map(id => Number(id));
     let reservation = (reservationId && (await Reservation.findByPk(reservationId)).dataValues) || {};
@@ -37,6 +42,7 @@ router.get('/:resEventId', async(req, res) => {
     res.json({reservation});
 })
 
+// used in EditReservation component
 router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     let reservation = await Reservation.findByPk(Number(req.params.id));
     if (reservation.userId !== req.user.id) res.status(401).send("Unauthorized Access");
@@ -51,6 +57,7 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     res.status(200).json({reservation});
 }));
 
+// used in EditReservation component
 router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {
     const reservation = await Reservation.findByPk(Number(req.params.id));
     if (reservation.userId !== req.user.id) res.status(401).send("Unauthorized Access");

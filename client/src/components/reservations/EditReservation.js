@@ -11,9 +11,9 @@ const EditReservation = ({ match }) => {
   const { fetchWithCSRF, currentUser, rerender, setRerender, genders } = useContext(Context);
   let [boolTypes, setBoolTypes] = useState({genders});
   const nullReservation =
-    {id: 0, playerId: 0, eventId: 0, event: {Location: '', dateTime: ''}, boolVals: {genders: 0}};
+    {id: 0, userId: 0, eventId: 0, event: {Location: '', dateTime: ''}, boolVals: {genders: 0}};
   const [reservation, setReservation] = useState({
-    ...nullReservation, playerId: currentUser.id, id: reservationId, eventId
+    ...nullReservation, userId: currentUser.id, id: reservationId, eventId
   });
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);

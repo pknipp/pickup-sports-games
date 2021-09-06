@@ -41,8 +41,8 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   User.associate = function(models) {
-    User.hasMany(models.Event, {foreignKey: 'ownerId'});
-    User.hasMany(models.Reservation, {foreignKey: 'playerId'});
+    User.hasMany(models.Event, {foreignKey: 'userId'});
+    User.hasMany(models.Reservation, {foreignKey: 'userId'});
     // insert a belongsToMany relationship between User and Event, via Reservations
   };
 

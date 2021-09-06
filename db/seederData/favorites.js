@@ -1,3 +1,3 @@
 ﻿module.exports = {
-    skillProb: 0.7,
+    favoriteProb: 0.7,
 };

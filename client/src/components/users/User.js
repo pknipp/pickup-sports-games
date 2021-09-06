@@ -25,15 +25,18 @@ const User = () => {
   const [errors, setErrors] = useState([]);
   const [Skill, setSkill] = useState(0);
   const [sports, setSports] = useState([]);
-  const [sportId, setSportId] = useState(0);
+  const [sportIds, setSportIds] = useState([]);
+  const [sportIndex, setSportIndex] = useState(0);
 
   let history = useHistory();
 
   useEffect(() => {
     (async() => {
       if (currentUser) {
-        const data = await (await fetch('/api/sports')).json();
-        setSports((data.sports || []).sort((a, b) => a.id - b.id));
+        const data = await (await fetch('/api/favorites')).json();
+        let newSports = (data.sports || []).sort((a, b) => a.id - b.id);
+        setSports(newSports);
+        setSportIds(newSports.map(sport => sport.id));
       }
     })();
   }, []);
@@ -45,7 +48,8 @@ const User = () => {
                   params.password !== params.password2 ? "Passwords must match" : "";
     setMessage(message);
     if (!message) {
-      let newParams = {...params, sportId, Skill}
+      // Two instances of "-1" each address need for 1st item in each dropdown
+      let newParams = {...params, sportId: sportIds[sportIndex - 1], Skill: Skill - 1}
       const res = await fetch(`/api/users`, { method: currentUser ? 'PUT': 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newParams)
@@ -121,34 +125,36 @@ const User = () => {
           type="number" placeholder="Cell" name="Cell" value={params.Cell}
           onChange={e => setParams({...params, Cell: Number(e.target.value)})}
         />
-        {!currentUser ? null : <><span>{sportId ? sports[sportId - 1].Name : ""} skill-level:</span>
+        {!currentUser ? null : <><span>{sportIndex ? sports[sportIndex - 1].Name : ""} skill-level:</span>
         <select
           onChange={e => {
             let val = Number(e.target.value);
-            if (sportId) {
-              if (val === sports[sportId - 1].skills.length + 1) {
-                setSportId(0);
+            // if a sport has been selected
+            if (sportIndex) {
+              if (val === sports[sportIndex - 1].skills.length + 1) {
+                // CANCEL, and return to sport-selection
+                setSportIndex(0);
               } else {
                 setSkill(val);
               }
             } else {
-              setSportId(val);
-              setSkill(sports[val].Skill);
+              if (val) setSportIndex(val);
             }
           }}
-          value={sportId && sports[sportId - 1].Skill}
+          value={sportIndex && (Skill || sports[sportIndex - 1]?.Skill + 1)}
         >
-          {[null, ...(sportId ? [...sports[sportId - 1].skills, 'Cancel'] : sports)].map((element, index) => (
+
+          {[null, ...(sportIndex ? [...sports[sportIndex - 1].skills, 'Cancel'] : sports)].map((element, index) => (
               <option
                   key={`${index}`}
                   value={index}
               >
                   {index ? (
-                    sportId ? (
-                      index === sports[sportId - 1].skills.length + 1 ?
-                        'CANCEL' : sports[sportId - 1].skills[index - 1]
+                    sportIndex ? (
+                      index === sports[sportIndex - 1].skills.length + 1 ?
+                        'CANCEL' : sports[sportIndex - 1].skills[index - 1]
                     ) : sports[index - 1].Name
-                  ) : `Select ${sportId ? "level" : "sport first"}`}
+                  ) : `Select ${sportIndex ? "level" : "sport first"}`}
               </option>
           ))}
         </select></>}

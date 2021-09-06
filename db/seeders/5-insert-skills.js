@@ -2,18 +2,20 @@
 const faker = require('faker');
 const { numberOfUsers } = require('../seederData/users');
 const { sports } = require('../seederData/sports');
-// const { skillProb } = require('../seederData/skills');
+const { favoriteProb } = require('../seederData/favorites');
 
 sports.sort((a, b) => a.Name < b.Name ? -1 : a.Name > b.Name ? 1 : 0);
 
 let favorites = [];
 for (let userId = 1; userId <= numberOfUsers; userId++) {
   sports.forEach((sport, i) => {
-    let skillsLength = sport.skills?.length || 4;
-    let skill = Math.floor(Math.random() * skillsLength);
-    let updatedAt = faker.date.past(0.1);
-    let favorite = {userId, sportId: i + 1, skill, updatedAt, createdAt: faker.date.past(0.1, updatedAt)};
-    favorites.push(favorite);
+    if (Math.random() < favoriteProb) {
+      let skillsLength = sport.skills?.length || 4;
+      let Skill = Math.floor(Math.random() * skillsLength);
+      let updatedAt = faker.date.past(0.1);
+      let favorite = {userId, sportId: i + 1, Skill, updatedAt, createdAt: faker.date.past(0.1, updatedAt)};
+      favorites.push(favorite);
+    }
   })
 }
 

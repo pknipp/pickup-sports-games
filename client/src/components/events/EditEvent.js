@@ -86,7 +86,7 @@ const EditEvent = ({ match }) => {
       let nullEvent = properties.reduce((pojo, prop) => {
         return {[prop]: '', ...pojo};
       }, {wantsToPlay: false});
-      [nullEvent.id, nullEvent.ownerId] = [0, 0];
+      [nullEvent.id, nullEvent.userId] = [0, 0];
       setEvent(nullEvent);
       setRerender(rerender + 1);
       history.push('/');

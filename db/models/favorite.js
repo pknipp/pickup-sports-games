@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         ...['userId','sportId'].reduce((pojo, fk) => {
             return {...pojo, [fk]: {type: DataTypes.INTEGER, allowNull: false}};
         }, {}),
-        skill: {allowNull: false, type: DataTypes.INTEGER},
+        Skill: {allowNull: false, type: DataTypes.INTEGER},
     },
   );
   Favorite.associate = function(models) {
