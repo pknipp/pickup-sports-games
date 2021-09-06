@@ -18,7 +18,6 @@ const password = check('password').not().isEmpty().withMessage('Provide a passwo
 // used in User component
 router.post('', [email, password],
   asyncHandler(async (req, res, next) => {
-    try {
     let [user, message, status] = [{}, '', 400];
     const errors = validationResult(req).errors;
     if (errors.length) {
@@ -40,9 +39,9 @@ router.post('', [email, password],
           user.tokenId = jti;
           res.cookie("token", token);
           await user.save();
-          // sportIds = (await Sport.findAll({})).map(sport => sport.dataValues.id);
-          // // Give a new user all minimum values of skill-level.
-          // sportIds.forEach(async sportId => await Favorite.create({userId: user.id, sportId, skill: 0}));
+          sportIds = (await Sport.findAll({})).map(sport => sport.dataValues.id);
+          // Give a new user all minimum values of skill-level.
+          sportIds.forEach(async sportId => await Favorite.create({userId: user.id, sportId, Skill: 0}));
           user = user.toSafeObject();
           status = 201;
         } else {
@@ -51,9 +50,6 @@ router.post('', [email, password],
       }
     }
     res.status(status).json({user: {...user, message}});
-  } catch(e) {
-    console.log("error = ", e);
-  }
   }));
 
 // used in putPost handler of User component
