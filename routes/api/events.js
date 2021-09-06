@@ -4,7 +4,7 @@ const faker = require('faker');
 const { Op } = require('sequelize');
 const fetch = require('node-fetch');
 
-const { Event, Reservation, User, Sport, Skill } = require("../../db/models");
+const { Event, Reservation, User, Sport, Favorite } = require("../../db/models");
 const { authenticated } = require('./security-utils');
 const { mapsConfig: { mapsApiKey } } = require('../../config');
 const checkLocation = require('./checkLocation');
@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
   let [event, message, status] = [{}, '', 201];
-  req.body.ownerId = req.user.id;
+  req.body.userId = req.user.id;
   req.body.dateTime = faker.date.future();
   let checked = await checkLocation(req.body.Location);
   if (checked.success) {
@@ -34,15 +34,15 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     events.forEach(async event => {
         allVenues.push(event.Location);
         event.skills = JSON.parse((await Sport.findByPk(event.sportId)).skills);
-        event["Event organizer"] = (await User.findByPk(event.ownerId)).dataValues.Nickname;
+        event["Event organizer"] = (await User.findByPk(event.userId)).dataValues.Nickname;
         event.Sport = (await Sport.findByPk(event.sportId)).dataValues.Name;
         let reservations = await Reservation.findAll({where: {eventId: event.id}});
         event["Player reservations"] = reservations.length;
         // Set reservationId to zero if no reservation for this event has been made by this user.
         event.reservationId = reservations.reduce((reservationId, reservation) => {
-            return (reservation.playerId === user.id ? reservation.id : reservationId);
+            return (reservation.userId === user.id ? reservation.id : reservationId);
         }, 0);
-        ['sportId', 'ownerId', 'createdAt', 'updatedAt'].forEach(key => delete event[key]);
+        ['sportId', 'userId', 'createdAt', 'updatedAt'].forEach(key => delete event[key]);
     })
     // fetch travel-Time between user and a bundled array of addresses ("venues")
     // google restricts each bundle to contain no more than 25 addresses
@@ -68,15 +68,15 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   event.Sports = (await Sport.findAll()).map(sport => ({id: sport.id, Name: sport.Name, skills: JSON.parse(sport.skills)}));
   const sport = await Sport.findByPk(sportId);
   event.boolTypes = sport.boolTypes && JSON.parse(sport.boolTypes);
-  if (event.ownerId !== user.id) return next({ status: 401, message: "You are not authorized." });
+  if (event.userId !== user.id) return next({ status: 401, message: "You are not authorized." });
   const reservations = await Reservation.findAll({where: {eventId}});
   let players = [];
   for await (reservation of reservations) {
-    let player = (await User.findByPk(reservation.playerId)).dataValues;
-    player.Skill = (await Skill.findOne({where: {sportId, userId: player.id}})).skill;
+    let player = (await User.findByPk(reservation.userId)).dataValues;
+    player.Skill = (await Favorite.findOne({where: {sportId, userId: player.id}})).skill;
     reservation = reservation.dataValues;
     reservation.boolVals = JSON.parse(reservation.boolVals);
-    ['eventId', 'id', 'playerId', 'createdAt'].forEach(prop => delete reservation[prop]);
+    ['eventId', 'id', 'userId', 'createdAt'].forEach(prop => delete reservation[prop]);
     ['First name', 'Last name', 'Address', 'tokenId', 'hashedPassword', 'updatedAt'].forEach(prop => delete player[prop]);
     player = {...player, ...reservation};
     players.push(player);
@@ -89,7 +89,7 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     const eventId = Number(req.params.id);
     let event = await Event.findByPk(eventId);
     let message = '';
-    if (event.ownerId !== req.user.id) res.status(401).send("Unauthorized Access");
+    if (event.userId !== req.user.id) res.status(401).send("Unauthorized Access");
     // confirm that Google Maps API can find a route between event's address & NYC
     let checked = await checkLocation(req.body.Location);
     if (checked.success) {
@@ -116,7 +116,7 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
 
 router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {
     const event = await Event.findByPk(Number(req.params.id));
-    if (event.ownerId !== req.user.id) res.status(401).send("Unauthorized Access");
+    if (event.userId !== req.user.id) res.status(401).send("Unauthorized Access");
     // try{
       await event.destroy();
       res.json({});

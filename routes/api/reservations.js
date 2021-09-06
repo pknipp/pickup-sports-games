@@ -6,7 +6,7 @@ const asyncHandler = require('express-async-handler');
 const { authenticated } = require('./security-utils');
 
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
-    req.body.ownerId = req.user.id;
+    req.body.userId = req.user.id;
     req.body.boolVals = JSON.stringify(req.body.boolVals);
     let reservation = await Reservation.create(req.body);
     let event = (await Event.findByPk(reservation.eventId)).dataValues;
@@ -39,7 +39,7 @@ router.get('/:resEventId', async(req, res) => {
 
 router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     let reservation = await Reservation.findByPk(Number(req.params.id));
-    if (reservation.playerId !== req.user.id) res.status(401).send("Unauthorized Access");
+    if (reservation.userId !== req.user.id) res.status(401).send("Unauthorized Access");
     req.body.boolVals = JSON.stringify(req.body.boolVals);
     Object.keys(req.body).forEach(key => reservation[key] = req.body[key]);
     await reservation.save();
@@ -53,7 +53,7 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
 
 router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {
     const reservation = await Reservation.findByPk(Number(req.params.id));
-    if (reservation.playerId !== req.user.id) res.status(401).send("Unauthorized Access");
+    if (reservation.userId !== req.user.id) res.status(401).send("Unauthorized Access");
     try{
       await reservation.destroy();
       res.json({});

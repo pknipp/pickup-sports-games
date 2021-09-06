@@ -3,7 +3,7 @@ const { check, validationResult } = require('express-validator');
 const Sequelize = require('sequelize');
 const router = require('express').Router();
 
-const { User, Event, Reservation, Skill, Sport } = require('../../db/models');
+const { User, Event, Reservation, Favorite, Sport } = require('../../db/models');
 const { authenticated, generateToken } = require('./security-utils');
 const { uploadFile } = require('../../s3helper.js');
 const checkLocation = require('./checkLocation');
@@ -41,7 +41,7 @@ router.post('', [email, password],
           await user.save();
           sportIds = (await Sport.findAll({})).map(sport => sport.dataValues.id);
           // Give a new user all minimum values of skill-level.
-          sportIds.forEach(async sportId => await Skill.create({userId: user.id, sportId, skill: 0}));
+          sportIds.forEach(async sportId => await Favorite.create({userId: user.id, sportId, skill: 0}));
           user = user.toSafeObject();
           status = 201;
         } else {
@@ -108,7 +108,7 @@ router.put('', [authenticated, email, password],
       res.cookie("token", token);
       await user.save();
       if (req.body.sportId) {
-        let skill = await Skill.findOne({where: {
+        let skill = await Favorite.findOne({where: {
           [Sequelize.Op.and]: [
             {userId: user.id},
             {sportId: req.body.sportId }
