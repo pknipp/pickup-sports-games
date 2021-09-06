@@ -8,9 +8,9 @@ const { reservationProb, extraInfos } = require('../seederData/reservations');
 let reservations = [];
 events.forEach((event, i) => {
   let sport = sports[event.sportId - 1];
-  for (let playerId = 1; playerId <= numberOfUsers; playerId++) {
+  for (let userId = 1; userId <= numberOfUsers; userId++) {
     if (Math.random() < reservationProb) {
-      const reservation = {playerId, eventId: i + 1};
+      const reservation = {userId, eventId: i + 1};
       reservation.boolVals = Object.keys(sport.boolTypes).reduce((pojo, key) => {
         return {...pojo, [key]: 1 + Math.floor(Math.random() * (2 ** sport.boolTypes[key].length - 1))};
       }, {genders: 1 + Math.floor(Math.random() * (2 ** 4 - 1))});

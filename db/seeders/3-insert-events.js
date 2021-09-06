@@ -10,7 +10,7 @@ const r = o => ({...o, createdAt: new Date(), updatedAt: new Date()});
 const events = [];
 for (let i = 0; i < numberOfEvents; i++) {
   const event = r({
-    ownerId: 1 + Math.floor(Math.random() * numberOfUsers),
+    userId: 1 + Math.floor(Math.random() * numberOfUsers),
     ['Location']: cities[Math.floor(cities.length * Math.random())],
     dateTime: faker.date.future()
   });
