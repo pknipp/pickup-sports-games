@@ -2,7 +2,7 @@
 const {Model, INTEGER} = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  const Skill = sequelize.define("Skill",
+  const Favorite = sequelize.define("Favorite",
     {
         ...['userId','sportId'].reduce((pojo, fk) => {
             return {...pojo, [fk]: {type: DataTypes.INTEGER, allowNull: false}};
@@ -10,9 +10,9 @@ module.exports = (sequelize, DataTypes) => {
         skill: {allowNull: false, type: DataTypes.INTEGER},
     },
   );
-  Skill.associate = function(models) {
-    Skill.belongsTo(models.Sport, {foreignKey: 'sportId', onDelete: 'CASCADE'});
-    Skill.belongsTo(models.User, {foreignKey: 'userId', onDelete: 'CASCADE'});
+  Favorite.associate = function(models) {
+    Favorite.belongsTo(models.Sport, {foreignKey: 'sportId', onDelete: 'CASCADE'});
+    Favorite.belongsTo(models.User, {foreignKey: 'userId', onDelete: 'CASCADE'});
   };
-  return Skill;
+  return Favorite;
 };

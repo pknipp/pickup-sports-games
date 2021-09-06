@@ -4,7 +4,7 @@ const {Model, INTEGER} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   const Reservation = sequelize.define("Reservation",
     {
-      ...['playerId','eventId'].reduce((pojo, fk) => {
+      ...['userId','eventId'].reduce((pojo, fk) => {
         return {...pojo, [fk]: {type: DataTypes.INTEGER, allowNull: false}};
       }, {}),
       boolVals: {type: DataTypes.TEXT, allowNull: false, defaultValue: JSON.stringify({})},
@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Reservation.associate = function(models) {
     Reservation.belongsTo(models.Event, {foreignKey: 'eventId', onDelete: 'CASCADE'});
-    Reservation.belongsTo(models.User, {foreignKey: 'playerId', onDelete: 'CASCADE'});
+    Reservation.belongsTo(models.User, {foreignKey: 'userId', onDelete: 'CASCADE'});
   };
 
   return Reservation;

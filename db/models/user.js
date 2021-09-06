@@ -60,13 +60,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
-  // Do we ever use the following?
-  // User.signup = async function({ ["First name"]: Firstname, lastName, optStuff, Email, wantsEmail, password }) {
-  //   const hashedPassword = bcrypt.hashSync(password);
-  //   const user = await User.create({Email, hashedPassword});
-  //   return await User.scope("currentUser").findByPk(user.id);
-  // };
-
   User.prototype.validatePassword = function(Password) {
     return bcrypt.compareSync(Password, this.hashedPassword.toString());
   };
