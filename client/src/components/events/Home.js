@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
 import BootstrapTable from 'react-bootstrap-table-next';
+import moment from 'moment';
 
 import Context from '../../context';
 
 const Home = () => {
     const options = [
-        ["events organized by you", "Update event details", "View event details"],
-        ["events for which you are registered", "Update reservation"],
-        ["events for which you are not registered", "Make reservation"]
+        ["events organized by you", "Manage event details", "View event details"],
+        ["events for which you are registered", "Manage reservation"],
+        ["events for which you are not registered", "Create reservation"]
     ];
     const { currentUser, gender } = useContext(Context);
     const [loading, setLoading] = useState(true);
@@ -28,7 +29,7 @@ const Home = () => {
             if (response.ok) {
                 let newAllEvents = [];
                 data.events.forEach(event => {
-                    let [EventDate, EventTime] = event.dateTime.split("T");
+                    let [EventDate, EventTime] = moment(event.dateTime).local().format().split("T");
                     EventTime = EventTime.slice(0, 5);
                     let minutes = Math.round(event.duration.value / 60);
                     let hours = Math.floor(minutes / 60);

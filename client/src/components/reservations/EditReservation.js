@@ -123,7 +123,7 @@ const EditReservation = ({ match }) => {
         />
 
         <button color="primary" variant="outlined" type="submit">
-          {reservation.id ? "Modify" : "Make"} reservation
+          {reservation.id ? "Update" : "Create"} reservation
         </button>
         <span style={{color: "red", paddingLeft:"10px"}}>{message}</span>
       </form>
