@@ -26,7 +26,6 @@ const Home = () => {
         (async () => {
             const response = await fetch(`/api/events`);
             let data = await response.json();
-            console.log("data = ", data);
             if (response.ok) {
                 let newAllEvents = [];
                 data.events.forEach(event => {
@@ -131,7 +130,7 @@ const Home = () => {
                 ))}
             </div>
             <br/>
-            {selectedOption ? null :
+            {!selectedOption &&
                 <div>
                     <NavLink exact to={"/editEvents/0"} className="nav" activeClassName="active">
                         <div>Create new event</div>

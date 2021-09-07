@@ -15,7 +15,7 @@ const router = express.Router();
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
   let [event, message, status] = [{}, '', 201];
   req.body.userId = req.user.id;
-  req.body.dateTime = faker.date.future();
+  // req.body.dateTime = faker.date.future();
   let checked = await checkLocation(req.body.Location);
   if (checked.success) {
     req.body.Location = checked.Location;
