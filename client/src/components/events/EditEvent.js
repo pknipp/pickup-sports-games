@@ -17,6 +17,8 @@ const EditEvent = ({ match }) => {
   ];
 
   const [sports, setSports] = useState([]);
+  const [sportIds, setSportIds] = useState([]);
+  const [sportIndex, setSportIndex] = useState(0);
   const [event, setEvent] = useState(properties.reduce((pojo, prop) => {
     return {[prop]: '', Sports: [], ...pojo};
   }, {id: Number(match.params.eventId)}));
@@ -40,29 +42,33 @@ const EditEvent = ({ match }) => {
   useEffect(() => {
     (async() => {
       // Put following line in a separate useEffect?
-      let newSports = (await (await fetch('/api/sports')).json()).sports;
+      let newSports = (await (await fetch('/api/favorites')).json()).sports;
       setSports(newSports);
+      let newSportIds = newSports.map(sport => sport.id);
+      setSportIds(newSportIds);
       if (event.id) {
         const res = await fetch(`/api/events/${event.id}`);
         let newEvent = (await res.json()).event;
+        let newSportIndex = 1 + newSportIds.indexOf(newEvent.sportId);
+        setSportIndex(newSportIndex);
         // React does not like null value, which might be stored in db.
         Object.keys(newEvent).forEach(key => {
           if (newEvent[key] === null) newEvent[key] = '';
         });
         newEvent.dateTime = moment(newEvent.dateTime).local().format().slice(0, -6);
         setEvent(newEvent);
-        // Put following in separate useEffect, and allow for non-sequential sportIds?
-        let newSkills = [...newSports[newEvent.sportId - 1].skills];
+        let newSkills = newSports[newSportIndex - 1].skills;
         setSkills(newSkills);
         setMinSkill(newEvent["Minimum skill"]);
         setMaxSkill(newEvent["Maximum skill"]);
       }
     })();
-  }, [event.id]);
+  }, [event.id, event.sportId]);
 
   const handlePutPost = async e => {
     e.preventDefault();
     [event["Minimum skill"], event["Maximum skill"]] = [minSkill, maxSkill];
+    event.sportId = sportIds[sportIndex - 1];
     const res = await fetch(`/api/events${event.id ? ('/' + event.id) : ''}`, { method: event.id ? 'PUT': 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(event)
@@ -97,35 +103,36 @@ const EditEvent = ({ match }) => {
     <div className="simple">
       <form className="auth" onSubmit={handlePutPost}>
         <h4>
-          {event.id ?
-            "Change the event details?"
+          {event.id ? "Change" : "Choose"} the event details.
+            {/* "Change the event details?"
           :
             "Choose the event details."
-          }
+          } */}
         </h4>
         <span>Sport:</span>
         <select
           onChange={e => {
             let index = Number(e.target.value);
-            let newSportId = index && sports[index - 1].id;
-            let isSameSport = Number(event.sportId === newSportId);
-            let newEvent = {...event};
-            // The follows UNspecifies the max/min skill levels, if the sport is changed.
-            ["Minimum skill", "Maximum skill"].forEach(key => newEvent[key] = isSameSport && newEvent[key]);
             // The following prevents state changes until a sport is selected.
             if (index) {
-              setEvent({...newEvent, sportId: newSportId});
-              setSkills([...sports[index - 1].skills]);
+              setSportIndex(index);
+              // If sport changes, initialize min/max skills as least restrictive as possible.
+              if (index !== sportIndex) {
+                let newSkills = [...sports[index - 1].skills];
+                setSkills(newSkills);
+                setMinSkill(0);
+                setMaxSkill(newSkills.length - 1);
+              }
             }
           }}
-          value={1 + sports.map(sport => sport.id).indexOf(event.sportId)}
+          value={sportIndex}
         >
           {["Select sport", ...sports].map((sport, index) => (
               <option
-                  key={`${index && sports[index - 1].id}`}
+                  key={index && sport.id}
                   value={index}
               >
-                  {index ? sports[index - 1].Name : "Select sport"}
+                  {sports[index - 1]?.Name || "Select sport"}
               </option>
           ))}
         </select>
@@ -144,10 +151,10 @@ const EditEvent = ({ match }) => {
           }}
         />
 
-        {!event.sportId ? null :
+        {!sportIndex ? null :
           <>
+          {/* DRY up following code by implementing a Skill component, w/some props (one boolean + ???) */}
             <span>Lower limit of skill-level:</span>
-
             <select
               onChange={e => setMinSkill(Number(e.target.value))}
               value={minSkill}

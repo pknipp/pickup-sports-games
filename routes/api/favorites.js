@@ -6,7 +6,7 @@ const { authenticated } = require('./security-utils');
 
 const router = express.Router();
 
-// used in useEffect of User component
+// used in useEffects of User component & of EditEvent
 router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     let userId = req.user.id;
     let favorites = await Favorite.findAll({where: {userId}});
