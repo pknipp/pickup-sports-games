@@ -52,7 +52,7 @@ module.exports = {
         },
         {
             Name: "Ultimate",
-            boolTypes: {},
+            boolTypes: {positions: ["cutter", "handler"]},
         },
         {
             Name: "Volleyball",

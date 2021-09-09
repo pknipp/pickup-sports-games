@@ -79,7 +79,8 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   event.Sports = (await Sport.findAll()).filter(sport => {
     return favoriteSportIds.includes(sport.id);
   }).map(sport => ({id: sport.id, Name: sport.Name, skills: JSON.parse(sport.skills)}));
-  const sport = await Sport.findByPk(sportId);
+  const sport = (await Sport.findByPk(sportId)).dataValues;
+  const skills = JSON.parse(sport.skills);
   event.boolTypes = sport.boolTypes && JSON.parse(sport.boolTypes);
   if (event.userId !== user.id) return next({ status: 401, message: "You are not authorized." });
   const reservations = await Reservation.findAll({where: {eventId}});
@@ -94,7 +95,7 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
     player = {...player, ...reservation};
     players.push(player);
   };
-  res.json({event: {...event, owner: user, players}});
+  res.json({event: {...event, owner: user, players, sport, skills}});
 }))
 
 // Used by EditGame component.

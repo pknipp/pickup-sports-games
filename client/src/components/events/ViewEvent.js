@@ -70,11 +70,13 @@ const ViewEvent = ({ match }) => {
         const res = await fetch(`/api/events/${event.id}`);
         let newEvent = (await res.json()).event;
         // Recode following to handle non-sequential sport ids.
-        let newSkills = [...newEvent.Sports[newEvent.sportId - 1].skills];
+        let newSkills = [...newEvent.skills];
+        // let newSkills = [...newEvent.Sports[newEvent.sportId - 1].skills];
         setSkills(newSkills);
         let newBoolTypes = {genders, ...newEvent.boolTypes};
         // Recode following line to handle non-sequential sport ids.
-        newEvent.Sport = newEvent.Sports[newEvent.sportId - 1].Name;
+        newEvent.Sport = newEvent.sport.Name;
+        // newEvent.Sport = newEvent.Sports[newEvent.sportId - 1].Name;
         let newPlayers = newEvent.players;
         newPlayers.forEach(player => {
           player.Skill = newSkills[player.Skill];
@@ -186,7 +188,9 @@ const ViewEvent = ({ match }) => {
           skilled</div>
         : null}
         <br/>
-        {!columns || !columns.length ? <span>NO COLUMNS</span> : <BootstrapTable
+        {
+        // !columns?.length ||
+        !players?.length ? <span><h4>NO PLAYERS YET</h4></span> : <BootstrapTable
           keyField='id'
           data={ players }
           columns={ columns }
