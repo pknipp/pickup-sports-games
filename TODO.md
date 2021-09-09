@@ -11,6 +11,7 @@ DRY up setSkills invocation in EditGame, and ensure that it'll work if gameTypes
 Figure out which time to display: local or zulu.
 
 MVP goals:
+1. Get "Skill" column to populate for each player on ViewEvent form. (See line 90 of events/:id/get.)
 1. After creating a new user, take immediately to a form which populates rows of the Favorites table for them (rather than blindly choosing all sports, for which each skill is set to zero).
 1. Ensure that event.time changes when viewed by those in other time zones.
 1. Get event.dateTime to work properly on heroku.

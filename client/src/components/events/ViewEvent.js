@@ -69,6 +69,7 @@ const ViewEvent = ({ match }) => {
     (async() => {
         const res = await fetch(`/api/events/${event.id}`);
         let newEvent = (await res.json()).event;
+        console.log("newEvent = ", newEvent);
         // Recode following to handle non-sequential sport ids.
         let newSkills = [...newEvent.skills];
         // let newSkills = [...newEvent.Sports[newEvent.sportId - 1].skills];
