@@ -69,6 +69,7 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
 
 // Used by EditGame and ViewGame components
 router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
+  try {
   const user = req.user;
   const eventId = Number(req.params.id);
   const event = (await Event.findByPk(eventId)).dataValues;
@@ -87,6 +88,7 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   let players = [];
   for await (reservation of reservations) {
     let player = (await User.findByPk(reservation.userId)).dataValues;
+    console.log("sportId/player.id = ", sportId, player.id);
     player.Skill = (await Favorite.findOne({where: {sportId, userId: player.id}})).Skill;
     reservation = reservation.dataValues;
     reservation.boolVals = JSON.parse(reservation.boolVals);
@@ -96,6 +98,9 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
     players.push(player);
   };
   res.json({event: {...event, owner: user, players, sport, skills}});
+} catch(e) {
+  console.log(e)
+}
 }))
 
 // Used by EditGame component.
