@@ -11,12 +11,10 @@ DRY up setSkills invocation in EditGame, and ensure that it'll work if gameTypes
 Figure out which time to display: local or zulu.
 
 MVP goals:
-1. Get "Skill" column to populate for each player on ViewEvent form. (See line 90 of events/:id/get.)
-1. After creating a new user, take immediately to a form which populates rows of the Favorites table for them (rather than blindly choosing all sports, for which each skill is set to zero).
+1. After creating a new user, take immediately to a form which populates rows of the Favorites table for them (rather than blindly choosing all sports, for which each skill is set to zero), perhaps as a horizontal flex-layout of checkboxes.  These preferences'll subsequently serve to filter the initial fetch (for events owned, reserved, and unreserved).
 1. Ensure that event.time changes when viewed by those in other time zones.
 1. Get event.dateTime to work properly on heroku.
-1. Introduce a db table ("Preferences") which'll join Users with Sports.  (Combine this with Skills table, as UserSports?) Somewhere (Edituser?) ask the user to specify these, perhaps as a horizontal flex-layout of checkboxes. These preferences'll subsequently serve to filter the initial fetch (for events owned, reserved, and unreserved).
-1. Other sports to include: hockey, badminton, pingpong, squash, running, bowling, golf, lacrosse, archery, cricket
+1. Other sports to include: hockey, badminton, pingpong, squash, running, bowling, golf, lacrosse, archery, cricket, rugby
 1. More drastic things to do if EditGame changes gameTypeId:
         - cancel reservations?
         - trigger email to players?

@@ -87,7 +87,7 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   let players = [];
   for await (reservation of reservations) {
     let player = (await User.findByPk(reservation.userId)).dataValues;
-    player.Skill = (await Favorite.findOne({where: {sportId, userId: player.id}})).skill;
+    player.Skill = (await Favorite.findOne({where: {sportId, userId: player.id}})).Skill;
     reservation = reservation.dataValues;
     reservation.boolVals = JSON.parse(reservation.boolVals);
     ['eventId', 'id', 'userId', 'createdAt'].forEach(prop => delete reservation[prop]);
