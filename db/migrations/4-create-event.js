@@ -3,8 +3,9 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable("Events", {
       id: {allowNull: false, autoIncrement: true, primaryKey: true, type: Sequelize.INTEGER},
-      userId: {allowNull: false, type: Sequelize.INTEGER, onDelete: 'CASCADE', references: {model: "Users"}},
-      sportId: {allowNull: false, type: Sequelize.INTEGER, onDelete: 'CASCADE', references: {model: "Sports"}},
+      favoriteId: {allowNull: false, type: Sequelize.INTEGER, onDelete: 'CASCADE', references: {model: "Favorites"}},
+      // userId: {allowNull: false, type: Sequelize.INTEGER, onDelete: 'CASCADE', references: {model: "Users"}},
+      // sportId: {allowNull: false, type: Sequelize.INTEGER, onDelete: 'CASCADE', references: {model: "Sports"}},
       Location: {allowNull: false, type: Sequelize.TEXT},
       ['Extra info']: {type: Sequelize.TEXT},
       dateTime: {type: Sequelize.DATE, allowNull: false},
