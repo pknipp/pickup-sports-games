@@ -7,6 +7,7 @@ const { favoriteProb } = require('../seederData/favorites');
 sports.sort((a, b) => a.Name < b.Name ? -1 : a.Name > b.Name ? 1 : 0);
 
 let favorites = [];
+// for (let favoriteId = 0; favoriteId < numberOfFavorites; favoriteId++) {
 for (let userId = 1; userId <= numberOfUsers; userId++) {
   sports.forEach((sport, i) => {
     if (Math.random() < favoriteProb) {
@@ -20,6 +21,8 @@ for (let userId = 1; userId <= numberOfUsers; userId++) {
 }
 
 module.exports = {
+  // Following property will be needed when seeding the events table.
+  favorites,
   up: async (queryInterface, Sequelize) => queryInterface.bulkInsert('Favorites', favorites),
   down: (queryInterface, Sequelize) => queryInterface.bulkDelete('Favorites'),
 };
