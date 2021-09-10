@@ -6,7 +6,7 @@ module.exports = {
       Name: {allowNull: false, type: Sequelize.TEXT},
       boolTypes: {allownull: false, type: Sequelize.TEXT},
       // sizes: {allowNull: true, type: Sequelize.TEXT},
-      skills: {allowNull: false, type: Sequelize.TEXT,
+      Skills: {allowNull: false, type: Sequelize.TEXT,
         // defaultValue: JSON.stringify(["beginner", "intermediate", "advanced"])
       },
       ...["createdAt", "updatedAt"].reduce((pojo, key) => {
