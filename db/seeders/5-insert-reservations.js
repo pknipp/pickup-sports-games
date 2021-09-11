@@ -2,12 +2,14 @@
 const faker = require('faker');
 const { numberOfUsers } = require('../seederData/users');
 const { sports } = require('../seederData/sports');
+const { favorites } = require('./3-insert-favorites');
 const { events } = require('./4-insert-events');
 const { reservationProb, extraInfos } = require('../seederData/reservations');
 
 let reservations = [];
 events.forEach((event, i) => {
-  let sport = sports[event.favoriteId - 1].sportId - 1];
+  let favorite = favorites[event.favoriteId - 1];
+  let sport = sports[favorite.sportId - 1];
   for (let userId = 1; userId <= numberOfUsers; userId++) {
     if (Math.random() < reservationProb) {
       const reservation = {userId, eventId: i + 1};

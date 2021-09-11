@@ -30,16 +30,18 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
 
 // used by Home component (AKA ViewGames)
 router.get('', [authenticated], asyncHandler(async(req, res, next) => {
+  try {
     const user = req.user;
     const favorites = await Favorite.findAll({where: {userId: user.id}});
-    const favoriteSportIds = favorites.map(favorite => favorite.sportId);
+    const favoriteIds = favorites.map(favorite => favorite.id);
     const events = (await Event.findAll({})).filter(event => {
-      return favoriteSportIds.includes(event.sportId);
+      return favoriteIds.includes(event.favoriteId);
     }).map(event => event.dataValues);
     const allVenues = [];
     events.forEach(async event => {
         allVenues.push(event.Location);
-        let sport = await Sport.findByPk(event.sportId);
+        let favorite = await Favorite.findByPk(event.favoriteId);
+        let sport = await Sport.findByPk(favorite.sportId);
         event.Sport = sport.Name;
         event.skills = JSON.parse(sport.skills);
         event["Event organizer"] = (await User.findByPk(event.userId)).dataValues.Nickname;
@@ -49,7 +51,7 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
         event.reservationId = reservations.reduce((reservationId, reservation) => {
             return (reservation.userId === user.id ? reservation.id : reservationId);
         }, 0);
-        ['sportId', 'userId', 'createdAt', 'updatedAt'].forEach(key => delete event[key]);
+        ['favoriteId', 'createdAt', 'updatedAt'].forEach(key => delete event[key]);
     })
     // fetch travel-Time between user and a bundled array of addresses ("venues")
     // google restricts each bundle to contain no more than 25 addresses
@@ -65,6 +67,9 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
       nBundle++;
     }
     res.json({events});
+  }catch(e) {
+    console.log(e)
+  }
 }));
 
 // Used by EditGame and ViewGame components
