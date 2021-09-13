@@ -13,12 +13,15 @@ const router = express.Router();
 
 // used by EditGame component
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
+  try {
   let [event, message, status] = [{}, '', 201];
   req.body.userId = req.user.id;
   // req.body.dateTime = faker.date.future();
   let checked = await checkLocation(req.body.Location);
   if (checked.success) {
     req.body.Location = checked.Location;
+    ["sportId", "userId"].forEach(key => delete req.body[key]);
+    console.log("req.body = ", req.body);
     event = (await Event.create(req.body)).dataValues;
     event = {...event, count: 0, reservationId: 0};
   } else {
@@ -26,6 +29,9 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     status = 400;
   }
   res.status(201).json({id: event.id, message});
+} catch(e) {
+  console.log(e)
+}
 }));
 
 // used by Home component (AKA ViewGames)
@@ -33,9 +39,9 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
   try {
     const user = req.user;
     const favorites = await Favorite.findAll({where: {userId: user.id}});
-    const favoriteIds = favorites.map(favorite => favorite.id);
-    const events = (await Event.findAll({})).filter(event => {
-      return favoriteIds.includes(event.favoriteId);
+    // const favoriteIds = favorites.map(favorite => favorite.id);
+    const events = (await Event.findAll({attributes: { exclude: ['sportId', 'userId'] }})).filter(event => {
+      return favorites.map(favorite => favorite.id).includes(event.favoriteId);
     }).map(event => event.dataValues);
     const allVenues = [];
     events.forEach(async event => {
@@ -43,8 +49,8 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
         let favorite = await Favorite.findByPk(event.favoriteId);
         let sport = await Sport.findByPk(favorite.sportId);
         event.Sport = sport.Name;
-        event.skills = JSON.parse(sport.skills);
-        event["Event organizer"] = (await User.findByPk(event.userId)).dataValues.Nickname;
+        event.Skills = JSON.parse(sport.Skills);
+        event["Event organizer"] = (await User.findByPk(user.id)).dataValues.Nickname;
         let reservations = await Reservation.findAll({where: {eventId: event.id}});
         event["Player reservations"] = reservations.length;
         // Set reservationId to zero if no reservation for this event has been made by this user.
@@ -77,18 +83,19 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   try {
   const user = req.user;
   const eventId = Number(req.params.id);
-  const event = (await Event.findByPk(eventId)).dataValues;
-  let sportId = event.sportId;
+  const event = (await Event.findByPk(eventId, {attributes: { exclude: ['sportId', 'userId'] }})).dataValues;
+  let favorite = (await Favorite.findByPk(event.favoriteId)).dataValues;
+  let sportId = favorite.sportId;
 
   const favorites = await Favorite.findAll({where: {userId: user.id}});
   const favoriteSportIds = favorites.map(favorite => favorite.sportId);
   event.Sports = (await Sport.findAll()).filter(sport => {
     return favoriteSportIds.includes(sport.id);
-  }).map(sport => ({id: sport.id, Name: sport.Name, skills: JSON.parse(sport.skills)}));
+  }).map(sport => ({id: sport.id, Name: sport.Name, Skills: JSON.parse(sport.Skills)}));
   const sport = (await Sport.findByPk(sportId)).dataValues;
-  const skills = JSON.parse(sport.skills);
+  const Skills = JSON.parse(sport.Skills);
   event.boolTypes = sport.boolTypes && JSON.parse(sport.boolTypes);
-  if (event.userId !== user.id) return next({ status: 401, message: "You are not authorized." });
+  if (favorite.userId !== user.id) return next({ status: 401, message: "You are not authorized." });
   const reservations = await Reservation.findAll({where: {eventId}});
   let players = [];
   for await (reservation of reservations) {
@@ -102,7 +109,7 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
     player = {...player, ...reservation};
     players.push(player);
   };
-  res.json({event: {...event, owner: user, players, sport, skills}});
+  res.json({event: {...event, owner: user, players, sport, Skills}});
 } catch(e) {
   console.log(e)
 }
@@ -123,7 +130,7 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
       message = `There is something wrong with your event's location (${req.body.Location}).`
       delete req.body.Location;
     }
-    if (req.body.sportId !== event.sportId) {
+    if (req.body.sportId !== favorite.sportId) {
       (await Reservation.findAll({where: {eventId}})).forEach(async reservation => {
         reservation.bools = 0;
         await reservation.save();

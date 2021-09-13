@@ -16,7 +16,7 @@ const Home = () => {
     const [allEvents, setAllEvents] = useState([]);
     const [events, setEvents] = useState([]);
     const [keys, setKeys] = useState([]);
-    const [selectedOption, setSelectedOption] = useState(2);
+    const [selectedOption, setSelectedOption] = useState(0);
     const [columns, setColumns] = useState(keys.map(key => ({dataField: key, text: key, sort: true})));
     const [message, setMessage] = useState('');
 
@@ -43,7 +43,7 @@ const Home = () => {
                         yes (hover)
                     </span>;
                     ['Maximum skill', 'Minimum skill'].forEach(key => {
-                        newEvent[key] = event.skills[newEvent[key]];
+                        newEvent[key] = event.Skills[newEvent[key]];
                     })
                     newAllEvents.push(newEvent);
                 });
@@ -95,7 +95,7 @@ const Home = () => {
         setEvents(newEvents);
         if (newEvents.length) {
             let headings = (!newEvents.length ? [] : Object.keys(newEvents[0])).filter(col => {
-                return !["id", "reservationId", "skills"].includes(col);
+                return !["id", "reservationId", "Skills"].includes(col);
             });
             // order of columns to appear in table
             let newColumns = [4,5,7,2,8,9,6,3,0,1,10,11].map(index => headings[index]).filter(col => {
