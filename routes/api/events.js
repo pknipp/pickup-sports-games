@@ -147,14 +147,17 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
 }));
 
 router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {
-    const event = await Event.findByPk(Number(req.params.id));
-    if (event.userId !== req.user.id) res.status(401).send("Unauthorized Access");
-    // try{
+  try {
+    console.log("req.params.id = ", req.params.id)
+    const event = await Event.findByPk(Number(req.params.id), {attributes: { exclude: ['sportId', 'userId'] }});
+    console.log("event.favoriteId = ", event.favoriteId)
+    let favorite = await Favorite.findByPk(event.favoriteId);
+    if (favorite.userId !== req.user.id) res.status(401).send("Unauthorized Access");
       await event.destroy();
       res.json({});
-    // } catch(e) {
-    //   res.status(400).send(e);
-    // }
+    } catch(e) {
+      res.status(400).send(e);
+    }
 }));
 
 module.exports = router;
