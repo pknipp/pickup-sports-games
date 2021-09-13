@@ -83,8 +83,13 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   try {
   const user = req.user;
   const eventId = Number(req.params.id);
+  console.log("eventId = ", eventId);
   const event = (await Event.findByPk(eventId, {attributes: { exclude: ['sportId', 'userId'] }})).dataValues;
+  console.log("event.id = ", event.id);
+  console.log("favoriteId = ", event.favoriteId);
   let favorite = (await Favorite.findByPk(event.favoriteId)).dataValues;
+  console.log("favorite.id = ", favorite.id)
+  console.log("favorite.sportId = ", favorite.sportId);
   let sportId = favorite.sportId;
 
   const favorites = await Favorite.findAll({where: {userId: user.id}});
@@ -100,6 +105,7 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   let players = [];
   for await (reservation of reservations) {
     let player = (await User.findByPk(reservation.userId)).dataValues;
+    console.log("player = ", player)
     console.log("sportId/player.id = ", sportId, player.id);
     player.Skill = (await Favorite.findOne({where: {sportId, userId: player.id}})).Skill;
     reservation = reservation.dataValues;
@@ -141,9 +147,7 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     Object.entries(req.body).forEach(([key, value]) => {
         event[key] = value !== '' ? value : null;
     });
-    // Set max/min restrictions on skill to "unspecified" if #sportId is changed
-    // The following is now handled on the front, in EditEvent component.
-    // ["Minimum skill", "Maximum skill"].forEach(key => event[key] *= Number(sameSport));
+
     await event.save();
     res.status(200).json({id: event.id, message});
   } catch(e) {
