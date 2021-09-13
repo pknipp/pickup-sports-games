@@ -12,14 +12,14 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     let userId = req.user.id;
     let favorites = (await Favorite.findAll({where: {userId}})).map(favorite => favorite.dataValues);
     for (let i = 0; i < favorites.length; i++) {
-        let favorite = favorites[i];
     // Whey cannot I use the following array method for this loop?
-    // favorites = favorites.map(async favorite => {
-        // favorite = favorite.dataValues;
+        // favorites = favorites.map(async favorite => {
+        let favorite = favorites[i];
         let sport = (await Sport.findByPk(favorite.sportId)).dataValues;
         favorite.Skills = JSON.parse(sport.Skills);
         favorite.Name = sport.Name;
     };
+    // console.log("favorites = ", favorites);
     res.json({favorites});
 } catch(e) {
     console.log(e)

@@ -17,16 +17,13 @@ const User = () => {
     'password2'
   ];
   const [params, setParams] = useState(currentUser ?
-    {...currentUser, password: '', password2: ''}
+    {...currentUser, password: '', password2: '', Skill: 0, index: 0}
       :
-    properties.reduce((pojo, prop) => ({[prop]: '', ...pojo}), {id: 0})
+    properties.reduce((pojo, prop) => ({[prop]: '', ...pojo}), {id: 0, Skill: 0, index: 0})
   );
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
-  // const [Skill, setSkill] = useState(0);
   const [favorites, setFavorites] = useState([]);
-  // const [sportIds, setSportIds] = useState([]);
-  const [index, setIndex] = useState(0);
 
   let history = useHistory();
 
@@ -34,9 +31,7 @@ const User = () => {
     (async() => {
       if (currentUser) {
         const data = await (await fetch('/api/favorites')).json();
-        let newFavorites = (data.favorites || []).sort((a, b) => a.Name - b.Name);
-        setFavorites(newFavorites);
-        // setSportIds(newSports.map(sport => sport.id));
+        setFavorites(data.favorites.sort((a, b) => a.id - b.id));
       }
     })();
   }, []);
@@ -46,34 +41,33 @@ const User = () => {
     let message = !params.Email ? "Email address is needed." :
                   !params.password?"Password is needed." :
                   params.password !== params.password2 ? "Passwords must match" : "";
-    setMessage(message);
-    if (!message) {
-      // Two instances of "-1" each address need for 1st item in each dropdown
-      let newParams = {...params, sportId: favorites[index - 1],
-        // sportIds[sportIndex - 1],
-        // Skill: Skill - 1
-      }
-      const res = await fetch(`/api/users`, { method: currentUser ? 'PUT': 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newParams)
-      });
-      let user = (await res.json()).user;
-      let message = user.message;
-      if (currentUser) {
-        // PUT route
+    return setMessage(message);
+    // if (!message) {
+    //   // Two instances of "-1" each address need for 1st item in each dropdown
+    //   // let newParams = {...params, index: params.index,
+    //     // sportIds[sportIndex - 1],
+    //     // Skill: Skill - 1
+    //   }
+    const res = await fetch(`/api/users`, { method: currentUser ? 'PUT': 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    let user = (await res.json()).user;
+    message = user.message;
+    if (currentUser) {
+      // PUT route
+      setCurrentUser(user);
+      setParams({...user, password: '', password2: ''});
+      message = (res.ok && !message) ? "Success" : message;
+    } else {
+      // POST route
+      if (res.ok && !message) {
         setCurrentUser(user);
-        setParams({...user, password: '', password2: ''});
-        message = (res.ok && !message) ? "Success" : message;
-      } else {
-        // POST route
-        if (res.ok && !message) {
-          setCurrentUser(user);
-          setParams(user);
-          history.push('/');
-        }
+        setParams(user);
+        history.push('/');
       }
-      setMessage(message);
-    };
+    }
+    setMessage(message);
   };
 
   const handleDelete = async e => {
@@ -86,7 +80,6 @@ const User = () => {
       setCurrentUser(null);
     }
   }
-
   return (
     <div className="simple">
       <form className="auth" onSubmit={handlePutPost}>
@@ -128,48 +121,42 @@ const User = () => {
           type="number" placeholder="Cell" name="Cell" value={params.Cell}
           onChange={e => setParams({...params, Cell: Number(e.target.value)})}
         />
-        {!currentUser ? null : <><span>{index ? favorites[index - 1].Name
-        // sports[sportIndex - 1].Name
+        {!currentUser ? null : <><span>{params.index ? favorites[params.index - 1].Name
          : ""} skill-level:</span>
         <select
           onChange={e => {
-            let val = Number(e.target.value);
-            // if a sport has been selected
-            if (index) {
-              if (val === favorites[index - 1].Skills.length + 1) {
-                // CANCEL, and return to sport-selection
-                setIndex(0);
-              } else {
-                let newParams = JSON.parse(JSON.stringify(params));
-                newParams.Skill = val;
-                // setSkill(val);
-              }
+            let newIndex = Number(e.target.value);
+            // If no sport has been selected, first choose one.
+            if (!params.index) {
+              if (newIndex) setParams({...params, index: newIndex, Skill: favorites[newIndex - 1].Skill});
+            // If a sport has already been selected.
             } else {
-              // if (val) setSportIndex(val);
+              // If you want to cancel current choice of sport.
+              if (!newIndex) {
+                setParams({...params, index: 0});
+              // If a particular skill has been selected.
+              } else {
+                setParams({...params, Skill: newIndex - 1});
+                //Eliminate following 3 lines if this is ever handled by the backend.
+                let newFavorites = JSON.parse(JSON.stringify(favorites));
+                newFavorites[params.index].Skill = newIndex - 1;
+                setFavorites(newFavorites);
+              }
             }
           }}
-          // value={sportIndex && (Skill || sports[sportIndex - 1]?.Skill + 1)}
+          value={params.index && params.Skill + 1}
         >
-
-          {/* {[null, ...(sportIndex ? [...sports[sportIndex - 1].skills, 'Cancel'] : sports)].map((element, index) => ( */}
+          {[null, ...(params.index ? favorites[params.index - 1]?.Skills :
+            favorites.map(favorite => favorite.Name))].map((element, newIndex) => (
               <option
-                  key={`${index}`}
-                  value={index}
+                  key={`${!!params.index}${newIndex}`}
+                  value={newIndex}
               >
-                  {index ? (
-                                        index ? (
-                      index === favorites[index - 1].Skills.length + 1 ?
-                        'CANCEL' : favorites[index - 1].Skills[index - 1]
-                    ) : favorites[index - 1].Name
-                  ) : `Select ${index ? "level" : "sport first"}`}
+                {newIndex ? element : `${params.index ? "Choose another " : "Select a "} sport`}
               </option>
           ))}
         </select></>}
 
-        {/* <span>Photo url:</span>
-        <input type="text" placeholder="Photo url" name="photo" value={params.photo}
-          onChange={e => setParams({...params, photo: e.target.value})}
-        /> */}
         <span>Password:</span>
         <input
           type="password" placeholder="Password" name="password" value={params.password}
