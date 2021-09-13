@@ -50,7 +50,7 @@ const EditEvent = ({ match }) => {
         setEvent(newEvent);
       }
     })();
-  }, [event.id, event.favoriteId]);
+  }, [event.id]);
 
   const handlePutPost = async e => {
     e.preventDefault();

@@ -118,10 +118,12 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
 // Used by EditGame component.
 // Do we want to allow an event owner to transfer event-"owner"ship to another user?
 router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
+  try {
     const eventId = Number(req.params.id);
-    let event = await Event.findByPk(eventId);
+    let event = await Event.findByPk(eventId, {attributes: { exclude: ['sportId', 'userId'] }});
+    let favorite = await Favorite.findByPk(event.favoriteId);
     let message = '';
-    if (event.userId !== req.user.id) res.status(401).send("Unauthorized Access");
+    if (favorite.userId !== req.user.id) res.status(401).send("Unauthorized Access");
     // confirm that Google Maps API can find a route between event's address & NYC
     let checked = await checkLocation(req.body.Location);
     if (checked.success) {
@@ -144,6 +146,9 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     // ["Minimum skill", "Maximum skill"].forEach(key => event[key] *= Number(sameSport));
     await event.save();
     res.status(200).json({id: event.id, message});
+  } catch(e) {
+    console.log(e)
+  }
 }));
 
 router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {
