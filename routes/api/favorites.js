@@ -17,9 +17,7 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     // favorites = favorites.map(async favorite => {
         // favorite = favorite.dataValues;
         let sport = (await Sport.findByPk(favorite.sportId)).dataValues;
-        // sport.boolTypes = JSON.parse(sport.boolTypes);
         favorite.Skills = JSON.parse(sport.Skills);
-        // sport.Skill = favorite.Skill;
         favorite.Name = sport.Name;
     };
     res.json({favorites});

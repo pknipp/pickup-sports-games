@@ -1,6 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const { check, validationResult } = require('express-validator');
+const { favoriteProb } = require('../../db/seederData/favorites');
 const router = require('express').Router();
+const { Favorite } = require('../../db/models');
 
 const UserRepository = require('../../db/user-repository');
 const { authenticated, generateToken } = require('./security-utils');
@@ -28,8 +30,14 @@ router.put('', [Email, Password],
   const { jti, token } = generateToken(user);
   user.tokenId = jti;
   await user.save();
+  let favorites = await Favorite.findAll({where: {userId: user.id}});
+  user = user.dataValues;
+  delete user.hashedPassword;
+  user.favorites = favorites.map(favorite => ({id: favorite.id, sportId: favorite.sportId, Skill: favorite.Skill}));
+  console.log("user = ", user);
   res.cookie('token', token);
-  res.json({ user: user.toSafeObject() });
+  res.json({user});
+  // res.json({ user: user.toSafeObject() });
 }));
 
 router.delete('', [authenticated],

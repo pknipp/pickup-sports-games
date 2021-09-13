@@ -23,10 +23,10 @@ const User = () => {
   );
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
-  const [Skill, setSkill] = useState(0);
-  const [sports, setSports] = useState([]);
-  const [sportIds, setSportIds] = useState([]);
-  const [sportIndex, setSportIndex] = useState(0);
+  // const [Skill, setSkill] = useState(0);
+  const [favorites, setFavorites] = useState([]);
+  // const [sportIds, setSportIds] = useState([]);
+  const [index, setIndex] = useState(0);
 
   let history = useHistory();
 
@@ -34,9 +34,9 @@ const User = () => {
     (async() => {
       if (currentUser) {
         const data = await (await fetch('/api/favorites')).json();
-        let newSports = (data.sports || []).sort((a, b) => a.id - b.id);
-        setSports(newSports);
-        setSportIds(newSports.map(sport => sport.id));
+        let newFavorites = (data.favorites || []).sort((a, b) => a.Name - b.Name);
+        setFavorites(newFavorites);
+        // setSportIds(newSports.map(sport => sport.id));
       }
     })();
   }, []);
@@ -49,7 +49,10 @@ const User = () => {
     setMessage(message);
     if (!message) {
       // Two instances of "-1" each address need for 1st item in each dropdown
-      let newParams = {...params, sportId: sportIds[sportIndex - 1], Skill: Skill - 1}
+      let newParams = {...params, sportId: favorites[index - 1],
+        // sportIds[sportIndex - 1],
+        // Skill: Skill - 1
+      }
       const res = await fetch(`/api/users`, { method: currentUser ? 'PUT': 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newParams)
@@ -125,36 +128,40 @@ const User = () => {
           type="number" placeholder="Cell" name="Cell" value={params.Cell}
           onChange={e => setParams({...params, Cell: Number(e.target.value)})}
         />
-        {!currentUser ? null : <><span>{sportIndex ? sports[sportIndex - 1].Name : ""} skill-level:</span>
+        {!currentUser ? null : <><span>{index ? favorites[index - 1].Name
+        // sports[sportIndex - 1].Name
+         : ""} skill-level:</span>
         <select
           onChange={e => {
             let val = Number(e.target.value);
             // if a sport has been selected
-            if (sportIndex) {
-              if (val === sports[sportIndex - 1].skills.length + 1) {
+            if (index) {
+              if (val === favorites[index - 1].Skills.length + 1) {
                 // CANCEL, and return to sport-selection
-                setSportIndex(0);
+                setIndex(0);
               } else {
-                setSkill(val);
+                let newParams = JSON.parse(JSON.stringify(params));
+                newParams.Skill = val;
+                // setSkill(val);
               }
             } else {
-              if (val) setSportIndex(val);
+              // if (val) setSportIndex(val);
             }
           }}
-          value={sportIndex && (Skill || sports[sportIndex - 1]?.Skill + 1)}
+          // value={sportIndex && (Skill || sports[sportIndex - 1]?.Skill + 1)}
         >
 
-          {[null, ...(sportIndex ? [...sports[sportIndex - 1].skills, 'Cancel'] : sports)].map((element, index) => (
+          {/* {[null, ...(sportIndex ? [...sports[sportIndex - 1].skills, 'Cancel'] : sports)].map((element, index) => ( */}
               <option
                   key={`${index}`}
                   value={index}
               >
                   {index ? (
-                    sportIndex ? (
-                      index === sports[sportIndex - 1].skills.length + 1 ?
-                        'CANCEL' : sports[sportIndex - 1].skills[index - 1]
-                    ) : sports[index - 1].Name
-                  ) : `Select ${sportIndex ? "level" : "sport first"}`}
+                                        index ? (
+                      index === favorites[index - 1].Skills.length + 1 ?
+                        'CANCEL' : favorites[index - 1].Skills[index - 1]
+                    ) : favorites[index - 1].Name
+                  ) : `Select ${index ? "level" : "sport first"}`}
               </option>
           ))}
         </select></>}
