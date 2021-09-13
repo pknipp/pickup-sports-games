@@ -5,7 +5,6 @@ import BootstrapTable from 'react-bootstrap-table-next';
 
 import Context from '../../context';
 import { time } from 'faker';
-// import skills from '../../../../db/seederData/skills';
 
 const ViewEvent = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender, genders } = useContext(Context);
@@ -40,7 +39,7 @@ const ViewEvent = ({ match }) => {
   const [players, setPlayers] = useState([]);
   const [boolTypes, setBoolTypes] = useState({genders});
   const [bools, setBools] = useState([[]]);
-  const [skills, setSkills] = useState([]);
+  const [Skills, setSkills] = useState([]);
 
   const [columns, setColumns] = useState(columns2.map((column, index) => {
     return {
@@ -71,8 +70,7 @@ const ViewEvent = ({ match }) => {
         let newEvent = (await res.json()).event;
         console.log("newEvent = ", newEvent);
         // Recode following to handle non-sequential sport ids.
-        let newSkills = [...newEvent.skills];
-        // let newSkills = [...newEvent.Sports[newEvent.sportId - 1].skills];
+        let newSkills = [...newEvent.Skills];
         setSkills(newSkills);
         let newBoolTypes = {genders, ...newEvent.boolTypes};
         // Recode following line to handle non-sequential sport ids.
@@ -182,10 +180,10 @@ const ViewEvent = ({ match }) => {
         />
         <br/>
         <h4>Event lineup:</h4>
-        {event['Minimum skill'] !== skills[0] || event['Maximum skill'] !== skills[skills.length - 1] ? <div>Key for color of player:
-          {event['Minimum skill'] !== skills[0] ? <span style={{color: 'red'}}> insufficiently </span> : null}
-          {event['Minimum skill'] !== skills[0] && event['Maximum skill'] !== skills[skills.length - 1] ? 'or ' : ' '}
-          {event['Maximum skill'] !== skills[skills.length - 1] ? <span style={{color: 'blue'}}> excessively </span> : null}
+        {event['Minimum skill'] !== Skills[0] || event['Maximum skill'] !== Skills[Skills.length - 1] ? <div>Key for color of player:
+          {event['Minimum skill'] !== Skills[0] ? <span style={{color: 'red'}}> insufficiently </span> : null}
+          {event['Minimum skill'] !== Skills[0] && event['Maximum skill'] !== Skills[Skills.length - 1] ? 'or ' : ' '}
+          {event['Maximum skill'] !== Skills[Skills.length - 1] ? <span style={{color: 'blue'}}> excessively </span> : null}
           skilled</div>
         : null}
         <br/>
