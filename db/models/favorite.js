@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
   Favorite.associate = function(models) {
     Favorite.belongsTo(models.Sport, {foreignKey: 'sportId', onDelete: 'CASCADE'});
     Favorite.belongsTo(models.User, {foreignKey: 'userId', onDelete: 'CASCADE'});
+    Favorite.hasMany(models.Event, {foreignKey: 'favoriteId'});
   };
   return Favorite;
 };

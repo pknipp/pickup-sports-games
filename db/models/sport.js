@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Sport.associate = function(models) {
-    Sport.hasMany(models.Event, {foreignKey: 'sportId'});
+    Sport.hasMany(models.Favorite, {foreignKey: 'sportId'});
   };
 
   return Sport;

@@ -20,7 +20,7 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
   let checked = await checkLocation(req.body.Location);
   if (checked.success) {
     req.body.Location = checked.Location;
-    ["sportId", "userId"].forEach(key => delete req.body[key]);
+    // ["sportId", "userId"].forEach(key => delete req.body[key]);
     event = (await Event.create(req.body)).dataValues;
     event = {...event, count: 0, reservationId: 0};
   } else {
@@ -33,14 +33,14 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
 }
 }));
 
-// used by Home component (AKA ViewGames)
+// used by Home component (AKA ViewEvents)
 router.get('', [authenticated], asyncHandler(async(req, res, next) => {
   try {
     const user = req.user;
     const favorites = await Favorite.findAll({where: {userId: user.id}});
     // const favoriteIds = favorites.map(favorite => favorite.id);
     const events = (await Event.findAll(
-      {attributes: { exclude: ['sportId', 'userId'] }}
+      // {attributes: { exclude: ['sportId', 'userId'] }}
       )).filter(event => {
       return favorites.map(favorite => favorite.id).includes(event.favoriteId);
     }).map(event => event.dataValues);
@@ -84,7 +84,9 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   try {
   const user = req.user;
   const eventId = Number(req.params.id);
-  const event = (await Event.findByPk(eventId, {attributes: { exclude: ['sportId', 'userId'] }})).dataValues;
+  const event = (await Event.findByPk(eventId
+    //, {attributes: { exclude: ['sportId', 'userId'] }}
+    )).dataValues;
   let favorite = (await Favorite.findByPk(event.favoriteId)).dataValues;
   let sportId = favorite.sportId;
 
@@ -120,7 +122,9 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
 router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
   try {
     const eventId = Number(req.params.id);
-    let event = await Event.findByPk(eventId, {attributes: { exclude: ['sportId', 'userId'] }});
+    let event = await Event.findByPk(eventId
+      //, {attributes: { exclude: ['sportId', 'userId'] }}
+      );
     let favorite = await Favorite.findByPk(event.favoriteId);
     let message = '';
     if (favorite.userId !== req.user.id) res.status(401).send("Unauthorized Access");
@@ -151,7 +155,9 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
 
 router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {
   try {
-    const event = await Event.findByPk(Number(req.params.id), {attributes: { exclude: ['sportId', 'userId'] }});
+    const event = await Event.findByPk(Number(req.params.id)
+    //, {attributes: { exclude: ['sportId', 'userId'] }}
+    );
     let favorite = await Favorite.findByPk(event.favoriteId);
     if (favorite.userId !== req.user.id) res.status(401).send("Unauthorized Access");
       await event.destroy();

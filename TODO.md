@@ -12,7 +12,6 @@ Figure out which time to display: local or zulu.
 
 MVP goals:
 1. Figure out why Line 105 of ViewEvent yields an error when attempting to access ViewEvent after editing a reservation.
-1. Figure out why Event.findByPk tries to return columns entitled "sportId" and "userId".
 1. After creating a new user, take immediately to a form which populates rows of the Favorites table for them (rather than blindly choosing all sports, for which each skill is set to zero), perhaps as a horizontal flex-layout of checkboxes.  These preferences'll subsequently serve to filter the initial fetch (for events owned, reserved, and unreserved).
 1. Ensure that event.time changes when viewed by those in other time zones.
 1. Get event.dateTime to work properly on heroku.

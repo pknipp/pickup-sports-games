@@ -11,7 +11,9 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     req.body.userId = req.user.id;
     req.body.boolVals = JSON.stringify(req.body.boolVals);
     let reservation = await Reservation.create(req.body);
-    let event = (await Event.findByPk(reservation.eventId, {attributes: { exclude: ['sportId', 'userId'] }})).dataValues;
+    let event = (await Event.findByPk(reservation.eventId
+        // , {attributes: { exclude: ['sportId', 'userId'] }}
+        )).dataValues;
     let favorite = await Favorite.findByPk(event.favoriteId);
     event.Sport = (await Sport.findByPk(favorite.sportId)).Name;
     reservation = {...reservation.dataValues, event};
@@ -36,7 +38,9 @@ router.get('/:resEventId', async(req, res) => {
     const [reservationId, eventId] = req.params.resEventId.split('-').map(id => Number(id));
     let reservation = (reservationId && (await Reservation.findByPk(reservationId)).dataValues) || {};
     reservation.boolVals = reservation.boolVals && JSON.parse(reservation.boolVals);
-    const event = (await Event.findByPk(eventId, {attributes: { exclude: ['sportId', 'userId'] }})).dataValues;
+    const event = (await Event.findByPk(eventId
+        // , {attributes: { exclude: ['sportId', 'userId'] }}
+        )).dataValues;
     const favorite = await Favorite.findByPk(event.favoriteId);
     const sport = await Sport.findByPk(favorite.sportId);
     event.Sport = sport.Name;
@@ -53,7 +57,9 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
     req.body.boolVals = JSON.stringify(req.body.boolVals);
     Object.keys(req.body).forEach(key => reservation[key] = req.body[key]);
     await reservation.save();
-    let event = (await Event.findByPk(reservation.eventId, {attributes: { exclude: ['sportId', 'userId'] }})).dataValues;
+    let event = (await Event.findByPk(reservation.eventId
+        // , {attributes: { exclude: ['sportId', 'userId'] }}
+        )).dataValues;
     let favorite = await Favorite.findByPk(event.favoriteId);
     event.Sport = (await Sport.findByPk(favorite.sportId)).Name;
     reservation = reservation.dataValues;

@@ -6,8 +6,6 @@ module.exports = (sequelize, DataTypes) => {
     "Event",
     {
       favoriteId: {allowNull: false, type: DataTypes.INTEGER},
-      // userId: {allowNull: false, type: DataTypes.INTEGER},
-      // sportId: {allowNull: false, type: DataTypes.INTEGER},
       ...['Minimum skill', 'Maximum skill'].reduce((pojo, key) => {
         return ({...pojo, [key]: {allowNull: false, type: DataTypes.INTEGER}});
       }, {}),
@@ -20,7 +18,6 @@ module.exports = (sequelize, DataTypes) => {
   Event.associate = function(models) {
     Event.hasMany(models.Reservation, {foreignKey: 'eventId'});
     Event.belongsTo(models.Favorite, {foreignKey: 'favoriteId', onDelete: 'CASCADE'});
-    // Event.belongsTo(models.Sport, {foreignKey: 'sportId', onDelete: 'CASCADE'});
   };
 
   return Event;
