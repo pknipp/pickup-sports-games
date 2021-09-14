@@ -8,7 +8,7 @@ import fetch from 'node-fetch';
 const EditEvent = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender } = useContext(Context);
   const properties = [
-    'sportId',
+    'favoriteId',
     'Location',
     'dateTime',
     'Extra info',
@@ -77,7 +77,7 @@ const EditEvent = ({ match }) => {
       let nullEvent = properties.reduce((pojo, prop) => {
         return {[prop]: '', ...pojo};
       }, {wantsToPlay: false});
-      [nullEvent.id, nullEvent.userId] = [0, 0];
+      [nullEvent.id, nullEvent.favoriteId] = [0, 0];
       setEvent(nullEvent);
       setRerender(rerender + 1);
       history.push('/');

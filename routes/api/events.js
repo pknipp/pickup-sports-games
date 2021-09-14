@@ -11,7 +11,7 @@ const checkLocation = require('./checkLocation');
 
 const router = express.Router();
 
-// used by EditGame component
+// used by EditEvent component
 router.post('', [authenticated], asyncHandler(async (req, res, next) => {
   try {
   let [event, message, status] = [{}, '', 201];
@@ -39,7 +39,9 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     const user = req.user;
     const favorites = await Favorite.findAll({where: {userId: user.id}});
     // const favoriteIds = favorites.map(favorite => favorite.id);
-    const events = (await Event.findAll({attributes: { exclude: ['sportId', 'userId'] }})).filter(event => {
+    const events = (await Event.findAll(
+      {attributes: { exclude: ['sportId', 'userId'] }}
+      )).filter(event => {
       return favorites.map(favorite => favorite.id).includes(event.favoriteId);
     }).map(event => event.dataValues);
     const allVenues = [];
