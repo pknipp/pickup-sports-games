@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import LogIn from './components/session/LogIn';
 import LogOut from './components/session/LogOut';
 import User from './components/users/User';
-// import Container from "./components/Container";
+import Favorites from './components/favorites/Favorites';
 import NavBar from "./components/NavBar";
 import EditEvent from "./components/events/EditEvent";
 import ViewEvent from "./components/events/ViewEvent";
@@ -83,6 +83,7 @@ const App = () => {
             <AuthRoute exact path="/signup" component={User} />
             <ProtectedRoute exact path="/" component={Home}/>
             <ProtectedRoute exact path="/edituser" component={User}/>
+            <ProtectedRoute exact path="/editfavorites" component={Favorites}/>
             <ProtectedRoute path="/logout" component={LogOut}/>
             <Route exact path="/editEvents/:eventId" component={EditEvent} />
             <Route exact path="/viewEvents/:eventId" component={ViewEvent} />

@@ -36,6 +36,12 @@ const NavBar = () => {
                 >
                     Manage Account
                 </NavLink>
+                <NavLink
+                    to="/editfavorites"
+                    className="nav" activeClassName="active"
+                >
+                    Manage Favorites
+                </NavLink>
                 <NavLink to="/logout" className="nav" activeClassName="active"
                 >
                     LogOut

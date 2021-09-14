@@ -106,7 +106,9 @@ const EditEvent = ({ match }) => {
           }}
           value={1 + favorites.map(favorite => favorite.id).indexOf(event.favoriteId)}
         >
-          {[null, ...favorites.map(favorite => favorite.Name)].map((favorite, index) => (
+          {[null, ...favorites
+          // .map(favorite => favorite.Name)
+        ].map((favorite, index) => (
               <option
                   key={index && favorite.id}
                   value={index}

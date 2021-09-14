@@ -106,7 +106,7 @@ router.put('', [authenticated, email, password],
       res.cookie("token", token);
       await user.save();
       if (req.body.index) {
-        let favorites = (await Favorite.findAll({where: {userId: user.id}})).sort((a, b) => a.id - b.id);
+        let favorites = (await Favorite.findAll({where: {userId: user.id}})).sort((a, b) => a.Name - b.Name);
         let favorite = favorites[req.body.index - 1];
         favorite.Skill = req.body.Skill;
         await favorite.save();

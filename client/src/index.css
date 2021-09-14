@@ -47,8 +47,13 @@
 form {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* align-items: center; */
 }
+
+.vertical {display: flex; flex-direction: column; align-items: center; padding: 0 5px;}
+.horizontal {display: flex; justify-content: flex-start; align-items: center; }
+.same {box-sizing: border-box; height: 55px; padding: 0px; margin: 0px;}
+/* .vertical.right {padding: 0 80px; } */
 
 form.auth>input,form.auth>select {
   width: 270px;

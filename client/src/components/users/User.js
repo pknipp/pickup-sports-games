@@ -24,15 +24,18 @@ const User = () => {
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
   const [favorites, setFavorites] = useState([]);
+  const [sports, setSports] = useState([]);
   const [refetch, setRefetch] = useState(false);
 
   let history = useHistory();
 
   useEffect(() => {
     (async() => {
+      const data = await (await fetch('/api/sports')).json();
+      setSports(data.sports.sort((a, b) => a.Name > b.Name ? 1 : a.Name < b.Name ? -1 : 0));
       if (currentUser) {
         const data = await (await fetch('/api/favorites')).json();
-        setFavorites(data.favorites.sort((a, b) => a.id - b.id));
+        setFavorites(data.favorites.sort((a, b) => a.Name - b.Name));
       }
     })();
   }, [refetch]);
@@ -77,8 +80,8 @@ const User = () => {
     }
   }
   return (
-    <div className="simple">
-      <form className="auth" onSubmit={handlePutPost}>
+    <div className="vertica">
+      <form className="auth vertical" onSubmit={handlePutPost}>
         <h4>
           {currentUser ?
             "Change your account details?"
@@ -86,83 +89,53 @@ const User = () => {
             "We hope that you will either login or signup."
           }
         </h4>
-        {/* DRY the following code. */}
-        <span>Email address:</span>
-        <input
-          type="text" placeholder="Email" name="Email" value={params.Email}
-          onChange={e => setParams({...params, Email: e.target.value})}
-        />
-        <span>First name:</span>
-        <input
-          type="text" placeholder="First name" name="First name" value={params['First name']}
-          onChange={e => setParams({...params, ['First name']: e.target.value})}
-        />
-        <span>Last name:</span>
-        <input
-          type="text" placeholder="Last name" name="Last name" value={params['Last name']}
-          onChange={e => setParams({...params, ['Last name']: e.target.value})}
-        />
-        <span>Nickname:</span>
-        <input
-          type="text" placeholder="Nickname" name="Nickname" value={params.Nickname}
-          onChange={e => setParams({...params, Nickname: e.target.value})}
-        />
-        <span>Address:</span>
-        <input
-          type="text" placeholder="Address" name="Address" value={params.Address}
-          onChange={e => setParams({...params, Address: e.target.value})}
-        />
-        <span>Cell number (10 digits):</span>
-        <input
-          type="number" placeholder="Cell" name="Cell" value={params.Cell}
-          onChange={e => setParams({...params, Cell: Number(e.target.value)})}
-        />
-        {!currentUser ? null : <><span>{params.index ? favorites[params.index - 1].Name
-         : ""} skill-level:</span>
-        <select
-          onChange={e => {
-            let newIndex = Number(e.target.value);
-            // If no sport has been selected, first choose one.
-            if (!params.index) {
-              if (newIndex) setParams({...params, index: newIndex, Skill: favorites[newIndex - 1].Skill});
-            // If a sport has already been selected.
-            } else {
-              // If you want to cancel current choice of sport.
-              if (!newIndex) {
-                setParams({...params, index: 0});
-              // If a particular skill has been selected.
-              } else {
-                setParams({...params, Skill: newIndex - 1});
-                //Eliminate following 3 lines if this is ever handled by the backend.
-                let newFavorites = JSON.parse(JSON.stringify(favorites));
-                newFavorites[params.index].Skill = newIndex - 1;
-                setFavorites(newFavorites);
-              }
-            }
-          }}
-          value={params.index && params.Skill + 1}
-        >
-          {[null, ...(params.index ? favorites[params.index - 1]?.Skills :
-            favorites.map(favorite => favorite.Name))].map((element, newIndex) => (
-              <option
-                  key={`${!!params.index}${newIndex}`}
-                  value={newIndex}
-              >
-                {newIndex ? element : `${params.index ? "Choose another " : "Select a "} sport`}
-              </option>
-          ))}
-        </select></>}
+        <div className="horizontal">
+          <div className="vertical left">
+            {/* DRY the following code. */}
+            <span>Email address:</span>
+            <input
+              type="text" placeholder="Email" name="Email" value={params.Email}
+              onChange={e => setParams({...params, Email: e.target.value})}
+            />
+            <span>First name:</span>
+            <input
+              type="text" placeholder="First name" name="First name" value={params['First name']}
+              onChange={e => setParams({...params, ['First name']: e.target.value})}
+            />
+            <span>Last name:</span>
+            <input
+              type="text" placeholder="Last name" name="Last name" value={params['Last name']}
+              onChange={e => setParams({...params, ['Last name']: e.target.value})}
+            />
+            <span>Nickname:</span>
+            <input
+              type="text" placeholder="Nickname" name="Nickname" value={params.Nickname}
+              onChange={e => setParams({...params, Nickname: e.target.value})}
+            />
+            <span>Address:</span>
+            <input
+              type="text" placeholder="Address" name="Address" value={params.Address}
+              onChange={e => setParams({...params, Address: e.target.value})}
+            />
+            <span>Cell number (10 digits):</span>
+            <input
+              type="number" placeholder="Cell" name="Cell" value={params.Cell}
+              onChange={e => setParams({...params, Cell: Number(e.target.value)})}
+            />
 
-        <span>Password:</span>
-        <input
-          type="password" placeholder="Password" name="password" value={params.password}
-          onChange={e => setParams({...params, password: e.target.value})}
-        />
-        <span>Confirm password:</span>
-        <input
-          type="password" placeholder="Confirm password" name="password2" value={params.password2}
-          onChange={e => setParams({...params, password2: e.target.value})}
-        />
+            <span>Password:</span>
+            <input
+              type="password" placeholder="Password" name="password" value={params.password}
+              onChange={e => setParams({...params, password: e.target.value})}
+            />
+            <span>Confirm password:</span>
+            <input
+              type="password" placeholder="Confirm password" name="password2" value={params.  password2}
+              onChange={e => setParams({...params, password2: e.target.value})}
+            />
+          </div>
+          
+        </div>
         <button color="primary" variant="outlined" type="submit">
           {currentUser ? "Update account" : "Signup"}
         </button>
@@ -182,7 +155,7 @@ const User = () => {
           </button>
         </form>
       }
-    </div>
+      </div>
   );
 }
 
