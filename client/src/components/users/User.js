@@ -24,6 +24,7 @@ const User = () => {
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
   const [favorites, setFavorites] = useState([]);
+  const [refetch, setRefetch] = useState(false);
 
   let history = useHistory();
 
@@ -34,20 +35,14 @@ const User = () => {
         setFavorites(data.favorites.sort((a, b) => a.id - b.id));
       }
     })();
-  }, []);
+  }, [refetch]);
 
   const handlePutPost = async e => {
     e.preventDefault();
     let message = !params.Email ? "Email address is needed." :
                   !params.password?"Password is needed." :
                   params.password !== params.password2 ? "Passwords must match" : "";
-    return setMessage(message);
-    // if (!message) {
-    //   // Two instances of "-1" each address need for 1st item in each dropdown
-    //   // let newParams = {...params, index: params.index,
-    //     // sportIds[sportIndex - 1],
-    //     // Skill: Skill - 1
-    //   }
+    if (message) return setMessage(message);
     const res = await fetch(`/api/users`, { method: currentUser ? 'PUT': 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params)
@@ -68,6 +63,7 @@ const User = () => {
       }
     }
     setMessage(message);
+    setRefetch(!refetch);
   };
 
   const handleDelete = async e => {

@@ -21,7 +21,6 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
   if (checked.success) {
     req.body.Location = checked.Location;
     ["sportId", "userId"].forEach(key => delete req.body[key]);
-    console.log("req.body = ", req.body);
     event = (await Event.create(req.body)).dataValues;
     event = {...event, count: 0, reservationId: 0};
   } else {
@@ -83,13 +82,8 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   try {
   const user = req.user;
   const eventId = Number(req.params.id);
-  console.log("eventId = ", eventId);
   const event = (await Event.findByPk(eventId, {attributes: { exclude: ['sportId', 'userId'] }})).dataValues;
-  console.log("event.id = ", event.id);
-  console.log("favoriteId = ", event.favoriteId);
   let favorite = (await Favorite.findByPk(event.favoriteId)).dataValues;
-  console.log("favorite.id = ", favorite.id)
-  console.log("favorite.sportId = ", favorite.sportId);
   let sportId = favorite.sportId;
 
   const favorites = await Favorite.findAll({where: {userId: user.id}});
@@ -105,8 +99,6 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
   let players = [];
   for await (reservation of reservations) {
     let player = (await User.findByPk(reservation.userId)).dataValues;
-    console.log("player = ", player)
-    console.log("sportId/player.id = ", sportId, player.id);
     player.Skill = (await Favorite.findOne({where: {sportId, userId: player.id}})).Skill;
     reservation = reservation.dataValues;
     reservation.boolVals = JSON.parse(reservation.boolVals);
@@ -157,9 +149,7 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
 
 router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {
   try {
-    console.log("req.params.id = ", req.params.id)
     const event = await Event.findByPk(Number(req.params.id), {attributes: { exclude: ['sportId', 'userId'] }});
-    console.log("event.favoriteId = ", event.favoriteId)
     let favorite = await Favorite.findByPk(event.favoriteId);
     if (favorite.userId !== req.user.id) res.status(401).send("Unauthorized Access");
       await event.destroy();

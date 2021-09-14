@@ -55,6 +55,7 @@ router.post('', [email, password],
 // used in putPost handler of User component
 router.put('', [authenticated, email, password],
   asyncHandler(async (req, res, next) => {
+    try {
     let [user, message, status] = [req.user, '', 200];
     const errors = validationResult(req).errors;
     if (user.id === 1) {
@@ -104,18 +105,17 @@ router.put('', [authenticated, email, password],
       user.tokenId = jti;
       res.cookie("token", token);
       await user.save();
-      if (req.body.sportId) {
-        let favorite = await Favorite.findOne({where: {
-          [Sequelize.Op.and]: [
-            {userId: user.id},
-            {sportId: req.body.sportId }
-          ]
-        }});
+      if (req.body.index) {
+        let favorites = (await Favorite.findAll({where: {userId: user.id}})).sort((a, b) => a.id - b.id);
+        let favorite = favorites[req.body.index - 1];
         favorite.Skill = req.body.Skill;
         await favorite.save();
       }
     }
     res.status(status).json({ user: { ...user.toSafeObject(), message } });
+  } catch(e) {
+    console.log(e)
+  }
   })
 );
 
