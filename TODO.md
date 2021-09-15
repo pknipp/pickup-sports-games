@@ -24,7 +24,7 @@ MVP goals:
 1. Separate contexts into auth, gender, etc.
 1. Flesh out README.md
 1. Continue making front-end prettier.
-1. Eliminate bug ("000:000") which appears when destination = origin
+1. Eliminate bug ("000:000") which appears when destination = origin (or when travel time is an integer number of hours)
 
 stretch goals:
     implement photo capability
