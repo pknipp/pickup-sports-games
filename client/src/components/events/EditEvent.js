@@ -24,6 +24,7 @@ const EditEvent = ({ match }) => {
   const [wantsToPlay, setWantsToPlay] = useState(false);
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
+  const [status, setStatus] = useState(false);
 
   let history = useHistory();
 
@@ -54,21 +55,31 @@ const EditEvent = ({ match }) => {
 
   const handlePutPost = async e => {
     e.preventDefault();
+    let numMissing = ["favoriteId", "Location", "dateTime"].reduce((numMissing, key) => {
+      return numMissing + Number(!event[key]);
+    }, 0);
+    if (numMissing) return setMessage(`You are missing ${numMissing} of the required inputs above.`);
     const res = await fetch(`/api/events${event.id ? ('/' + event.id) : ''}`, { method: event.id ? 'PUT': 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(event)
     });
-    let {id, newMessage} = await res.json();
+    let {id, message: newMessage, Location} = await res.json();
     // React likes '' but does not like null.
     // Object.entries(newEvent).forEach(([key, value]) => {
     //   if (value === null) newEvent[key] = '';
     // });
     // newEvent.dateTime = moment(newEvent.dateTime).local().format().slice(0, -6);
-    setMessage(newMessage || "Success!");
-    setEvent({...event, id});
-    if (!newMessage) history.push(wantsToPlay ? `/reservations/0-${id}` : '/');
+    let locationMessage = `You specified the event location as ${event.Location}, which the system interpreted as indicated above.  If this is acceptable to you, click the "Continue" button, below.  If not, modify the location above and click "Update event".`;
+    setStatus(!newMessage);
+    setMessage(newMessage || locationMessage);
+    setEvent({...event, id, Location});
     // setRerender(rerender + 1);
   };
+
+  const handleContinue = e => {
+    e.preventDefault();
+    history.push(wantsToPlay ? `/reservations/0-${event.id}` : '/');
+  }
 
   const handleDelete = async e => {
     e.preventDefault();
@@ -94,25 +105,21 @@ const EditEvent = ({ match }) => {
         <select
           onChange={e => {
             let newEvent = JSON.parse(JSON.stringify(event));
-            let newIndex = Number(e.target.value);
+            let newIndex = Number(e.target.value) || index;
             setIndex(newIndex);
-            newEvent.favoriteId = favorites.map(favorite => favorite.id)[newIndex - 1];
+            let favorite = favorites[newIndex - 1];
+            newEvent.favoriteId = favorite.id;
             // If sport changes, initialize min/max skills as least restrictive as possible.
-            if (newIndex !== 1 + index) {
+            if (newIndex !== index) {
               newEvent["Minimum skill"] = 0;
-              newEvent["Maximum skill"] = favorites[newIndex - 1].Skills.length - 1;
+              newEvent["Maximum skill"] = favorite.Skills.length - 1;
             }
             setEvent(newEvent);
           }}
           value={1 + favorites.map(favorite => favorite.id).indexOf(event.favoriteId)}
         >
-          {[null, ...favorites
-          // .map(favorite => favorite.Name)
-        ].map((favorite, index) => (
-              <option
-                  key={index && favorite.id}
-                  value={index}
-              >
+          {[null, ...favorites].map((favorite, index) => (
+              <option key={index && favorite.id} value={index}>
                   {favorites[index - 1]?.Name || "Select sport"}
               </option>
           ))}
@@ -130,12 +137,7 @@ const EditEvent = ({ match }) => {
               value={event["Minimum skill"]}
             >
               {favorites[index - 1].Skills.slice(0, event["Maximum skill"] + 1).map((Skill, index) => (
-                  <option
-                      key={`${index}`}
-                      value={index}
-                  >
-                      {Skill}
-                  </option>
+                <option key={`${index}`} value={index}>{Skill}</option>
               ))}
             </select>
 
@@ -149,12 +151,7 @@ const EditEvent = ({ match }) => {
               value={event["Maximum skill"] - event["Minimum skill"]}
             >
               {favorites[index - 1].Skills.slice(event["Minimum skill"]).map((Skill, index) => (
-                  <option
-                      key={`${index}`}
-                      value={index}
-                  >
-                      {Skill}
-                  </option>
+                <option key={`${index}`} value={index}>{Skill}</option>
               ))}
             </select>
           </>
@@ -173,8 +170,6 @@ const EditEvent = ({ match }) => {
             setEvent({...event, dateTime: e.target.value});
           }}
         />
-
-
 
         <span>Extra info (optional):</span>
         <textarea
@@ -197,15 +192,23 @@ const EditEvent = ({ match }) => {
           </>
         }
 
+        <span style={{color: "red", paddingLeft:"10px"}}>{message}</span>
         <button color="primary" variant="outlined" type="submit">
           {event.id ? "Update " : "Create "}event
         </button>
-        <span style={{color: "red", paddingLeft:"10px"}}>{message}</span>
+
       </form>
       {!event.id ? null :
         <form className="auth" onSubmit={handleDelete}>
           <button color="primary" variant="outlined" type="submit">
             Delete event
+          </button>
+        </form>
+      }
+      {!event.id || !status ? null :
+        <form className="auth" onSubmit={handleContinue}>
+          <button color="primary" variant="outlined" type="submit">
+            Continue
           </button>
         </form>
       }

@@ -12,7 +12,7 @@ Figure out which time to display: local or zulu.
 
 MVP goals:
 1. Figure out why Line 105 of ViewEvent yields an error when attempting to access ViewEvent after editing a reservation.
-1. Remove try/catch blocks from back-end to speed the code.
+1. Reconfigure Favorites component using Bootstraptable.
 1. Look for other discrete (MC or checkbox) inputs, and use fetches rather than setting state.
 1. Ensure that event.time changes when viewed by those in other time zones.
 1. Get event.dateTime to work properly on heroku.

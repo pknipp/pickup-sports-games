@@ -32,8 +32,7 @@ const LogIn = () => {
   return (currentUser) ? <Redirect to="/" /> : (
     <div className="simple">
       <form className="auth" onSubmit={handleSubmit}>
-      {/* <h1>Welcome to volleyball meetup!</h1> */}
-      <h4>We hope that you will either login or signup.</h4>
+        <h4>We hope that you will either login or signup.</h4>
         <span>Email address:</span>
         <input
           type="text" placeholder="Email" value={Email}

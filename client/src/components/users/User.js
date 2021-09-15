@@ -80,7 +80,7 @@ const User = () => {
     }
   }
   return (
-    <div className="vertica">
+    <div className="vertical">
       <form className="auth vertical" onSubmit={handlePutPost}>
         <h4>
           {currentUser ?
@@ -89,8 +89,7 @@ const User = () => {
             "We hope that you will either login or signup."
           }
         </h4>
-        <div className="horizontal">
-          <div className="vertical left">
+
             {/* DRY the following code. */}
             <span>Email address:</span>
             <input
@@ -133,9 +132,8 @@ const User = () => {
               type="password" placeholder="Confirm password" name="password2" value={params.  password2}
               onChange={e => setParams({...params, password2: e.target.value})}
             />
-          </div>
-          
-        </div>
+
+
         <button color="primary" variant="outlined" type="submit">
           {currentUser ? "Update account" : "Signup"}
         </button>

@@ -33,13 +33,8 @@ router.put('', [Email, Password],
   let favorites = await Favorite.findAll({where: {userId: user.id}});
   user = user.dataValues;
   delete user.hashedPassword;
-  // user.favorites = favorites.map(async favorite => {
-  //   let Skills = JSON.parse((await Sport.findByPk(favorite.sportId)).Skills);
-  //   return {id: favorite.id, Name: favorite.Name, Skill: favorite.Skill, Skills};
-  // });
   res.cookie('token', token);
   res.json({user});
-  // res.json({ user: user.toSafeObject() });
 }));
 
 router.delete('', [authenticated],

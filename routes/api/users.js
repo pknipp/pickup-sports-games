@@ -40,8 +40,8 @@ router.post('', [email, password],
           res.cookie("token", token);
           await user.save();
           sportIds = (await Sport.findAll({})).map(sport => sport.dataValues.id);
-          // Give a new user all minimum values of skill-level.
-          sportIds.forEach(async sportId => await Favorite.create({userId: user.id, sportId, Skill: 0}));
+          // Give a new user all minimum values of skill-level. (Now this is done on front, in Favorites component.)
+          // sportIds.forEach(async sportId => await Favorite.create({userId: user.id, sportId, Skill: 0}));
           user = user.toSafeObject();
           status = 201;
         } else {
@@ -55,7 +55,7 @@ router.post('', [email, password],
 // used in putPost handler of User component
 router.put('', [authenticated, email, password],
   asyncHandler(async (req, res, next) => {
-    try {
+    // try {
     let [user, message, status] = [req.user, '', 200];
     const errors = validationResult(req).errors;
     if (user.id === 1) {
@@ -113,9 +113,7 @@ router.put('', [authenticated, email, password],
       }
     }
     res.status(status).json({ user: { ...user.toSafeObject(), message } });
-  } catch(e) {
-    console.log(e)
-  }
+  // } catch(e) {console.log(e)}
   })
 );
 
@@ -127,17 +125,14 @@ router.get('', asyncHandler(async (req, res, next) => {
 
 // used in User component
 router.delete("", [authenticated], asyncHandler(async (req, res) => {
+  // try {
   const user = req.user;
   if (user.id === 1) return res.json({ message: "You cannot delete my 'demo' user, because visitors to my site use that for testing purposes.  Create a new user via the 'Signup' route if you'd like to test out the deletion of a user." })
-
-  try {
-    await user.destroy();
-    user.tokenId = null;
-    res.clearCookie('token');
-    res.json({});
-  } catch (e) {
-    res.status(400).send(e);
-  }
+  await user.destroy();
+  user.tokenId = null;
+  res.clearCookie('token');
+  res.json({});
+  // } catch (e) {res.status(400).send(e);}
 }));
 
 module.exports = router;
