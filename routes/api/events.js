@@ -32,7 +32,7 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
 
 // used by Home component (AKA ViewEvents)
 router.get('', [authenticated], asyncHandler(async(req, res, next) => {
-  try {
+  // try {
   const user = req.user;
   const favorites = await Favorite.findAll({where: {userId: user.id}});
   const events = (await Event.findAll()).filter(event => {
@@ -60,18 +60,15 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
   let nBundle = 0;
   while (allVenues.length) {
     let venues = allVenues.splice(0, Math.min(maxFetch, allVenues.length));
-    console.log("user.Address = ", user.Address);
-    console.log("venues = ", venues);
     const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${user.Address}&destinations=${venues.join('|')}&key=${mapsApiKey}`);
     let data = await response.json();
-    console.log("data = ", data);
     data.rows[0].elements.forEach((element, index) => {
       events[index + nBundle * maxFetch].duration = element.duration;
     });
     nBundle++;
   }
   res.json({events});
-  }catch(e) {console.log(e)}
+  // }catch(e) {console.log(e)}
 }));
 
 // Used by EditGame and ViewGame components
