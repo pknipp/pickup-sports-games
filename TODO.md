@@ -18,6 +18,7 @@ MVP goals:
 1. Ensure that event.time changes when viewed by those in other time zones.
 1. Get event.dateTime to work properly on heroku.
 1. Other sports to include: hockey, badminton, pingpong, squash, bowling, golf, lacrosse, archery, cricket, rugby
+1. Include cleanup functions in useEffects, to eliminate memory leaks.
 1. More drastic things to do if EditGame changes gameTypeId:
         - cancel reservations?
         - trigger email to players?
