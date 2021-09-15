@@ -1,5 +1,5 @@
 ﻿module.exports = {
-    numberOfEvents: 30,
+    numberOfEvents: 60,
     miscProb: 0.6,
     extraInfos: [
         "Organizer may be a bit late.",
