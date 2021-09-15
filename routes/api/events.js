@@ -62,7 +62,7 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     let venues = allVenues.splice(0, Math.min(maxFetch, allVenues.length));
     console.log("user.Address = ", user.Address);
     console.log("venues = ", venues);
-    const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${user.Address}destinations=${venues.join('|')}&key=${mapsApiKey}`);
+    const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${user.Address}&destinations=${venues.join('|')}&key=${mapsApiKey}`);
     let data = await response.json();
     console.log("data = ", data);
     data.rows[0].elements.forEach((element, index) => {
