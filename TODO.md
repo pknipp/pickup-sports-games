@@ -11,6 +11,7 @@ DRY up setSkills invocation in EditGame, and ensure that it'll work if gameTypes
 Figure out which time to display: local or zulu.
 
 MVP goals:
+1. When attempting to delete a row in a table, render a warning if rows in other tables are dependent upon this row.  Such dependency-chains include user/reservation, user/(favorite)/event/reservation, favorite/event/reservation, event/reservation
 1. Figure out why Line 105 of ViewEvent yields an error when attempting to access ViewEvent after editing a reservation.
 1. Reconfigure Favorites component using Bootstraptable.
 1. Look for other discrete (MC or checkbox) inputs, and use fetches rather than setting state.

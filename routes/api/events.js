@@ -34,18 +34,19 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
 router.get('', [authenticated], asyncHandler(async(req, res, next) => {
   // try {
   const user = req.user;
-  const favorites = await Favorite.findAll({where: {userId: user.id}});
+  const mySportIds = (await Favorite.findAll({where: {userId: user.id}})).map(fav => fav.sportId);
+  const possibleFavorites = (await Favorite.findAll()).filter(fav => mySportIds.includes(fav.sportId));
   const events = (await Event.findAll()).filter(event => {
-    return favorites.map(favorite => favorite.id).includes(event.favoriteId);
+    return possibleFavorites.map(fav => fav.id).includes(event.favoriteId);
   }).map(event => event.dataValues);
   const allVenues = [];
   events.forEach(async event => {
       allVenues.push(event.Location);
-      let favorite = await Favorite.findByPk(event.favoriteId);
-      let sport = await Sport.findByPk(favorite.sportId);
-      event.Sport = sport.Name;
-      event.Skills = JSON.parse(sport.Skills);
-      event["Event organizer"] = (await User.findByPk(user.id)).dataValues.Nickname;
+      let eventFavorite = await Favorite.findByPk(event.favoriteId);
+      let eventSport = await Sport.findByPk(eventFavorite.sportId);
+      event.Sport = eventSport.Name;
+      event.Skills = JSON.parse(eventSport.Skills);
+      event["Event organizer"] = (await User.findByPk(eventFavorite.userId)).dataValues.Nickname;
       let reservations = await Reservation.findAll({where: {eventId: event.id}});
       event["Player reservations"] = reservations.length;
       // Set reservationId to zero if no reservation for this event has been made by this user.
