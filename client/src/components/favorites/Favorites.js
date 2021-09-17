@@ -22,8 +22,9 @@ const Favorites = () => {
       setFavorites(newFavorites.sort((a, b) => a.Name > b.Name ? 1 : a.Name < b.Name ? -1 : 0));
       let newSports = (await (await fetch('/api/sports')).json()).sports;
       setSports(newSports.sort((a, b) => a.Name > b.Name ? 1 : a.Name < b.Name ? -1 : 0));
+      console.log("bottom of ue1 says that newFavorites.length/newSports.length = ", newFavorites.length, newSports.length);
     })();
-  }, [refetch]);
+  }, []);
 
   useEffect(() => {
     (async() => {
@@ -33,15 +34,17 @@ const Favorites = () => {
         sport.Sport = sport.Name;
         sport["Follow?"] = (
           <input
+            key={sport.id}
             name="wantsToPlay"
             type="checkbox"
             checked={favorites.map(favorite => favorite.sportId).includes(sport.id)}
             onChange={async e => {
               if (!e.target.checked) {
+                console.log("delete a favorite")
                 let favoriteId = favorites.filter(favorite => favorite.sportId === sport.id)[0]?.id;
                 await fetch(`/api/favorites/${favoriteId}`, { method: 'DELETE'});
-                setRefetch(!refetch);
               } else {
+                console.log("post a favorite");
                 await fetch("/api/favorites", { method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({sportId: sport.id})
@@ -51,10 +54,11 @@ const Favorites = () => {
             }}
           />
         );
+        console.log(sport["Follow?"])
       });
       setSports(newSports);
     })();
-  }, [favorites]);
+  }, []);
 
   return (
     <>
