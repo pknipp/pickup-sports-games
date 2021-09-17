@@ -89,8 +89,8 @@ const App = () => {
             <Route exact path="/viewEvents/:eventId" component={ViewEvent} />
             <Route exact path="/reservations/:resEventId" component={EditReservation} />
           </Switch>
-          <span>
-            <br/><br/>
+          <div className="wide">
+            <br/>
             creators:
               <a href="https://pknipp.github.io/" target="_blank" rel="noopener noreferrer">&nbsp;
                 Peter Knipp
@@ -99,7 +99,7 @@ const App = () => {
               <a href="https://acyg2212.github.io/" target="_blank" rel="noopener noreferrer">
                 Aaron Cygnarowicz
               </a>
-          </span>
+          </div>
         </BrowserRouter>
       }
     </Context.Provider>
