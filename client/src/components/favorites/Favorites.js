@@ -64,7 +64,7 @@ const Favorites = () => {
           value={favorites.filter(favorite => favorite.sportId === sport.id)[0]?.Skill}
         >
           {(!favorites.map(favorite => favorite.sportId).includes(sport.id) ?
-            ["Ignore"] : sport.Skills
+            ["not following"] : sport.Skills
             ).map((element, newIndex) => (
               <option key={newIndex} value={newIndex}>
                 {element}

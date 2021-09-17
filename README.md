@@ -2,8 +2,8 @@
 
 ## Database
 <!-- - https://drawsql.app/getout/diagrams/volleyballmeetup -->
+- https://drawsql.app/appacademy-2/diagrams/sportsmeetupOLD
 - https://drawsql.app/appacademy-2/diagrams/sportsmeetup
-- https://drawsql.app/appacademy-2/diagrams/sportsmeetupnew
 
 
 ## API set up
