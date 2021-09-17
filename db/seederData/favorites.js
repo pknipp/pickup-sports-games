@@ -1,3 +1,3 @@
 ﻿module.exports = {
-    favoriteProb: 0.6,
+    favoriteProb: 0.8,
 };

@@ -1,6 +1,6 @@
 ﻿module.exports = {
     numberOfEvents: 80,
-    miscProb: 0.6,
+    miscProb: 0.7,
     extraInfos: [
         "Organizer may be a bit late.",
         "Organizer is arriving late and hence needs someone to help with the setup.",

@@ -1,5 +1,5 @@
 module.exports = {
-    reservationProb: 0.5,
+    reservationProb: 0.8,
     extraInfos: [
         "I'm getting over a cold.",
         "I may be a bit late.",
