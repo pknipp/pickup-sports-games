@@ -157,7 +157,7 @@ const ViewEvent = ({ match }) => {
   }, [event.id]);
 
   return (
-    <div className="simple">
+    <div className="simple wide">
         <h4>Event details:</h4>
         <BootstrapTable
           keyField='id'
