@@ -50,6 +50,8 @@ form {
   align-items: center;
 }
 
+.container {display: flex; justify-content: center; }
+.narrow {width: 500px; }
 .vertical {display: flex; flex-direction: column; align-items: center; padding: 0 5px;}
 .horizontal {display: flex; justify-content: center; align-items: center; }
 .same {box-sizing: border-box; height: 55px; padding: 0px; margin: 0px;}

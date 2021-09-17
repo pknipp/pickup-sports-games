@@ -5,9 +5,15 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import Context from '../../context';
 
 const Favorites = () => {
-  const columns = ["Follow?", "Sport", "Select skill-level"].map(key => {
-    return {dataField: key, text: key, sort: true};
+  const columns = [["Follow?", 25], ["Sport", 35], ["Select skill-level", 40]].map(([key, width]) => {
+    return {dataField: key, text: key, headerStyle: {width: `${width}%`}, sort: true};
   });
+  columns[0].sortFunc = (a, b, order, dataField, rowA, rowB) => {
+    return (order === "asc" ? 1 : -1) * (Number(rowA.wantsToPlay) - Number(rowB.wantsToPlay));
+  };
+  columns[2].sortFunc = (a, b, order, dataField, rowA, rowB) => {
+    return (order === "asc" ? 1 : -1) * (rowA.Skill - rowB.Skill);
+  };
   const { currentUser } = useContext(Context);
   const [favorites, setFavorites] = useState([]);
   const [sports, setSports] = useState([]);
@@ -22,57 +28,58 @@ const Favorites = () => {
       let newSports = (await (await fetch('/api/sports')).json()).sports;
       newSports.forEach(sport => {
         sport.Sport = sport.Name;
-        // delete sport.Name;
+        let index = newFavorites.map(fav => fav.sportId).indexOf(sport.id);
+        sport.favoriteId = newFavorites[index]?.id;
+        sport.wantsToPlay = !!sport.favoriteId;
+        sport.Skill = (Number(!!sport.favoriteId) && newFavorites[index].Skill + 1) - 1;
       });
       setSports(newSports.sort((a, b) => a.Name > b.Name ? 1 : a.Name < b.Name ? -1 : 0));
     })();
   }, [refetch]);
 
   return (
-    <BootstrapTable keyField='id' columns={columns} data={sports.map(sport => {
-      return {...sport, ["Follow?"]: (
-        <input
-          key={sport.id}
-          name="wantsToPlay"
-          type="checkbox"
-          checked={favorites.map(favorite => favorite.sportId).includes(sport.id)}
-          onChange={async e => {
-            if (!e.target.checked) {
-              let favoriteId = favorites.filter(favorite => favorite.sportId === sport.id)[0]?.id;
-              await fetch(`/api/favorites/${favoriteId}`, { method: 'DELETE'});
-            } else {
-              await fetch("/api/favorites", { method: 'POST',
+    <div className="container narrow">
+      <BootstrapTable keyField='id' columns={columns} data={sports.map(sport => {
+        return {...sport, ["Follow?"]: (
+          <input
+            key={sport.id}
+            name="wantsToPlay"
+            type="checkbox"
+            checked={sport.favoriteId >= 0}
+            onChange={async e => {
+              if (e.target.checked) {
+                await fetch("/api/favorites", { method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({sportId: sport.id})
+                });
+              } else {
+                await fetch(`/api/favorites/${sport.favoriteId}`, { method: 'DELETE'});
+              }
+              setRefetch(!refetch);
+            }}
+          />
+        ),
+        ["Select skill-level"]: (
+          <select
+            disabled={!sport.favoriteId}
+            onChange={async e => {
+              await fetch(`/api/favorites/${sport.favoriteId}`, { method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({sportId: sport.id})
+                body: JSON.stringify({Skill: Number(e.target.value)})
               });
-            }
-            setRefetch(!refetch);
-          }}
-        />
-      ),
-      ["Select skill-level"]: (
-        <select
-          disabled={!favorites.map(favorite => favorite.sportId).includes(sport.id)}
-          onChange={async e => {
-            let favoriteId = favorites.filter(favorite => favorite.sportId === sport.id)[0]?.id;
-            await fetch(`/api/favorites/${favoriteId}`, { method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({Skill: Number(e.target.value)})
-            });
-            setRefetch(!refetch);
-          }}
-          value={favorites.filter(favorite => favorite.sportId === sport.id)[0]?.Skill}
-        >
-          {(!favorites.map(favorite => favorite.sportId).includes(sport.id) ?
-            ["not following"] : sport.Skills
-            ).map((element, newIndex) => (
+              setRefetch(!refetch);
+            }}
+            value={favorites.filter(favorite => favorite.sportId === sport.id)[0]?.Skill}
+          >
+            {(sport.favoriteId ? sport.Skills : ["not following"]).map((element, newIndex) => (
               <option key={newIndex} value={newIndex}>
                 {element}
               </option>
-          ))}
-        </select>
-      )}
-    })}/>
+            ))}
+          </select>
+        )}
+      })}/>
+    </div>
   );
 }
 
