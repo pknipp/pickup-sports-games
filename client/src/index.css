@@ -52,6 +52,7 @@ form {
 
 .container {display: flex; justify-content: center; }
 .narrow {width: 500px; }
+.wide {padding: 0 40px; }
 .vertical {display: flex; flex-direction: column; align-items: center; padding: 0 5px;}
 .horizontal {display: flex; justify-content: center; align-items: center; }
 .same {box-sizing: border-box; height: 55px; padding: 0px; margin: 0px;}

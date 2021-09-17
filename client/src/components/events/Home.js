@@ -111,7 +111,7 @@ const Home = () => {
     }, [allEvents, selectedOption]);
 
     return (
-        <div className="simple">
+        <div className="simple wide">
             <div className="welcome">
                 <h4>Below are tabulated the events which may interest you.</h4>
             </div>
