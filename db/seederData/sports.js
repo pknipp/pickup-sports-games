@@ -35,6 +35,7 @@ module.exports = {
         {
             Name: "Running",
             boolTypes: {distances: ["5K", "7K", "10K", "15K"]},
+            // Skills: ["5K/19min or 10K/40min or 10mi/66min"]
         },
         {
             Name: "Sailboat racing",
