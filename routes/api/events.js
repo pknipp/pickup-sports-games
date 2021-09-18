@@ -68,7 +68,7 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     });
     nBundle++;
   }
-  res.json({events});
+  res.json({events, sportsLength: mySportIds.length});
   // }catch(e) {console.log(e)}
 }));
 

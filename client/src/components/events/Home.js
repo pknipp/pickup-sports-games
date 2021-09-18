@@ -15,6 +15,7 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const [allEvents, setAllEvents] = useState([]);
     const [events, setEvents] = useState([]);
+    const [sportsLength, setSportsLength] = useState(null);
     const [keys, setKeys] = useState([]);
     const [selectedOption, setSelectedOption] = useState(0);
     const [columns, setColumns] = useState(keys.map(key => ({dataField: key, text: key, sort: true})));
@@ -27,6 +28,7 @@ const Home = () => {
             const response = await fetch(`/api/events`);
             let data = await response.json();
             if (response.ok) {
+                setSportsLength(data.sportsLength);
                 let newAllEvents = [];
                 data.events.forEach(event => {
                     let [EventDate, EventTime] = moment(event.dateTime).local().format().split("T");
@@ -113,7 +115,7 @@ const Home = () => {
     return (
         <div className="simple wide">
             <div className="welcome">
-                <h4>Below are tabulated the events which may interest you.</h4>
+                <h4>{!loading ? (sportsLength ? "Below are tabulated the events which may interest you." : "You are presently following no sports.  You should click on  'Manage Favorites' in order to choose some to follow.") : ""}</h4>
             </div>
             <br/>
             <div>
