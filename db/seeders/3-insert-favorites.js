@@ -11,8 +11,8 @@ let favorites = [];
 for (let userId = 1; userId <= numberOfUsers; userId++) {
   sports.forEach((sport, i) => {
     if (Math.random() < favoriteProb) {
-      let skillsLength = sport.skills?.length || 4;
-      let Skill = Math.floor(Math.random() * skillsLength);
+      let SkillsLength = sport.Skills?.length || 4;
+      let Skill = Math.floor(Math.random() * SkillsLength);
       let updatedAt = faker.date.past(0.1);
       let favorite = {userId, sportId: i + 1, Skill, updatedAt, createdAt: faker.date.past(0.1, updatedAt)};
       favorites.push(favorite);

@@ -1,4 +1,15 @@
 ﻿let Skills = ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"];
+let distances = [["5K", 18, 45], ["10K", 37, 95], ["10mi", 61, 134]];
+let numberRunningSkills = 10;
+let runningSkills = [];
+for (let i = 0; i <= numberRunningSkills; i++) {
+    let skills = distances.map(([distance, minTime, maxTime]) => {
+        let time = maxTime + Math.round(i * (minTime - maxTime) / numberRunningSkills);
+        return `${distance}/${time}min`;
+    });
+    runningSkills.push(skills.join(", "));
+}
+
 module.exports = {
     sports: [
         {
@@ -35,7 +46,7 @@ module.exports = {
         {
             Name: "Running",
             boolTypes: {distances: ["5K", "7K", "10K", "15K"]},
-            // Skills: ["5K/19min or 10K/40min or 10mi/66min"]
+            Skills: runningSkills
         },
         {
             Name: "Sailboat racing",

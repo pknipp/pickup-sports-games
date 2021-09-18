@@ -138,7 +138,6 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
 
 router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {
   // try {
-  console.log(req.body);
   let eventId = Number(req.params.id);
   const event = await Event.findByPk(eventId);
   let favorite = await Favorite.findByPk(event.favoriteId);

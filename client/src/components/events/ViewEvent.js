@@ -29,7 +29,7 @@ const ViewEvent = ({ match }) => {
     'Cell',
     ['createdAt', 'Member since'],
     ['updatedAt', 'When signed up'],
-    ['Extra info', 'Misc info? (hover)'],
+    ['Extra info', 'Misc info?'],
     'Skill',
   ];
 
@@ -101,7 +101,7 @@ const ViewEvent = ({ match }) => {
             // Make columns narrower by breaking multiple words, wherever possible.
             text: (typeof(column) === 'string' ? column : column[1]).split(' ').join('\n'),
             sort: true,
-            headerStyle: {width: `${index > 3 ? "6%" : "10%"}`, whiteSpace: 'pre'},
+            headerStyle: {width: `${index > 3 ? "9%" : "10%"}`, whiteSpace: 'pre'},
             sortFunc: (a, b, order, dataField) => {
               let diff;
               if (newSkills.includes(a)) {

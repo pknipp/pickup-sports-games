@@ -5,7 +5,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import Context from '../../context';
 
 const Favorites = () => {
-  const columns = [["Follow?", 25], ["Sport", 35], ["Select skill-level", 40]].map(([key, width]) => {
+  const columns = [["Follow?", 20], ["Sport", 30], ["Select skill-level", 50]].map(([key, width]) => {
     return {dataField: key, text: key, headerStyle: {width: `${width}%`}, sort: true};
   });
   columns[0].sortFunc = (a, b, order, dataField, rowA, rowB) => {

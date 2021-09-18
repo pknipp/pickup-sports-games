@@ -11,7 +11,7 @@ const events = [];
 for (let i = 0; i < numberOfEvents; i++) {
   let favoriteId = Math.floor(favorites.length * Math.random());
   let favorite = favorites[favoriteId];
-  let nSkills = sports[favorite.sportId - 1]?.length || 4;
+  let nSkills = sports[favorite.sportId - 1]?.Skills?.length || 4;
   let minSkill = Math.floor(Math.random() * nSkills);
   const event = r({
     favoriteId: 1 + favoriteId,
