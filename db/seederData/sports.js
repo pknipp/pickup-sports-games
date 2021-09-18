@@ -1,6 +1,6 @@
 ﻿let Skills = ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"];
 let distances = [["5K", 18, 45], ["10K", 37, 95], ["10mi", 61, 134]];
-let numberRunningSkills = 10;
+let numberRunningSkills = 15;
 let runningSkills = [];
 for (let i = 0; i <= numberRunningSkills; i++) {
     let skills = distances.map(([distance, minTime, maxTime]) => {
