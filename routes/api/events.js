@@ -138,11 +138,20 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
 
 router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {
   // try {
-  const event = await Event.findByPk(Number(req.params.id));
+  console.log(req.body);
+  let eventId = Number(req.params.id);
+  const event = await Event.findByPk(eventId);
   let favorite = await Favorite.findByPk(event.favoriteId);
   if (favorite.userId !== req.user.id) res.status(401).send("Unauthorized Access");
+  let reservations = await Reservation.findAll({where: {eventId}});
+  reservations = reservations.filter(reservation => reservation.userId !== req.user.id);
+  if (!reservations.length || req.body.warning) {
     await event.destroy();
     res.json({});
+  } else {
+    res.json({warning: `Note that there ${reservations.length === 1 ? "is" : "are"} ${reservations.length} other ${reservations.length === 1 ? "person" : "people"} who ${reservations.length === 1 ? "has" : "have"} signed up for this event.  Are you sure that you want to cancel it?  If so, re-click "Delete".  If not, click "Cancel".`})
+  }
+
   // } catch(e) {res.status(400).send(e)}
 }));
 

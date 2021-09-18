@@ -25,6 +25,7 @@ const EditEvent = ({ match }) => {
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
   const [status, setStatus] = useState(false);
+  const [warning, setWarning] = useState(false);
 
   let history = useHistory();
 
@@ -83,15 +84,25 @@ const EditEvent = ({ match }) => {
 
   const handleDelete = async e => {
     e.preventDefault();
-    const res = await fetch(`/api/events/${event.id}`, { method: 'DELETE'});
+    const res = await fetch(`/api/events/${event.id}`, { method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({warning})
+    });
+
     if (res.ok) {
-      let nullEvent = properties.reduce((pojo, prop) => {
-        return {[prop]: '', ...pojo};
-      }, {wantsToPlay: false});
-      [nullEvent.id, nullEvent.favoriteId] = [0, 0];
-      setEvent(nullEvent);
-      setRerender(rerender + 1);
-      history.push('/');
+      let data = await res.json();
+      if (data.warning) {
+        setMessage(data.warning);
+        setWarning(true);
+      } else {
+        let nullEvent = properties.reduce((pojo, prop) => {
+          return {[prop]: '', ...pojo};
+        }, {wantsToPlay: false});
+        [nullEvent.id, nullEvent.favoriteId] = [0, 0];
+        setEvent(nullEvent);
+        setRerender(rerender + 1);
+        history.push('/');
+      }
     }
   }
 
@@ -193,9 +204,9 @@ const EditEvent = ({ match }) => {
         }
 
         <span style={{color: "red", paddingLeft:"10px"}}>{message}</span>
-        <button color="primary" variant="outlined" type="submit">
+        {warning ? null : <button color="primary" variant="outlined" type="submit">
           {event.id ? "Update " : "Create "}event
-        </button>
+        </button>}
 
       </form>
       {!event.id ? null :
@@ -209,6 +220,17 @@ const EditEvent = ({ match }) => {
         <form className="auth" onSubmit={handleContinue}>
           <button color="primary" variant="outlined" type="submit">
             Continue
+          </button>
+        </form>
+      }
+      {!warning ? null :
+        <form className="auth" onSubmit={e => {
+          e.preventDefault();
+          setWarning(false);
+          setMessage('');
+        }}>
+          <button color="primary" variant="outlined" type="submit">
+            Cancel
           </button>
         </form>
       }

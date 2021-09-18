@@ -11,9 +11,9 @@ DRY up setSkills invocation in EditGame, and ensure that it'll work if gameTypes
 Figure out which time to display: local or zulu.
 
 MVP goals:
-1. When attempting to delete a row in a table of the db, render a warning if rows in other tables are dependent upon this row.  Such dependency-chains include user/reservation, user/(favorite)/event/reservation, favorite/event/reservation, event/reservation
+1. When attempting to delete a row in a table of the db, render a warning if rows in other tables are dependent upon this row.  Such dependency-chains include user/reservation, user/(favorite)/event/reservation, favorite/event/reservation, event/reservation (done)
 1. Figure out why Line 105 of ViewEvent yields an error when attempting to access ViewEvent after editing a reservation.
-1. Look for other discrete (MC or checkbox) inputs, and use fetches rather than setting state.
+1. Put smarter skill-levels in running (and biking and xc-skiining), such as 5K/20 min or 10K/30 min or ...
 1. Ensure that event.time changes when viewed by those in other time zones.
 1. Get event.dateTime to work properly on heroku.
 1. Other sports to include: hockey, badminton, pingpong, squash, bowling, golf, lacrosse, archery, cricket, rugby
