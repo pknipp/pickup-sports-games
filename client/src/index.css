@@ -50,10 +50,10 @@ form {
   align-items: center;
 }
 
-.sportsList {display: grid; grid-template-columns: repeat(3, 1fr); grid-column-gap: 40px; }
+.sportsList {display: grid; grid-template-columns: repeat(4, 1fr); grid-column-gap: 40px; }
 .center {display: flex; justify-content: center; }
 .container {display: flex; justify-content: center; }
-.narrow {width: 650px; }
+.narrow {width: 700px; }
 .wide {padding: 0 40px; }
 .vertical {display: flex; flex-direction: column; align-items: center; padding: 0 5px;}
 .horizontal {display: flex; justify-content: center; align-items: center; }

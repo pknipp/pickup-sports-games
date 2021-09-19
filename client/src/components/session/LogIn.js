@@ -15,7 +15,7 @@ const LogIn = () => {
         let newSports = (await response.json()).sports;
         if (response.ok) setSports(newSports);
     })();
-  });
+  }, []);
 
   const login = async (Email, Password) => {
     const response = await fetch(`/api/session`, { method: 'PUT',
@@ -42,17 +42,17 @@ const LogIn = () => {
     <div className="center">
     <div className="simple narrow">
 
-      <h4>Here you can organize and participate in the following:</h4><br/>
+      <h4>Do you want to organize and/or participate in the following?</h4><br/>
       <div className="sportsList">
         {sports.map(sport => (
-          <span>
+          <span key={sport.id}>
             {sport.Name}
           </span>
         ))}
       </div><br/>
 
       <form className="auth" onSubmit={handleSubmit}>
-        <h4>We hope that you will either login or signup below.</h4>
+        <h4>If so, please either login or signup below.</h4>
         <span>Email address:</span>
         <input
           type="text" placeholder="Email" value={Email}

@@ -6,7 +6,7 @@ const r = o => ({...o,
     updatedAt: new Date(),
     boolTypes: JSON.stringify(o.boolTypes),
     Skills: JSON.stringify(o.Skills || ['beginner', 'intermediate', 'advanced', 'expert']),
-    nGenders: o.nGenders || 4
+    nGenders: o.nGenders === undefined ? 4 : o.nGenders,
 });
 
 sports = sports.map(sport => r(sport));
