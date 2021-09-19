@@ -94,7 +94,7 @@ const EditReservation = ({ match }) => {
         </h3>
         <span><h4>{reservationId ? "Below are" : "Specify below"} your willingnesses for ...</h4></span>
         <div>
-          {Object.entries(boolTypes).map(([boolType, boolArray], index1) => (
+          {Object.entries(boolTypes).reverse().map(([boolType, boolArray], index1) => (
             <div key={boolType}><br/>
               <div><h4>... {index1 && index1 === Object.keys(boolTypes).length - 1 ? " and " : " "}{boolType}{boolType === "genders" ? " (trans-inclusive)" : ""}:</h4></div>
               {boolArray?.map((bool, index2) => (
@@ -113,6 +113,11 @@ const EditReservation = ({ match }) => {
               ))}
             </div>
           ))}
+          {reservation.nGenders < 4 ? null :
+            '(Here the term "mixed" has the usual meaning for this sport, in terms of the male/female ratio on a team.)'
+          }
+          <br/>
+          <br/>
         </div>
 
         <span><h4>Extra info about your reservation (optional):</h4></span>
