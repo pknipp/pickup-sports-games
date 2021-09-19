@@ -39,19 +39,20 @@ const LogIn = () => {
   }
 
   return (currentUser) ? <Redirect to="/" /> : (
-    <div className="simple">
-      <div>
-        This site allows you to organize and participate in the following sports:
-        <ul className="simple">
-          {sports.map(sport => (
-            <li>
-              {sport.Name}
-            </li>
-          ))}
-        </ul>
-      </div>
+    <div className="center">
+    <div className="simple narrow">
+
+      <h4>Here you can organize and participate in the following:</h4><br/>
+      <div className="sportsList">
+        {sports.map(sport => (
+          <span>
+            {sport.Name}
+          </span>
+        ))}
+      </div><br/>
+
       <form className="auth" onSubmit={handleSubmit}>
-        <h4>We hope that you will either login or signup.</h4>
+        <h4>We hope that you will either login or signup below.</h4>
         <span>Email address:</span>
         <input
           type="text" placeholder="Email" value={Email}
@@ -70,6 +71,7 @@ const LogIn = () => {
           </NavLink>
         </span>
       </form>
+    </div>
     </div>
   );
 }

@@ -30,7 +30,8 @@ module.exports = {
         },
         {
             Name: "Biking",
-            boolTypes: {distances: ["10 miles", "15 miles", "20 miles", "30 miles"]},
+            boolTypes: {distances: ["20 miles", "30 miles", "40 miles", "60 miles", "100 miles"]},
+            Skills: [8,10,12,14,16,18,20,22].map(x => String(x) + "MPH")
         },
         {
             Name: "Cross-country skiing",

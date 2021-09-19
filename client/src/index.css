@@ -50,6 +50,8 @@ form {
   align-items: center;
 }
 
+.sportsList {display: grid; grid-template-columns: repeat(3, 1fr); grid-column-gap: 40px; }
+.center {display: flex; justify-content: center; }
 .container {display: flex; justify-content: center; }
 .narrow {width: 650px; }
 .wide {padding: 0 40px; }
