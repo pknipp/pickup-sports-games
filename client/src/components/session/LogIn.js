@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Redirect, NavLink } from 'react-router-dom';
 import Context from '../../context';
 
@@ -6,7 +6,16 @@ const LogIn = () => {
   const [Email, setEmail] = useState("volleyb@aol.com");
   const [Password, setPassword] = useState("password");
   const [message, setMessage] = useState('');
+  const [sports, setSports] = useState([]);
   const { fetchWithCSRF, currentUser, setCurrentUser } = useContext(Context);
+
+  useEffect(() => {
+    (async () => {
+        const response = await fetch(`/api/sports`);
+        let newSports = (await response.json()).sports;
+        if (response.ok) setSports(newSports);
+    })();
+  });
 
   const login = async (Email, Password) => {
     const response = await fetch(`/api/session`, { method: 'PUT',
@@ -31,6 +40,16 @@ const LogIn = () => {
 
   return (currentUser) ? <Redirect to="/" /> : (
     <div className="simple">
+      <div>
+        This site allows you to organize and participate in the following sports:
+        <ul className="simple">
+          {sports.map(sport => (
+            <li>
+              {sport.Name}
+            </li>
+          ))}
+        </ul>
+      </div>
       <form className="auth" onSubmit={handleSubmit}>
         <h4>We hope that you will either login or signup.</h4>
         <span>Email address:</span>

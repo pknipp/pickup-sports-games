@@ -1,4 +1,5 @@
 ﻿let Skills = ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"];
+// max/min running skills are for 25-year old elite male and 60-year old beginner female, as tabulated at https://runninglevel.com/running-times
 let distances = [["5K", 18, 45], ["10K", 37, 95], ["10mi", 61, 134]];
 let numberRunningSkills = 15;
 let runningSkills = [];
