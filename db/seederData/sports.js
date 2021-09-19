@@ -91,19 +91,19 @@ module.exports = {
             Skills: ["1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0", "5.5", "6.0", "6.5", "7.0"],
         },
         {
-            Name: "Running",
-            boolTypes: {distances: ["5K", "7K", "10K", "15K"]},
-            Skills: runningSkills,
-            nGenders: 3
-        },
-        {
             Name: "Ping-pong",
             boolTypes: {sizes: ["singles", "doubles"]},
         },
         {
-            Name: "Rubgy",
+            Name: "Rugby",
             boolTypes: {positions: ["front row forwards", "second row forwards", "back row forwards", "half backs", "three quarters", "full back"]},
             Skills,
+        },
+        {
+            Name: "Running",
+            boolTypes: {distances: ["5K", "7K", "10K", "15K"]},
+            Skills: runningSkills,
+            nGenders: 3
         },
         {
             Name: "Sailboat racing",
