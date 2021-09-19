@@ -78,6 +78,7 @@ const ViewEvent = ({ match }) => {
         let newPlayers = newEvent.players;
         newPlayers.forEach(player => {
           player.Skill = newSkills[player.Skill];
+          player.Email = player.Email.split("@").join("@ ");
           Object.entries(newBoolTypes).forEach(([boolType, bools]) => {
             bools.forEach((bool, i) => {
               const boolVal = player.boolVals[boolType] % 2;
