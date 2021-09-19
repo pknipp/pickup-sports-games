@@ -68,13 +68,10 @@ const ViewEvent = ({ match }) => {
     (async() => {
         const res = await fetch(`/api/events/${event.id}`);
         let newEvent = (await res.json()).event;
-        // Recode following to handle non-sequential sport ids.
         let newSkills = [...newEvent.Skills];
         setSkills(newSkills);
-        let newBoolTypes = {genders, ...newEvent.boolTypes};
-        // Recode following line to handle non-sequential sport ids.
+        let newBoolTypes = {genders: genders.slice(0, newEvent.sport.nGenders), ...newEvent.boolTypes};
         newEvent.Sport = newEvent.sport.Name;
-        // newEvent.Sport = newEvent.Sports[newEvent.sportId - 1].Name;
         let newPlayers = newEvent.players;
         newPlayers.forEach(player => {
           player.Skill = newSkills[player.Skill];

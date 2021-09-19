@@ -34,6 +34,7 @@ router.get('/:resEventId', async(req, res) => {
     const favorite = await Favorite.findByPk(event.favoriteId);
     const sport = await Sport.findByPk(favorite.sportId);
     event.Sport = sport.Name;
+    reservation.nGenders = sport.nGenders;
     event.boolTypes = JSON.parse(sport.boolTypes);
     reservation.event = event;
     res.json({reservation});

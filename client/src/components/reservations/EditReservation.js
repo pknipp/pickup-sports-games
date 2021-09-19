@@ -28,7 +28,7 @@ const EditReservation = ({ match }) => {
       })
       newReservation.event.dateTime = moment(newReservation.event.dateTime).local().format().slice(0,-9);
 
-      let newBoolTypes = {genders, ...newReservation.event.boolTypes};
+      let newBoolTypes = {genders: genders.slice(0, newReservation.nGenders), ...newReservation.event.boolTypes};
       // Decode base-2 integer in db to determine boolean array for each boolType.
       Object.entries(newBoolTypes).forEach(([boolType, bools]) => {
         bools.forEach((bool, i) => {
