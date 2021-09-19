@@ -31,11 +31,13 @@ module.exports = {
         {
             Name: "Biking",
             boolTypes: {distances: ["20 miles", "30 miles", "40 miles", "60 miles", "100 miles"]},
-            Skills: [8,10,12,14,16,18,20,22].map(x => String(x) + "MPH")
+            Skills: [8,10,12,14,16,18,20,22].map(x => String(x) + "MPH"),
+            nGenders: 3
         },
         {
             Name: "Cross-country skiing",
             boolTypes: {distances: ["5K", "7K", "10K", "15K"]},
+            nGenders: 3
         },
         {
             Name: "Flag football",
@@ -48,7 +50,8 @@ module.exports = {
         {
             Name: "Running",
             boolTypes: {distances: ["5K", "7K", "10K", "15K"]},
-            Skills: runningSkills
+            Skills: runningSkills,
+            nGenders: 3
         },
         {
             Name: "Sailboat racing",

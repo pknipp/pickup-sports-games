@@ -5,7 +5,8 @@ const r = o => ({...o,
     createdAt: new Date(),
     updatedAt: new Date(),
     boolTypes: JSON.stringify(o.boolTypes),
-    Skills: JSON.stringify(o.Skills || ['beginner', 'intermediate', 'advanced', 'expert']), //["beginner", "low", "middle", "high"]
+    Skills: JSON.stringify(o.Skills || ['beginner', 'intermediate', 'advanced', 'expert']),
+    nGenders: o.nGenders || 4
 });
 
 sports = sports.map(sport => r(sport));

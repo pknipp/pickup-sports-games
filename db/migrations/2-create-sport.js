@@ -5,7 +5,7 @@ module.exports = {
       id: {allowNull: false, autoIncrement: true, primaryKey: true, type: Sequelize.INTEGER},
       Name: {allowNull: false, type: Sequelize.TEXT},
       boolTypes: {allownull: false, type: Sequelize.TEXT},
-      // sizes: {allowNull: true, type: Sequelize.TEXT},
+      nGenders: {allownull: false, type: Sequelize.INTEGER},
       Skills: {allowNull: false, type: Sequelize.TEXT,
         // defaultValue: JSON.stringify(["beginner", "intermediate", "advanced"])
       },

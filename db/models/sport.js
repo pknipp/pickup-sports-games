@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
       Name: {allowNull: false, type: DataTypes.TEXT},
       boolTypes: {allowNull: false, type: DataTypes.TEXT},
       Skills: {allowNull: false, type: DataTypes.TEXT},
+      nGenders: {allowNull: false, type: DataTypes.INTEGER},
     },
   );
 
