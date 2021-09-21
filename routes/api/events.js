@@ -40,7 +40,8 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     return possibleFavorites.map(fav => fav.id).includes(event.favoriteId);
   }).map(event => event.dataValues);
   const allVenues = [];
-  events.forEach(async event => {
+  for (let i = 0; i < events.length; i++) {
+      let event = events[i];
       allVenues.push(event.Location);
       let eventFavorite = await Favorite.findByPk(event.favoriteId);
       let eventSport = await Sport.findByPk(eventFavorite.sportId);
@@ -49,12 +50,17 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
       event["Event organizer"] = (await User.findByPk(eventFavorite.userId)).dataValues.Nickname;
       let reservations = await Reservation.findAll({where: {eventId: event.id}});
       event["Player reservations"] = reservations.length;
+      let Nicknames = [];
+      for (let i = 0; i < reservations.length; i++) {
+        Nicknames.push((await User.findByPk(reservations[i].userId)).Nickname);
+      };
+      event.Nicknames = Nicknames.sort().join(", ");
       // Set reservationId to zero if no reservation for this event has been made by this user.
       event.reservationId = reservations.reduce((reservationId, reservation) => {
           return (reservation.userId === user.id ? reservation.id : reservationId);
       }, 0);
       ['favoriteId', 'createdAt', 'updatedAt'].forEach(key => delete event[key]);
-  })
+  }
   // fetch travel-Time between user and a bundled array of addresses ("venues")
   // google restricts each bundle to contain no more than 25 addresses
   const maxFetch = 25;

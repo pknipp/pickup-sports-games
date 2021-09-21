@@ -4,6 +4,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import moment from 'moment';
 
 import Context from '../../context';
+import fetch from "node-fetch";
 
 const Home = () => {
     const options = [
@@ -29,8 +30,8 @@ const Home = () => {
             let data = await response.json();
             if (response.ok) {
                 setSportsLength(data.sportsLength);
-                let newAllEvents = [];
-                data.events.forEach(event => {
+                let newAllEvents = data.events;
+                newAllEvents.forEach(event => {
                     let [EventDate, EventTime] = moment(event.dateTime).local().format().split("T");
                     EventTime = EventTime.slice(0, 5);
                     let minutes = Math.round(event.duration.value / 60);
@@ -39,15 +40,19 @@ const Home = () => {
                     minutes -= hours * 60;
                     minutes = (!minutes ? "00" : minutes < 10 ? "0" : "") + minutes;
                     event["Travel time"] = hours + ":" + minutes;
-                    let newEvent = {...event, ["Event date"]: EventDate, ["Event time"]: EventTime};
-                    ['dateTime', 'duration'].forEach(key => delete newEvent[key]);
-                    newEvent['Extra info'] = newEvent['Extra info'] && <span className="ttip" data-toggle="tooltip" title={newEvent['Extra info']}>
-                        yes (hover)
+                    event["Event date"] = EventDate;
+                    event["Event time"] = EventTime;
+                    ['dateTime', 'duration'].forEach(key => delete event[key]);
+                    event['Extra info'] = event['Extra info'] &&
+                        <span className="ttip" data-toggle="tooltip" title={event['Extra info']}>
+                            yes (hover)
+                        </span>;
+                    event["Player reservations"] = event && <span className="ttip" data-toggle="tooltip" title={event.Nicknames}>
+                        {event["Player reservations"]}
                     </span>;
                     ['Maximum skill', 'Minimum skill'].forEach(key => {
-                        newEvent[key] = event.Skills[newEvent[key]];
-                    })
-                    newAllEvents.push(newEvent);
+                        event[key] = event.Skills[event[key]];
+                    });
                 });
                 setAllEvents(newAllEvents);
             } else {
@@ -97,7 +102,7 @@ const Home = () => {
         setEvents(newEvents);
         if (newEvents.length) {
             let headings = (!newEvents.length ? [] : Object.keys(newEvents[0])).filter(col => {
-                return !["id", "reservationId", "Skills"].includes(col);
+                return !["id", "reservationId", "Skills", "Nicknames"].includes(col);
             });
             // order of columns to appear in table
             let newColumns = [4,5,7,2,8,9,6,3,0,1,10,11].map(index => headings[index]).filter(col => {
