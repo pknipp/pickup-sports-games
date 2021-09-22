@@ -48,25 +48,25 @@ This table has no FKs.  One column ("nGenders") is an integer between 0 and 4 wh
 
 Two columns ("Skills" and "boolTypes") are JSON.stringifications of non-primitive data types, as indicated below:
 
-### 1. Skills:
+### - Sport.Skills:
 
-This is an array of skill-level strings.  Below are examples for several sports.  (Code is taken from a seeder file.)
+This is an array of skill-level strings.  Below are examples for several sports.  (Code is taken from db/seederData/sports.js.)
 ```
 { Name: "Biking", Skills: [8,10,12,14,16,18,20,22].map(x => String(x) + "MPH") },
 { Name: "Tennis", Skills:["1.5","2.0","2.5","3.0","3.5","4.0","4.5","5.0","5.5","6.0","6.5","7.0"]},
 { Name: "Ultimate", Skills: ['beginner', 'intermediate', 'advanced', 'expert'] },
 { Name: "Volleyball", Skills: ["beginner", "HS JV", "HS varsity", "D3 college", "D1 college"] }
 ```
-### 2. boolTypes:
+### - Sport.boolTypes:
 
-This is a POJO of arrays of boolean questions posed at the reservation phase.  An example for Basketball is presented below.  (Code taken from a seeder file.)
+This is a POJO of arrays of boolean questions posed at the reservation phase.  An example for Basketball is presented below.  (Code taken from db/seederData/sports.js.)
 ```
 {
-    sizes: ["3 on 3", "5 on 5"],
+    ["team sizes"]: ["3 on 3", "5 on 5"],
     positions: ["center", "forward", "guard"],
 },
 ```
-Other keys for boolTypes properties are given below, each followed by the Sports for which it is used.
+Keys for other boolTypes properties are given below, each followed by the Sports for which it is used.
 
 - "distances": running, biking, cross-country skiing
 
@@ -76,7 +76,8 @@ Other keys for boolTypes properties are given below, each followed by the Sports
 
 Values of both Sport.Skills and Sport.boolTypes are JSON.parsed immediately after querying from the database and are JSON.stringified immediately before committing to the database.
 
-Sports is the only read-only table.  A future expansion of this project would allow users to POST/PUT/DELETE rows of the Sports table.  This would probably mean that the Sports table would acquire a commissionerId FK which would reference a row of the Users table. Sport.commissionerId would be the PK of the only user authorized to mutate that row Sport.
+Sports is the only read-only table.  A future expansion of this project would allow users to POST/PUT/DELETE rows of the Sports table.  We envision doing this by adding a boolean column isCommissioner to the Favorites table.
+For any row of the Favorites table with a true value of that boolean, that User will be able to mutate that Sport.  (Note that more than one User could have this privilege, for any given sport.)
 
 ## Favorites:
 
