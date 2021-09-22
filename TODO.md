@@ -11,6 +11,7 @@ DRY up setSkills invocation in EditGame, and ensure that it'll work if gameTypes
 Figure out which time to display: local or zulu.
 
 MVP goals:
+1. Make every component EXCEPT for Home a modal, so that the Home state is retained (so no needless fetches).
 1. When attempting to delete a row in a table of the db, render a warning if rows in other tables are dependent upon this row.  Such dependency-chains include user/reservation, user/(favorite)/event/reservation, favorite/event/reservation, event/reservation (done)
 1. Figure out why Line 105 of ViewEvent yields an error when attempting to access ViewEvent after editing a reservation.
 1. Use joins, rather than two or more queries.
@@ -22,6 +23,7 @@ MVP goals:
         - cancel reservations?
         - trigger email to players?
 1. Separate contexts into auth, gender, etc.
+1. Create a 4th column in Favorites table, to include any sports-specific links.
 1. Flesh out README.md
 1. Continue making front-end prettier.
 1. Eliminate bug ("000:000") which appears when destination = origin (or when travel time is an integer number of hours)

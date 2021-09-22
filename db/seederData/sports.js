@@ -20,13 +20,13 @@ module.exports = {
         },
         {
             Name: "Badminton",
-            boolTypes: {sizes: ["singles", "doubles"]},
+            boolTypes: {["team sizes"]: ["singles", "doubles"]},
             Skills,
         },
         {
             Name: "Basketball",
             boolTypes: {
-                sizes: ["3 on 3", "5 on 5"],
+                ["team sizes"]: ["3", "5"],
                 positions: ["center", "forward", "guard"],
             },
             Skills,
@@ -49,23 +49,21 @@ module.exports = {
         {
             Name: "Flag football",
             boolTypes: {
-                sizes: ["4 on 4", "7 on 7", "8 on 8"],
+                ["team sizes"]: ["4", "7", "8"],
                 positions: ["QB", "receiver", "defense", "line", "running back"],
             },
             Skills,
         },
         {
             Name: "Hockey (ice)",
-            boolTypes: {
-                positions: ["center", "wingers", "defense", "goalie"],
-            },
+            boolTypes: {positions: ["center", "wingers", "defense", "goalie"]},
             Skills,
         },
         {
             Name: "Hockey (field)",
             boolTypes: {
                 positions: ["forward", "midfield", "defense", "goalie"],
-                sizes: ["11", "5"],
+                ["team sizes"]: ["11", "5"],
             },
             Skills,
         },
@@ -87,12 +85,12 @@ module.exports = {
         },
         {
             Name: "Paddle tennis",
-            boolTypes: {sizes: ["singles", "doubles"]},
+            boolTypes: {["sizes and positions"]: ["singles", "doubles - deuce side", "doubles - ad side"]},
             Skills: ["1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0", "5.5", "6.0", "6.5", "7.0"],
         },
         {
             Name: "Ping-pong",
-            boolTypes: {sizes: ["singles", "doubles"]},
+            boolTypes: {["team sizes"]: ["1", "2"]},
         },
         {
             Name: "Rugby",
@@ -107,7 +105,7 @@ module.exports = {
         },
         {
             Name: "Sailboat racing",
-            boolTypes: {classes: ["laser", "420", "470", "catamaran"]},
+            boolTypes: {types: ["laser", "420", "470", "catamaran"]},
         },
         {
             Name: "Soccer",
@@ -129,7 +127,7 @@ module.exports = {
         },
         {
             Name: "Tennis",
-            boolTypes: {sizes: ["singles", "doubles", "Canadian doubles"]},
+            boolTypes: {["sizes and positions"]: ["singles", "doubles - deuce side", "doubles - ad side", "Canadian doubles"]},
             Skills: ["1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0", "5.5", "6.0", "6.5", "7.0"],
         },
         {
@@ -140,7 +138,7 @@ module.exports = {
             Name: "Volleyball",
             boolTypes: {
                 positions: ['setter', 'middle', 'right side', 'outside', 'libero'],
-                sizes: ['twos', 'fours', 'sixes'],
+                ["team size"]: ['2', '4', '6'],
             },
             Skills,
         },

@@ -34,11 +34,15 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
 router.get('', [authenticated], asyncHandler(async(req, res, next) => {
   // try {
   const user = req.user;
+  // array of ids of User's favorite sports
   const mySportIds = (await Favorite.findAll({where: {userId: user.id}})).map(fav => fav.sportId);
-  const possibleFavorites = (await Favorite.findAll()).filter(fav => mySportIds.includes(fav.sportId));
+  // array of
+  // const possibleFavorites = (await Favorite.findAll()).filter(fav => mySportIds.includes(fav.sportId));
+  const possibleFavorites = await Favorite.findAll({where: {userId: user.id}});
   const events = (await Event.findAll()).filter(event => {
     return possibleFavorites.map(fav => fav.id).includes(event.favoriteId);
   }).map(event => event.dataValues);
+  // initialize array of
   const allVenues = [];
   for (let i = 0; i < events.length; i++) {
       let event = events[i];

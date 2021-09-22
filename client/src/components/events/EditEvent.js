@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 
 import Context from '../../context';
-import fetch from 'node-fetch';
+// import fetch from 'node-fetch';
 
 const EditEvent = ({ match }) => {
   const { fetchWithCSRF, rerender, setRerender } = useContext(Context);

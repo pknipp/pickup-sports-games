@@ -4,7 +4,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import moment from 'moment';
 
 import Context from '../../context';
-import fetch from "node-fetch";
+// import fetch from "node-fetch";
 
 const Home = () => {
     const options = [

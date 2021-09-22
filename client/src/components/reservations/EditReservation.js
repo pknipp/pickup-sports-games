@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 
 import Context from '../../context';
-import fetch from 'node-fetch';
+// import fetch from 'node-fetch';
 
 const EditReservation = ({ match }) => {
   const resEventId = match.params.resEventId;
@@ -28,13 +28,18 @@ const EditReservation = ({ match }) => {
       })
       newReservation.event.dateTime = moment(newReservation.event.dateTime).local().format().slice(0,-9);
 
+      // "Genders" booleans come from context, whereas the other booleans come from the db.
       let newBoolTypes = {genders: genders.slice(0, newReservation.nGenders), ...newReservation.event.boolTypes};
       // Decode base-2 integer in db to determine boolean array for each boolType.
       Object.entries(newBoolTypes).forEach(([boolType, bools]) => {
         bools.forEach((bool, i) => {
+          // The rightmost bit is used to determine the present boolean.
           const boolVal = newReservation.boolVals[boolType] % 2;
+          // !!converts a bit into a boolean.
           bools[i] = [bool, !!boolVal];
+          // Subtract the rightmost bit from the integer (leaving 0 as the last bit).
           newReservation.boolVals[boolType] -= boolVal;
+          // Dividing the integer by two acts to remove the rightmost bit (a zero).
           newReservation.boolVals[boolType] /= 2;
         })
       });
@@ -47,10 +52,15 @@ const EditReservation = ({ match }) => {
 
   const handlePutPost = async e => {
     e.preventDefault();
-    // Encode the array of booleans for each booleanType as a base-2 integer, for storing in db.
+    // Encoding the arrays of booleans are done one boolean type at a time.
     Object.entries(boolTypes).forEach(([boolType, bools]) => {
-      reservation.boolVals[boolType] = [...bools].reverse().reduce((tot, bool) => 2 * tot + Number(bool[1]), 0);
+      // Each booleanType's responses are encoded as ("reduced into") a base-2 integer.
+      reservation.boolVals[boolType] = [...bools].reverse().reduce((tot, bool) => {
+        // Number(...) converts boolean (F/T) to a bit (0/1), which then supplements the accumulator
+        return 2 * tot + Number(bool[1]);
+        }, 0);
     });
+    // A warning is generated if the user selects no checkboxes, for a particular boolean type.
     let haveNoBools = Object.values(reservation.boolVals).reduce((sum, value) => sum + Number(!value), 0);
     let newMessage = !haveNoBools ? '' :
       "You need to select at least one checkbox from " + haveNoBools + " of the groups above.";
@@ -114,7 +124,7 @@ const EditReservation = ({ match }) => {
             </div>
           ))}
           {reservation.nGenders < 4 ? null :
-            '(Here the term "mixed" has the usual meaning for this sport, in terms of the male/female ratio on a team.)'
+            '(Here the term "mixed" has the usual meaning for this sport and/or league, in terms of the male/female ratio on a team.)'
           }
           <br/>
           <br/>
