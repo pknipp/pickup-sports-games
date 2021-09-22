@@ -52,7 +52,7 @@ const EditReservation = ({ match }) => {
 
   const handlePutPost = async e => {
     e.preventDefault();
-    // Encoding the arrays of booleans are done one boolean type at a time.
+    // Encoding the arrays of booleans is done one boolean type at a time.
     Object.entries(boolTypes).forEach(([boolType, bools]) => {
       // Each booleanType's responses are encoded as ("reduced into") a base-2 integer.
       reservation.boolVals[boolType] = [...bools].reverse().reduce((tot, bool) => {
@@ -104,17 +104,31 @@ const EditReservation = ({ match }) => {
         </h3>
         <span><h4>{reservationId ? "Below are" : "Specify below"} your willingnesses for ...</h4></span>
         <div>
+          {/* Create the checkboxes one boolType at a time. */}
           {Object.entries(boolTypes).reverse().map(([boolType, boolArray], index1) => (
             <div key={boolType}><br/>
-              <div><h4>... {index1 && index1 === Object.keys(boolTypes).length - 1 ? " and " : " "}{boolType}{boolType === "genders" ? " (trans-inclusive)" : ""}:</h4></div>
+              <div>
+                <h4>
+                  ...
+                  {/* The following ternary only makes the grammar proper. */}
+                  {index1 && index1 === Object.keys(boolTypes).length - 1 ? " and " : " "}
+                  {/* The following controls the appearance of this helpful point, for one boolean type. */}
+                  {boolType}{boolType === "genders" ? " (trans-inclusive)" : ""}
+                  :
+                </h4>
+              </div>
               {boolArray?.map((bool, index2) => (
                 <div key={index2} className="checkboxPair">
+                  {/* label for the checkbox */}
                   <span>{bool[0]}</span>
                   <input
                     type="checkbox"
+                    // value for the checkbox
                     checked={bool[1]}
                     onChange={e => {
+                      // easy way to make a deep clone
                       const newBoolTypes = JSON.parse(JSON.stringify(boolTypes));
+                      // change value in deep clone, and then overwrite state
                       newBoolTypes[boolType][index2][1] = e.target.checked;
                       setBoolTypes(newBoolTypes);
                     }}
