@@ -16,17 +16,20 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
   // try {
   let [event, message, status] = [{}, '', 201];
   req.body.userId = req.user.id;
-  // req.body.dateTime = faker.date.future();
   let checked = await checkLocation(req.body.Location);
   if (checked.success) {
+    // Save originalLocation so that User can compare it with that returned from api.
+    let originalLocation = req.body.Location;
+    // Overwrite User's suggested address with that returned from api.
     req.body.Location = checked.Location;
     event = (await Event.create(req.body)).dataValues;
+    // Augment event POJO with fact that no reservations have yet been made, even by organizer him/herself.
     event = {...event, count: 0, reservationId: 0};
+    res.status(201).json({id: event.id, message, Location: originalLocation});
   } else {
     message = `There is something wrong with your event's location (${req.body.Location}). Try a different one.`
-    status = 400;
+    res.status(400).json({message});
   }
-  res.status(201).json({id: event.id, message, Location: checked.Location});
 // } catch(e) {console.log(e)}
 }));
 
