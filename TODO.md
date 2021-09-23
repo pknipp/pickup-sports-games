@@ -23,7 +23,8 @@ MVP goals:
 1. Create a 4th column in Favorites table, to include any sports-specific links.
 1. Polish README.md, especially by including code snippets which indicate the sanitatizing/checking of User.address and Event.Location, at the time of POST/PUT.
 1. Polish front-end.
-1. In ViewEvent component, list boolType checkboxes horizontally (e.g., horizontal array of 3 vertical arrays).
+1. DRY index.css
+1. In ViewEvent component, center the checkbox-pair column for each boolType.
 1. Eliminate bug ("000:000") which appears when destination = origin (or when travel time is an integer number of hours)
 
 stretch goals:

@@ -28,20 +28,24 @@ Our project (["Pickup sports"](https://pickup-sports-events.herokuapp.com)) faci
 
 [go to next section ("Google maps distance-matrix API")](#google-maps-distance-matrix-api)
 
-This has five tables: Users, Sports, Favorites, Events, and Reservations, details about each of which are below.
+Our database has five tables: Users, Sports, Favorites, Events, and Reservations, some details about each of which appear below.
 
 ## Users:
 
-This table has no foreign keys (FKs).  User.tokenId is truthy only for Users that are logged in. Below is a screenshot of the front-end component "User" which allows the User CRUD access to this table.
+This table has no foreign keys (FKs).
+
+User.tokenId is truthy only for Users that are logged in.
+
+Below is a screenshot of the front-end component "User" which allows the User CRUD access to this table.
 
 ![User](assets/User.png)
 
 ## Sports:
 
-This table has no FKs.  One column ("nGenders") is an integer between 0 and 4 which represents the number of different ways that one may typically arrange teams based on gender: "men's", "women's", "gender-neutral", or "mixed".  The latter designation applies to some sports and/or leagues for which there are generally understood ways for constructing teams heterogeneously by gender.  For most rows, Sport.nGenders equals 4, but some exceptions are provided below:
+This table has no FKs.
 
+One column ("nGenders") is an integer between 0 and 4 which represents the number of different ways that one may typically arrange teams based on gender: "men's", "women's", "gender-neutral", or "mixed".  The latter designation applies to some sports and/or leagues for which there are generally understood ways for constructing teams heterogeneously by gender.  For most rows, Sport.nGenders equals 4, but some exceptions are provided below:
 - 0 (ie, no needs to extra gender classification): Lacrosse (men's), Lacrosse (women's)
-
 - 3 (ie, no "mixed" category): Biking, Cross-country skiinng, Running
 
 Two columns ("Skills" and "boolTypes") are JSON.stringifications of non-primitive data types, as indicated below:
@@ -65,11 +69,8 @@ This is a POJO of arrays of boolean questions posed at the reservation phase.  A
 },
 ```
 Keys for other boolTypes properties are given below, each followed by the Sports for which it is used.
-
 - "distances": running, biking, cross-country skiing
-
 - "types": bowling, sailboat racing
-
 - "sizes and positions": tennis, paddle tennis
 
 Values of both Sport.Skills and Sport.boolTypes are JSON.parsed immediately after querying from the database and are JSON.stringified immediately before committing to the database.
@@ -80,13 +81,22 @@ For any row of the Favorites table with a true value of that boolean, that User 
 ## Favorites:
 
 Because any User is interested in following (aka "organizing" or "participating in") only a subset of the rows of the Sports table, there is a many-to-many relationship between those two tables.  The Favorites table joins those two tables.
-The only non-FK column of this table is "Skill", an integer which represents the User's self assessed skill-level in that Sport, ie would equal an appropriate index of Sport.Skills.  (See "Sports" above for various skill-level scales.)  Below is a screenshot of the front-end component "Manage Favorites" which allows the User CRUD access to this table.  (Note that one of the drop-downs is activated.)
+
+The only non-FK column of this table is "Skill", an integer which represents the User's self assessed skill-level in that Sport, ie would equal an appropriate index of Sport.Skills.  (See "Sports" above for various skill-level scales.)
+
+Below is a screenshot of the front-end component "Manage Favorites" which allows the User CRUD access to this table.  (Note that one of the drop-downs is activated.)
 
 ![Favorites](assets/Favorites.png)
 
 ##  Events:
 
-  An Event (our name for a game, practice, or training session) may be organized only by a User for whom that Sport is a Favorite, so the Events table depends upon the Favorites table.  Note that Event.userId is the PK for the event organizer, not for a player in the Event (which is handled by the Reservations table).  Event["Minimum skill"] and Event["Maximum skill"] are columns containing values that are integers, each defining the Event organizer's desired a limiting skill-level for the particular event.  As for Favorite.Skill, these two integers acquire their meaning when used as indices for the array Sport.Skills, for that particular sport.  Below is a screenshot of the front-end component "EditEvent" which allows the User CRUD access to this table.
+  An Event (our name for a game, practice, or training session) may be organized only by a User for whom that Sport is a Favorite, so the Events table depends upon the Favorites table.
+
+  <!-- WRONG! Note that Event.userId is the PK for the event organizer, not for a player in the Event (which is handled by the Reservations table). -->
+
+  The "Minimum skill" and "Maximum skill" columns contain integer values, each defining the Event organizer's desired limiting skill-level for the particular event.  As for Favorite.Skill, these two integers acquire their meaning when used as indices for the array Sport.Skills, for that particular sport.
+
+  Below is a screenshot of the front-end component "EditEvent" which allows the User CRUD access to this table.
 
 ![Event](assets/Event.png)
 
@@ -96,7 +106,9 @@ The only non-FK column of this table is "Skill", an integer which represents the
 
 The only non-FK column of this table is "boolVals".
 This is the JSON.stringification of a flat POJO, each of whose properties corresponds to an array of checkboxes ("preferences"/"willingnesses") filled out by the User in the Reservation process.  (See boolTypes above for more information for the names of these checkboxes.) The value of each of these properties is a integer: the base-2 encoding of the User's responses.  As for the two columns of stringifications in the Sports table, values of Favorite.boolVals
-are JSON.parsed immediately after querying from the database and are JSON.stringified immediately before committing to the database.   Below is a screenshot of the front-end component "EditReservation" which allows the User CRUD access to this table.
+are JSON.parsed immediately after querying from the database and are JSON.stringified immediately before committing to the database.
+
+Below is a screenshot of the front-end component "EditReservation" which allows the User CRUD access to this table.
 
 ![Reservation](assets/Reservation.png)
 
