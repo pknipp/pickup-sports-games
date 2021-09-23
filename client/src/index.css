@@ -55,8 +55,8 @@ form {
 .container {display: flex; justify-content: center; }
 .narrow {width: 700px; }
 .wide {padding: 0 40px; }
-.vertical {display: flex; flex-direction: column; align-items: center; padding: 0 5px;}
-.horizontal {display: flex; justify-content: center; align-items: center; }
+.vertical {display: flex; flex-direction: column; align-items: center; justify-content: center; justify-items: center; align-content: center; padding: 0 5px;}
+.horizontal {display: flex; justify-content: center; align-items: top; }
 .same {box-sizing: border-box; height: 55px; padding: 0px; margin: 0px;}
 /* .vertical.right {padding: 0 80px; } */
 

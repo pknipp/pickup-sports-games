@@ -70,7 +70,11 @@ const ViewEvent = ({ match }) => {
         let newEvent = (await res.json()).event;
         let newSkills = [...newEvent.Skills];
         setSkills(newSkills);
-        let newBoolTypes = {genders: genders.slice(0, newEvent.sport.nGenders), ...newEvent.boolTypes};
+        // let newBoolTypes = {genders: genders.slice(0, newEvent.sport.nGenders), ...newEvent.boolTypes};
+        let newBoolTypes = {...newEvent.boolTypes};
+        if (newEvent.sport.nGenders) {
+          newBoolTypes = {genders: genders.slice(0, newEvent.sport.nGenders), ...newBoolTypes};
+        }
         newEvent.Sport = newEvent.sport.Name;
         let newPlayers = newEvent.players;
         newPlayers.forEach(player => {

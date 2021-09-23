@@ -29,7 +29,11 @@ const EditReservation = ({ match }) => {
       newReservation.event.dateTime = moment(newReservation.event.dateTime).local().format().slice(0,-9);
 
       // "Genders" booleans come from context, whereas the other booleans come from the db.
-      let newBoolTypes = {genders: genders.slice(0, newReservation.nGenders), ...newReservation.event.boolTypes};
+      // let newBoolTypes = {genders: genders.slice(0, newReservation.nGenders), ...newReservation.event.boolTypes};
+      let newBoolTypes = {...newReservation.event.boolTypes};
+      if (newReservation.nGenders) {
+        newBoolTypes = {genders: genders.slice(0, newReservation.nGenders), ...newBoolTypes};
+      }
       // Decode base-2 integer in db to determine boolean array for each boolType.
       Object.entries(newBoolTypes).forEach(([boolType, bools]) => {
         bools.forEach((bool, i) => {
@@ -103,7 +107,7 @@ const EditReservation = ({ match }) => {
           {reservation.event?.dateTime.split('T')[1]}.
         </h3>
         <span><h4>{reservationId ? "Below are" : "Specify below"} your willingnesses for ...</h4></span>
-        <div>
+        <div className="horizontal">
           {/* Create the checkboxes one boolType at a time. */}
           {Object.entries(boolTypes).reverse().map(([boolType, boolArray], index1) => (
             <div key={boolType}><br/>
@@ -117,10 +121,12 @@ const EditReservation = ({ match }) => {
                   :
                 </h4>
               </div>
+              <div className="vertical">
+                <div>
               {boolArray?.map((bool, index2) => (
                 <div key={index2} className="checkboxPair">
                   {/* label for the checkbox */}
-                  <span>{bool[0]}</span>
+                  <span>{bool[0] === "mixed" ? "*" : ""}{bool[0]}</span>
                   <input
                     type="checkbox"
                     // value for the checkbox
@@ -135,14 +141,18 @@ const EditReservation = ({ match }) => {
                   />
                 </div>
               ))}
+              </div>
+              </div>
             </div>
           ))}
-          {reservation.nGenders < 4 ? null :
-            '(Here the term "mixed" has the usual meaning for this sport and/or league, in terms of the male/female ratio on a team.)'
-          }
-          <br/>
-          <br/>
+          <br/><br/>
         </div>
+        <div>
+        {reservation.nGenders < 4 ? null :
+            '*Here the term "mixed" has the usual meaning for this sport and/or league, in terms of the male/female ratio on a team.'
+          }
+        </div>
+        <br/><br/>
 
         <span><h4>Extra info about your reservation (optional):</h4></span>
 
