@@ -145,14 +145,13 @@ const EditReservation = ({ match }) => {
               </div>
             </div>
           ))}
-          <br/><br/>
         </div>
         <div>
         {reservation.nGenders < 4 ? null :
             '*Here the term "mixed" has the usual meaning for this sport and/or league, in terms of the male/female ratio on a team.'
           }
         </div>
-        <br/><br/>
+        <br/>
 
         <span><h4>Extra info about your reservation (optional):</h4></span>
 

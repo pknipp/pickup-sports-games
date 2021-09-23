@@ -1,5 +1,3 @@
-# Pickup Sports
-
 # Contents
 
 [Heroku deployment](https://pickup-sports-events.herokuapp.com)
@@ -110,7 +108,7 @@ are JSON.parsed immediately after querying from the database and are JSON.string
 
 [go to next section ("Base-2 encoding and decoding of Reservation willingnesses")](#base-2-encoding-and-decoding-of-reservation-willingnesses)
 
-The API's main purpose in our project is to enable the User to know the travel time between his/her address and that of a particular Event. For instance when the User views all of the Events for which he/she may make a Reservation, that table may be sorted by the values in that column, as is the case in the screenshot of the "Home" component below. (Note that this screenshot also shows an activated "Tooltip" indicating the Nicknames of the 10 Users who have made Reservations for this Event.)
+The API's main purpose in our project is to enable the User to know the travel time between his/her address and that of a particular Event. For instance when the User views all of the Events for which he/she may make a Reservation, that table may be sorted by the values in that column, as is the case in the screenshot of the "Home" component below. (Note that this screenshot also shows an activated "Tooltip" indicating the Nicknames of the 9 Users who have made Reservations for the Tallahassee bolleyball game.)
 
 ![Home](assets/Home.png)
 
@@ -159,12 +157,7 @@ In this case, there is one origin (the White House) and three destinations (Pitt
 ```
   Note that this API can handle precise addresses (like that of the White House, above), incomplete/vague addresses ("Pittsburgh"), or those of locations to/from which it is impossible to drive ("Honolulu").  Our seeder data for the values of User.Address and Event.Location have been sanitized to include only the names of cities accessible by car from the majority of places in the contiguous United States.
 
-  Our back-end's POST/PUT routes for the Users and Events table allow for the inclusion of new addresses in the database, and we sanitize each of these changes by confirming that
-
-
-    checks conducted during POST/PUT of user and event
-        access to NYC?
-        returned address is suitable?
+  Our back-end's POST/PUT routes for the Users and Events table allow for the inclusion of new addresses in the database, and we sanitize each of these changes by confirming that the distance-matrix API can find a route between New York City and User.address or Event.location.  We also alert the User to the fact that the API returns the API's version of the address, to allow the User to detect whether or not the API is misinterpreting the address entered by the user.
 
 <!-- ## player/owner dichotomy? -->
 

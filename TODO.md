@@ -20,9 +20,8 @@ MVP goals:
 1. More drastic things to do if EditEvent changes gameTypeId:
         - cancel reservations?
         - trigger email to players?
-1. Separate contexts into auth, gender, etc.
 1. Create a 4th column in Favorites table, to include any sports-specific links.
-1. Polish README.md.
+1. Polish README.md, especially by including code snippets which indicate the sanitatizing/checking of User.address and Event.Location, at the time of POST/PUT.
 1. Polish front-end.
 1. In ViewEvent component, list boolType checkboxes horizontally (e.g., horizontal array of 3 vertical arrays).
 1. Eliminate bug ("000:000") which appears when destination = origin (or when travel time is an integer number of hours)
