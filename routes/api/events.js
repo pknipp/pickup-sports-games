@@ -36,13 +36,12 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
   const user = req.user;
   // array of ids of User's favorite sports
   const mySportIds = (await Favorite.findAll({where: {userId: user.id}})).map(fav => fav.sportId);
-  // array of
-  // const possibleFavorites = (await Favorite.findAll()).filter(fav => mySportIds.includes(fav.sportId));
-  const possibleFavorites = await Favorite.findAll({where: {userId: user.id}});
+  const possibleFavorites = (await Favorite.findAll()).filter(fav => mySportIds.includes(fav.sportId));
+  // array of Events which would qualify as my Favorites
   const events = (await Event.findAll()).filter(event => {
     return possibleFavorites.map(fav => fav.id).includes(event.favoriteId);
   }).map(event => event.dataValues);
-  // initialize array of
+  // initialize array of Event.Location's
   const allVenues = [];
   for (let i = 0; i < events.length; i++) {
       let event = events[i];
@@ -50,10 +49,12 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
       let eventFavorite = await Favorite.findByPk(event.favoriteId);
       let eventSport = await Sport.findByPk(eventFavorite.sportId);
       event.Sport = eventSport.Name;
+      // Transform from string to array.
       event.Skills = JSON.parse(eventSport.Skills);
       event["Event organizer"] = (await User.findByPk(eventFavorite.userId)).dataValues.Nickname;
       let reservations = await Reservation.findAll({where: {eventId: event.id}});
       event["Player reservations"] = reservations.length;
+      // Nicknames will be visible in Tooltip in Home component
       let Nicknames = [];
       for (let i = 0; i < reservations.length; i++) {
         Nicknames.push((await User.findByPk(reservations[i].userId)).Nickname);

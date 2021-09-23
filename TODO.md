@@ -25,6 +25,7 @@ MVP goals:
 1. Polish front-end.
 1. DRY index.css
 1. In ViewEvent component, center the checkbox-pair column for each boolType.
+1. Find bug that seems to be mis-placing some Reservations?
 1. Eliminate bug ("000:000") which appears when destination = origin (or when travel time is an integer number of hours)
 
 stretch goals:

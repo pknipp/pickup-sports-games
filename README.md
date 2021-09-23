@@ -120,7 +120,7 @@ Below is a screenshot of the front-end component "EditReservation" which allows 
 
 [go to next section ("Base-2 encoding and decoding of Reservation willingnesses")](#base-2-encoding-and-decoding-of-reservation-willingnesses)
 
-The API's main purpose in our project is to enable the User to know the travel time between his/her address and that of a particular Event. For instance when the User views all of the Events for which he/she may make a Reservation, that table may be sorted by the values in that column, as is the case in the screenshot of the "Home" component below. (Note that this screenshot also shows an activated "Tooltip" indicating the Nicknames of the 9 Users who have made Reservations for the Tallahassee bolleyball game.)
+The API's main purpose in our project is to enable the User to know the travel time between his/her address and that of a particular Event. For instance when the User views all of the Events for which he/she may make a Reservation, that table may be sorted by the values in that column, as is the case in the screenshot of the "Home" component below. (Note that this screenshot also shows an activated "Tooltip" indicating the Nicknames of the 11 Users who have made Reservations for the Garland football game.)
 
 ![Home](assets/Home.png)
 
