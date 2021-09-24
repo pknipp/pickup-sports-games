@@ -25,7 +25,7 @@ const EditEvent = ({ match }) => {
   const [Location, setLocation] = useState('');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
-  const [status, setStatus] = useState(false);
+  const [needsContinue, setNeedsContinue] = useState(false);
   const [warning, setWarning] = useState(false);
 
   let history = useHistory();
@@ -72,35 +72,18 @@ const EditEvent = ({ match }) => {
     });
     newEvent.dateTime = moment(newEvent.dateTime).local().format().slice(0, -6);
 
-    if (newEvent.message) {
-      setStatus(false);
+    if (newEvent.Location === Location) {
+      proceed();
     } else {
-      if (newEvent.Location === Location) {
-        setStatus(false);
-        proceed();
-      } else {
-        newEvent.message = `You specified the event location as ${Location}, which the system interpreted as indicated  above.  If this is acceptable to you, click the "Continue" button, below.  If not, modify the location above and   click "Update event".`;
-        setStatus(true);
-      }
+      setNeedsContinue(!newEvent.message);
+      setMessage(newEvent.message || `You specified the event location as ${Location}, which the system interpreted as  indicated  above.  If this is acceptable to you, click the "Continue" button, below.  If not, modify the   location above and   click "Update event".`);
+      setEvent({...event, ...newEvent});
     }
-    setMessage(newEvent.message);
-    setEvent({...event, ...newEvent});
-
-    // if (!newEvent.message) {
-    //   if (newEvent.Location !== Location) {
-    //     setStatus(true);
-    //     newEvent.message = `You specified the event location as ${Location}, which the system interpreted as indicated  above.  If this is acceptable to you, click the "Continue" button, below.  If not, modify the location above and   click "Update event".`;
-    //   }
-    // }
-    // setMessage(newEvent.message);
-    // setEvent({...event, ...newEvent});
-    // setRerender(rerender + 1);
   };
 
   const handleContinue = e => {
     e.preventDefault();
     proceed();
-    // history.push(wantsToPlay ? `/reservations/0-${event.id}` : '/');
   }
 
   const proceed = () => history.push(wantsToPlay ? `/reservations/0-${event.id}` : '/');
@@ -243,7 +226,7 @@ const EditEvent = ({ match }) => {
           </button>
         </form>
       }
-      {!event.id || !status ? null :
+      {!event.id || !needsContinue ? null :
         <form className="auth" onSubmit={handleContinue}>
           <button color="primary" variant="outlined" type="submit">
             Continue
