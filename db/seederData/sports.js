@@ -69,17 +69,13 @@ module.exports = {
         },
         {
             Name: "Lacrosse (men's)",
-            boolTypes: {
-                positions: ["goalie", "defense", "midfield", "attack"],
-            },
+            boolTypes: { positions: ["goalie", "defense", "midfield", "attack"] },
             nGenders: 0,
             Skills,
         },
         {
             Name: "Lacrosse (women's)",
-            boolTypes: {
-                positions: ["goalie", "defense", "midfield", "attack"],
-            },
+            boolTypes: { positions: ["goalie", "defense", "midfield", "attack"] },
             nGenders: 0,
             Skills,
         },

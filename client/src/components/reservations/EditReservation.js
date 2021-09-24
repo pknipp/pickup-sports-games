@@ -112,7 +112,7 @@ const EditReservation = ({ match }) => {
           {Object.entries(boolTypes).reverse().map(([boolType, boolArray], index1) => (
             <div key={boolType}><br/>
               <div>
-                <h4>
+                <h4 className="center">
                   ...
                   {/* The following ternary only makes the grammar proper. */}
                   {index1 && index1 === Object.keys(boolTypes).length - 1 ? " and " : " "}
@@ -121,7 +121,7 @@ const EditReservation = ({ match }) => {
                   :
                 </h4>
               </div>
-              <div className="vertical">
+              <div className="vertical center">
                 <div>
               {boolArray?.map((bool, index2) => (
                 <div key={index2} className="checkboxPair">
