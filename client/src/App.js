@@ -51,9 +51,10 @@ const App = () => {
   const [fetchWithCSRF] = useState(() => fetch);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [rerender, setRerender] = useState(0);
+  // const [rerender, setRerender] = useState(0);
   const genders = ["men's", "women's", "gender neutral", "mixed"];
-  const contextValue = {fetchWithCSRF, currentUser, setCurrentUser, rerender, setRerender,
+  const contextValue = {fetchWithCSRF, currentUser, setCurrentUser,
+    // rerender, setRerender,
     genders};
 
   const loadUser = () => {

@@ -6,7 +6,9 @@ import Context from '../../context';
 // import fetch from 'node-fetch';
 
 const EditEvent = ({ match }) => {
-  const { fetchWithCSRF, rerender, setRerender } = useContext(Context);
+  const { fetchWithCSRF,
+    // rerender, setRerender
+  } = useContext(Context);
   const properties = [
     'favoriteId',
     'Location',
@@ -106,7 +108,7 @@ const EditEvent = ({ match }) => {
         }, {wantsToPlay: false});
         [nullEvent.id, nullEvent.favoriteId] = [0, 0];
         setEvent(nullEvent);
-        setRerender(rerender + 1);
+        // setRerender(rerender + 1);
         history.push('/');
       }
     }

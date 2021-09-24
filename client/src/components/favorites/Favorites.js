@@ -19,7 +19,7 @@ const Favorites = () => {
   const [sports, setSports] = useState([]);
   const [refetch, setRefetch] = useState(false);
 
-  let history = useHistory();
+  // let history = useHistory();
 
   useEffect(() => {
     (async() => {

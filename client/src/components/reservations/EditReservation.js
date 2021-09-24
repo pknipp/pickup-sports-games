@@ -8,7 +8,9 @@ import Context from '../../context';
 const EditReservation = ({ match }) => {
   const resEventId = match.params.resEventId;
   const [reservationId, eventId] = resEventId.split('-').map(id => Number(id));
-  const { fetchWithCSRF, currentUser, rerender, setRerender, genders } = useContext(Context);
+  const { fetchWithCSRF, currentUser,
+    // rerender, setRerender,
+    genders } = useContext(Context);
   let [boolTypes, setBoolTypes] = useState({genders});
   const nullReservation =
     {id: 0, userId: 0, eventId: 0, event: {Location: '', dateTime: ''}, boolVals: {genders: 0}};
@@ -78,24 +80,17 @@ const EditReservation = ({ match }) => {
     if (reservation.id) {
       // PUT route
       setMessage("Success");
+      setReservation(newReservation);
     } else {
       // POST route
       history.push('/');
     }
-    setReservation(newReservation);
-    // // Is the following line necessary?
-    setRerender(rerender + 1);
   };
 
   const handleDelete = async e => {
     e.preventDefault();
     const res = await fetch(`/api/reservations/${reservation.id}`, { method: 'DELETE'});
-    if (res.ok) {
-      setReservation(nullReservation);
-      // Is the following unnecessary?
-      setRerender(rerender + 1);
-      history.push('/');
-    }
+    if (res.ok) history.push('/');
   }
 
   return (

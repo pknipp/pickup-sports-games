@@ -7,7 +7,9 @@ import Context from '../../context';
 import { time } from 'faker';
 
 const ViewEvent = ({ match }) => {
-  const { fetchWithCSRF, rerender, setRerender, genders } = useContext(Context);
+  const { fetchWithCSRF,
+    // rerender, setRerender,
+    genders } = useContext(Context);
   const eventProps = ['Location', 'dateTime', 'Extra info', 'Minimum skill', 'Maximum skill'];
   const userProps = ['Email', 'Nickname', 'Cell',
   // 'photo'
@@ -57,7 +59,7 @@ const ViewEvent = ({ match }) => {
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
 
-  let history = useHistory();
+  // let history = useHistory();
 
   // const createMarkup = header => ({__html: `<span>${header}</span>`});
   // const MyComponent = header => <div dangerouslySetInnerHTML={createMarkup(header)} />;

@@ -10,10 +10,10 @@ const checkLocation = require('./checkLocation');
 
 // const BUCKET = 'volleyballbucket';
 
-const email = check('Email').isEmail().withMessage('Give a valid email address').normalizeEmail();
+const email = check('Email').isEmail().withMessage('Give a valid email address.').normalizeEmail();
 // const firstName = check('firstName').not().isEmpty().withMessage('Provide first name');
 // const lastName = check('lastName').not().isEmpty().withMessage('Provide last name');
-const password = check('password').not().isEmpty().withMessage('Provide a password');
+const password = check('password').not().isEmpty().withMessage('Provide a password.');
 
 // used in User component
 router.post('', [email, password],

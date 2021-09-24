@@ -25,7 +25,7 @@ const User = () => {
   const [errors, setErrors] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [sports, setSports] = useState([]);
-  const [refetch, setRefetch] = useState(false);
+  // const [refetch, setRefetch] = useState(false);
 
   let history = useHistory();
 
@@ -38,7 +38,8 @@ const User = () => {
         setFavorites(data.favorites.sort((a, b) => a.Name - b.Name));
       }
     })();
-  }, [refetch]);
+  // }, [refetch]);
+  }, []);
 
   const handlePutPost = async e => {
     e.preventDefault();
@@ -56,17 +57,16 @@ const User = () => {
       // PUT route
       setCurrentUser(user);
       setParams({...user, password: '', password2: ''});
-      message = (res.ok && !message) ? "Success" : message;
+      setMessage((res.ok && !message) ? "Success" : message);
+      // setRefetch(!refetch);
     } else {
       // POST route
       if (res.ok && !message) {
         setCurrentUser(user);
-        setParams(user);
-        history.push('/');
+        return history.push('/');
       }
+      setMessage(message);
     }
-    setMessage(message);
-    setRefetch(!refetch);
   };
 
   const handleDelete = async e => {
@@ -79,6 +79,7 @@ const User = () => {
       setCurrentUser(null);
     }
   }
+
   return (
     <div className="vertical">
       <form className="auth vertical" onSubmit={handlePutPost}>
