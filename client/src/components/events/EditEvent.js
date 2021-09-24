@@ -22,6 +22,7 @@ const EditEvent = ({ match }) => {
     return {[prop]: '', Sports: [], ...pojo};
   }, {id: Number(match.params.eventId)}));
   const [wantsToPlay, setWantsToPlay] = useState(false);
+  const [Location, setLocation] = useState('');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
   const [status, setStatus] = useState(false);
@@ -52,7 +53,7 @@ const EditEvent = ({ match }) => {
         setEvent(newEvent);
       }
     })();
-  }, [event.id]);
+  }, []);
 
   const handlePutPost = async e => {
     e.preventDefault();
@@ -64,23 +65,45 @@ const EditEvent = ({ match }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(event)
     });
-    let {id, message: newMessage, Location} = await res.json();
+    let newEvent = await res.json();
     // React likes '' but does not like null.
-    // Object.entries(newEvent).forEach(([key, value]) => {
-    //   if (value === null) newEvent[key] = '';
-    // });
-    // newEvent.dateTime = moment(newEvent.dateTime).local().format().slice(0, -6);
-    let locationMessage = `You specified the event location as ${event.Location}, which the system interpreted as indicated above.  If this is acceptable to you, click the "Continue" button, below.  If not, modify the location above and click "Update event".`;
-    setStatus(!newMessage);
-    setMessage(newMessage || locationMessage);
-    setEvent({...event, id, Location});
+    Object.entries(newEvent).forEach(([key, value]) => {
+      if (value === null) newEvent[key] = '';
+    });
+    newEvent.dateTime = moment(newEvent.dateTime).local().format().slice(0, -6);
+
+    if (newEvent.message) {
+      setStatus(false);
+    } else {
+      if (newEvent.Location === Location) {
+        setStatus(false);
+        proceed();
+      } else {
+        newEvent.message = `You specified the event location as ${Location}, which the system interpreted as indicated  above.  If this is acceptable to you, click the "Continue" button, below.  If not, modify the location above and   click "Update event".`;
+        setStatus(true);
+      }
+    }
+    setMessage(newEvent.message);
+    setEvent({...event, ...newEvent});
+
+    // if (!newEvent.message) {
+    //   if (newEvent.Location !== Location) {
+    //     setStatus(true);
+    //     newEvent.message = `You specified the event location as ${Location}, which the system interpreted as indicated  above.  If this is acceptable to you, click the "Continue" button, below.  If not, modify the location above and   click "Update event".`;
+    //   }
+    // }
+    // setMessage(newEvent.message);
+    // setEvent({...event, ...newEvent});
     // setRerender(rerender + 1);
   };
 
   const handleContinue = e => {
     e.preventDefault();
-    history.push(wantsToPlay ? `/reservations/0-${event.id}` : '/');
+    proceed();
+    // history.push(wantsToPlay ? `/reservations/0-${event.id}` : '/');
   }
+
+  const proceed = () => history.push(wantsToPlay ? `/reservations/0-${event.id}` : '/');
 
   const handleDelete = async e => {
     e.preventDefault();
@@ -171,7 +194,11 @@ const EditEvent = ({ match }) => {
         <span>Event location:</span>
         <input
           type="text" placeholder="Location" name="Location" value={event.Location}
-          onChange={e => setEvent({...event, Location: e.target.value})}
+          onChange={e => {
+            let newLocation = e.target.value;
+            setEvent({...event, Location: newLocation});
+            setLocation(newLocation);
+          }}
         />
         <span>Date/time:</span>
         <input

@@ -18,14 +18,12 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
   req.body.userId = req.user.id;
   let checked = await checkLocation(req.body.Location);
   if (checked.success) {
-    // Save originalLocation so that User can compare it with that returned from api.
-    let originalLocation = req.body.Location;
     // Overwrite User's suggested address with that returned from api.
     req.body.Location = checked.Location;
-    event = (await Event.create(req.body)).dataValues;
+    event = await Event.create(req.body);
     // Augment event POJO with fact that no reservations have yet been made, even by organizer him/herself.
-    event = {...event, count: 0, reservationId: 0};
-    res.status(201).json({id: event.id, message, Location: originalLocation});
+    // event = {...event, count: 0, reservationId: 0};
+    res.status(201).json({id: event.id, Location: req.body.Location});
   } else {
     message = `There is something wrong with your event's location (${req.body.Location}). Try a different one.`
     res.status(400).json({message});
@@ -35,7 +33,7 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
 
 // used by Home component (AKA ViewEvents)
 router.get('', [authenticated], asyncHandler(async(req, res, next) => {
-  // try {
+  try {
   const user = req.user;
   // array of ids of User's favorite sports
   const mySportIds = (await Favorite.findAll({where: {userId: user.id}})).map(fav => fav.sportId);
@@ -83,7 +81,7 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     nBundle++;
   }
   res.json({events, sportsLength: mySportIds.length});
-  // }catch(e) {console.log(e)}
+  }catch(e) {console.log(e)}
 }));
 
 // Used by EditGame and ViewGame components
@@ -122,7 +120,7 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
 // Used by EditGame component.
 // Do we want to allow an event owner to transfer event-"owner"ship to another user?
 router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
-  // try {
+  try {
   const eventId = Number(req.params.id);
   let event = await Event.findByPk(eventId);
   let favorite = await Favorite.findByPk(event.favoriteId);
@@ -133,7 +131,7 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
   if (checked.success) {
     req.body.Location = checked.Location;
   } else {
-    message = `There is something wrong with your event's location (${req.body.Location}).`
+    message = `There is something wrong with your event's location (${req.body.Location}). Try a different one.`
     delete req.body.Location;
   }
   if (req.body.sportId !== favorite.sportId) {
@@ -146,8 +144,8 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
       event[key] = value !== '' ? value : null;
   });
   await event.save();
-  res.status(200).json({id: event.id, message});
-  // }catch(e) {console.log(e)}
+  res.status(message ? 400 : 200).json({...event.dataValues, message});
+  }catch(e) {console.log(e)}
 }));
 
 router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {
