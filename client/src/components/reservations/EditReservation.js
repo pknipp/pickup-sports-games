@@ -8,14 +8,12 @@ import Context from '../../context';
 const EditReservation = ({ match }) => {
   const resEventId = match.params.resEventId;
   const [reservationId, eventId] = resEventId.split('-').map(id => Number(id));
-  const { fetchWithCSRF, currentUser,
-    // rerender, setRerender,
-    genders } = useContext(Context);
+  const { fetchWithCSRF, user, genders } = useContext(Context);
   let [boolTypes, setBoolTypes] = useState({genders});
   const nullReservation =
     {id: 0, userId: 0, eventId: 0, event: {Location: '', dateTime: ''}, boolVals: {genders: 0}};
   const [reservation, setReservation] = useState({
-    ...nullReservation, userId: currentUser.id, id: reservationId, eventId
+    ...nullReservation, userId: user.id, id: reservationId, eventId
   });
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);

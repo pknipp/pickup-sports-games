@@ -14,7 +14,7 @@ const Favorites = () => {
   columns[2].sortFunc = (a, b, order, dataField, rowA, rowB) => {
     return (order === "asc" ? 1 : -1) * (rowA.Skill - rowB.Skill);
   };
-  const { currentUser } = useContext(Context);
+  const { user } = useContext(Context);
   const [favorites, setFavorites] = useState([]);
   const [sports, setSports] = useState([]);
   const [refetch, setRefetch] = useState(false);

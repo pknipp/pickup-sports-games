@@ -4,12 +4,12 @@ import { NavLink } from 'react-router-dom';
 import Context from '../context';
 
 const NavBar = () => {
-  const { fetchWithCSRF, currentUser } = useContext(Context);
+  const { fetchWithCSRF, user } = useContext(Context);
 
   const head = (
     <h1>
         <p align="center">
-            Welcome {currentUser ? currentUser.Nickname : ""} to pickup sports!
+            Welcome {user?.Nickname || ""} to pickup sports!
         </p>
     </h1>
 );
@@ -18,10 +18,10 @@ const NavBar = () => {
     <>
         <h1>
             <p align="center">
-                Welcome {currentUser ? currentUser.Nickname : ""} to pickup sports!
+                Welcome {user?.Nickname || ""} to pickup sports!
             </p>
         </h1>
-        <p align="center">{!currentUser ? null :
+        <p align="center">{!user ? null :
             <>
                 <NavLink
                     exact to="/"

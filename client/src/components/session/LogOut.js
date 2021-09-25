@@ -5,11 +5,11 @@ import Context from '../../context';
 
 const LogOut = () => {
 
-  const { fetchWithCSRF, currentUser, setCurrentUser } = useContext(Context);
+  const { fetchWithCSRF, user, setUser } = useContext(Context);
 
   const logout = async () => {
     const res = await fetch('/api/session', { method: "delete" });
-    if (res.ok) setCurrentUser(null);
+    if (res.ok) setUser(null);
   }
 
   const handleSubmit = e => {
@@ -17,7 +17,7 @@ const LogOut = () => {
     logout();
   }
 
-  return (!currentUser) ? <Redirect to="/login" /> : (
+  return (!user?.id) ? <Redirect to="/login" /> : (
     <form className="simple" onSubmit={handleSubmit}>
       <button color="primary" variant="outlined" type="submit">Logout</button>
     </form>

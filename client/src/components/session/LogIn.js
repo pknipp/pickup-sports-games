@@ -7,7 +7,7 @@ const LogIn = () => {
   const [Password, setPassword] = useState("password");
   const [message, setMessage] = useState('');
   const [sports, setSports] = useState([]);
-  const { fetchWithCSRF, currentUser, setCurrentUser } = useContext(Context);
+  const { fetchWithCSRF, user, setUser } = useContext(Context);
 
   useEffect(() => {
     (async () => {
@@ -25,7 +25,7 @@ const LogIn = () => {
     let data = await response.json();
     // console.log("data = ", data);
     if (response.ok) {
-      setCurrentUser(data.user);
+      setUser(data.user);
     } else {
       setMessage(data.message || data.error.errors[0]);
     }
@@ -38,7 +38,7 @@ const LogIn = () => {
     if (!message) login(Email, Password);
   }
 
-  return (currentUser) ? <Redirect to="/" /> : (
+  return (user?.id) ? <Redirect to="/" /> : (
     <div className="center">
     <div className="simple narrow">
 

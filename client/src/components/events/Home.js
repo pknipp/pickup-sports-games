@@ -12,7 +12,7 @@ const Home = () => {
         ["events for which you are registered", "Manage reservation"],
         ["events for which you are not registered", "Create reservation"]
     ];
-    const { currentUser, gender } = useContext(Context);
+    const { user, genders } = useContext(Context);
     const [loading, setLoading] = useState(true);
     const [allEvents, setAllEvents] = useState([]);
     const [events, setEvents] = useState([]);
@@ -60,7 +60,7 @@ const Home = () => {
             }
             setLoading(false);
         })()
-    }, [currentUser.id]);
+    }, [user.id]);
 
     useEffect(() => {
         let newEvents = allEvents.filter((event, i) => {
@@ -68,7 +68,7 @@ const Home = () => {
             if (selectedOption) {
                 bool = (!(selectedOption - 1) !== !event.reservationId);
             } else {
-                bool = (event["Event organizer"] === currentUser.Nickname);
+                bool = (event["Event organizer"] === user.Nickname);
             }
             return bool;
         });

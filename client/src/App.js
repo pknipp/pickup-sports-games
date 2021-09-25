@@ -19,14 +19,14 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 )
 
 const ProtectedRoute = ({ component: Component, path, exact, ...rest}) => {
-  const { currentUser } = useContext(Context)
+  const { user } = useContext(Context)
   return (
       <Route
           {...rest}
           path={path}
           exact={exact}
-          render={props => currentUser
-              ? <Component currentUser={currentUser} {...rest} />
+          render={props => user
+              ? <Component user={user} {...rest} />
               : <Redirect to="/login" />
           }
       />
@@ -34,13 +34,13 @@ const ProtectedRoute = ({ component: Component, path, exact, ...rest}) => {
 }
 
 const AuthRoute = ({ component: Component, path, exact, ...rest }) => {
-  const { currentUser } = useContext(Context);
+  const { user } = useContext(Context);
   return (
       <Route
           {...rest}
           path={path}
           exact={exact}
-          render={() => currentUser ? <Redirect to="/" />
+          render={() => user ? <Redirect to="/" />
               : <Component {...rest} />
           }
       />
@@ -49,11 +49,11 @@ const AuthRoute = ({ component: Component, path, exact, ...rest }) => {
 
 const App = () => {
   const [fetchWithCSRF] = useState(() => fetch);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   // const [rerender, setRerender] = useState(0);
   const genders = ["men's", "women's", "gender neutral", "mixed"];
-  const contextValue = {fetchWithCSRF, currentUser, setCurrentUser,
+  const contextValue = {fetchWithCSRF, user, setUser,
     // rerender, setRerender,
     genders};
 
@@ -62,7 +62,7 @@ const App = () => {
     if (authToken) {
       try {
         const payloadObj = JSON.parse(atob(authToken.split(".")[1]))
-        setCurrentUser(payloadObj.data);
+        setUser(payloadObj.data);
       } catch (e) {
         Cookies.remove("token");
       }

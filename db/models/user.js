@@ -29,14 +29,14 @@ module.exports = (sequelize, DataTypes) => {
           exclude: ["Updated at"],
         },
       },
-      scopes: {
-        currentUser: {
-          attributes: { exclude: ["hashedPassword"] },
-        },
-        loginUser: {
-          attributes: {},
-        },
-      },
+      // scopes: {
+      //   currentUser: {
+      //     attributes: { exclude: ["hashedPassword"] },
+      //   },
+      //   loginUser: {
+      //     attributes: {},
+      //   },
+      // },
     }
   );
 
@@ -53,12 +53,12 @@ module.exports = (sequelize, DataTypes) => {
     }, {});
   }
 
-  User.login = async function({ Email, Password }) {
-    const user = await User.scope('loginUser').findOne({where: [{ Email }]});
-    if (user && user.validatePassword(Password)) {
-      return await User.scope('currentUser').findByPk(user.id);
-    }
-  };
+  // User.login = async function({ Email, Password }) {
+  //   const user = await User.scope('loginUser').findOne({where: [{ Email }]});
+  //   if (user && user.validatePassword(Password)) {
+  //     return await User.scope('currentUser').findByPk(user.id);
+  //   }
+  // };
 
   User.prototype.validatePassword = function(Password) {
     return bcrypt.compareSync(Password, this.hashedPassword.toString());
@@ -75,9 +75,9 @@ module.exports = (sequelize, DataTypes) => {
     return bcrypt.compareSync(Password, this.hashedPassword.toString());
   };
 
-  User.getCurrentUserById = async function(id) {
-    return await User.scope("currentUser").findByPk(id);
-  };
+  // User.getCurrentUserById = async function(id) {
+  //   return await User.scope("currentUser").findByPk(id);
+  // };
 
   return User;
 };
