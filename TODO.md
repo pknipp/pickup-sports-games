@@ -13,6 +13,7 @@ Figure out which time to display: local or zulu.
 MVP goals:
 1. Figure out how to reduce the number of fetches, or use joins rather than two or more queries?
 1. When attempting to delete a row in a table of the db, render a warning if rows in other tables are dependent upon this row.  Such dependency-chains include user/reservation, user/(favorite)/event/reservation, favorite/event/reservation, event/reservation (done)
+1. Comment out all back-end try/catch statements.
 1. Figure out why Line 105 of ViewEvent yields an error when attempting to access ViewEvent after editing a reservation.
 1. Ensure that event.time changes when viewed by those in other time zones, and get event.dateTime to work properly on heroku.
 1. Other sports to include: golf, archery, cricket

@@ -38,20 +38,20 @@ const User = () => {
         setFavorites(data.favorites.sort((a, b) => a.Name - b.Name));
       }
     })();
-  // }, [refetch]);
   }, []);
 
   const handlePutPost = async e => {
     e.preventDefault();
-    let message = !params.Email ? "Email address is needed." :
-                  !params.password?"Password is needed." :
+    let message = !params.Email ? "Provide an email address." :
+                  !params.password?"Provide a password." :
                   params.password !== params.password2 ? "Passwords must match" : "";
     if (message) return setMessage(message);
     const res = await fetch(`/api/users`, { method: currentUser ? 'PUT': 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params)
     });
-    let user = (await res.json()).user;
+    let user = await res.json();
+    console.log("user = ", user)
     message = user.message;
     if (currentUser) {
       // PUT route
