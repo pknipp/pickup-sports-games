@@ -56,65 +56,53 @@ router.post('', [email, password],
 // used in putPost handler of User component
 router.put('', [authenticated, email, password],
   asyncHandler(async (req, res, next) => {
-    try{
-    let [user, message, status] = [req.user, '', 200];
+    // try{
+    // let [user, message, status] = [req.user, '', 200];
+    let user = req.user;
     const errors = validationResult(req).errors;
-    if (errors.length) return res.status(400).json({message: errors[0].msg});
+    if (errors.length) return res.status(400).json({messages: [errors[0].msg]});
     if (user.id === 1) {
-      message = "You cannot modify our 'demo' user's details, which are needed in order to allow our site's visitors  to login easily.  Feel free to use the 'Signup' route to create a new user if you'd like to test out the   'Manage Account' route.";
-      status = 400;
-    } else {
-      let otherUser1 = await User.findOne({
-        where: {
-          [Sequelize.Op.and]: [
-            { Email: req.body.Email },
-            { [Sequelize.Op.not]: { id: user.id } }
-          ]
-        }
-      });
-      let otherUser2 = await User.findOne({
-        where: {
-          [Sequelize.Op.and]: [
-            { Nickname: req.body.Nickname },
-            { [Sequelize.Op.not]: { id: user.id } }
-          ]
-        }
-      });
-      if (otherUser1) {
-        message = `That email (${req.body.Email}) is taken.`;
-        delete req.body.Email;
-      } else if (otherUser2) {
-        message = `That nickname (${req.body.Nickname}) is taken.`;
-        delete req.body.Nickname
-      } else {
-        // confirm that Google Maps API can find a route between user's address & NYC
-        let checked = await checkLocation(req.body.Address);
-        if (checked.success) {
-          req.body.Address = checked.Location;
-        } else {
-          message = `There is something wrong with your new home address (${req.body.Address}).`
-          delete req.body.Address;
-        }
-      }
-      Object.entries(req.body).filter(([key,]) => key !== 'password').forEach(([key, value]) => {
-        user[key] = value;
-      });
-      user = user.setPassword(req.body.password);
-      const { jti, token } = generateToken(user);
-      user.tokenId = jti;
-      res.cookie("token", token);
-      await user.save();
-      if (req.body.index) {
-        let favorites = (await Favorite.findAll({where: {userId: user.id}})).sort((a, b) => a.Name - b.Name);
-        let favorite = favorites[req.body.index - 1];
-        favorite.Skill = req.body.Skill;
-        await favorite.save();
-      }
-      user = user.dataValues;
-      delete user.hashedPassword;
+      return res.status(400).json({messages: ["You cannot modify our 'demo' user's details, which are needed in order to allow our site's visitors  to login easily.  Feel free to use the 'Signup' route to create a new user if you'd like to test out the 'Manage Account' route."]});
     }
-    res.status(status).json({ ...user, message });
-    }catch(e){console.log(e)}
+    let messages = [];
+    for (const key of ["Email", "Nickname"]) {
+      let otherUser = await User.findOne({where: {[Sequelize.Op.and]: [
+        { [key]: req.body[key] },
+        {[Sequelize.Op.not]: { id: user.id } }
+      ]}});
+      if (otherUser) {
+        messages.push(`That ${key} (${req.body[key]}) is taken.`);
+        delete req.body[key];
+      }
+    }
+
+    // confirm that Google Maps API can find a route between user's address & NYC
+    let checked = await checkLocation(req.body.Address);
+    if (checked.success) {
+      req.body.Address = checked.Location;
+    } else {
+      messages.push(`There is something wrong with your new home address (${req.body.Address}).`);
+      delete req.body.Address;
+    }
+
+    Object.entries(req.body).filter(([key,]) => key !== 'password').forEach(([key, value]) => {
+      user[key] = value;
+    });
+    user = user.setPassword(req.body.password);
+    const { jti, token } = generateToken(user);
+    user.tokenId = jti;
+    res.cookie("token", token);
+    await user.save();
+    if (req.body.index) {
+      let favorites = (await Favorite.findAll({where: {userId: user.id}})).sort((a, b) => a.Name - b.Name);
+      let favorite = favorites[req.body.index - 1];
+      favorite.Skill = req.body.Skill;
+      await favorite.save();
+    }
+    user = user.dataValues;
+    delete user.hashedPassword;
+    res.json({...user, messages });
+    // }catch(e){console.log(e)}
   })
 );
 
