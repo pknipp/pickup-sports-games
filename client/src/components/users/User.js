@@ -53,21 +53,23 @@ const User = () => {
       body: JSON.stringify({...user, password, password2})
     });
     let newUser = await res.json();
-    message = newUser.message;
-    if (user) {
-      // PUT route
-      setUser(newUser);
-      // setParams({...newUser, password: '', password2: ''});
-      setMessage((res.ok && !message) ? "Success" : message);
-      // setRefetch(!refetch);
-    } else {
-      // POST route
-      if (res.ok && !message) {
-        setUser(newUser);
-        return history.push('/');
-      }
-      setMessage(message);
-    }
+    let messages = newUser.messages;
+    setUser({...user, ...newUser});
+    setMessage(!res.ok || messages.length ? messages.join(" ") : "Success")
+    // if (user) {
+    //   // PUT route
+    //   setUser(newUser);
+    //   // setParams({...newUser, password: '', password2: ''});
+    //   setMessage((res.ok && !message) ? "Success" : message);
+    //   // setRefetch(!refetch);
+    // } else {
+    //   // POST route
+    //   if (res.ok && !message) {
+    //     setUser(newUser);
+    //     return history.push('/');
+    //   }
+    //   setMessage(message);
+    // }
   };
 
   const handleDelete = async e => {
