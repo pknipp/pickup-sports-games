@@ -44,11 +44,11 @@ const User = () => {
 
   const handlePutPost = async e => {
     e.preventDefault();
-    let message = !user.Email ? "Provide an email address." :
+    let message = !user?.Email ? "Provide an email address." :
                   !password?"Provide a password." :
                   password !== password2 ? "Passwords must match" : "";
     if (message) return setMessage(message);
-    const res = await fetch(`/api/users`, { method: user.id ? 'PUT': 'POST',
+    const res = await fetch(`/api/users`, { method: user?.id ? 'PUT': 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({...user, password, password2})
     });
@@ -95,32 +95,32 @@ const User = () => {
             {/* DRY the following code. */}
             <span>Email address:</span>
             <input
-              type="text" placeholder="Email" name="Email" value={user.Email}
+              type="text" placeholder="Email" name="Email" value={user?.Email}
               onChange={e => setUser({...user, Email: e.target.value})}
             />
             <span>First name:</span>
             <input
-              type="text" placeholder="First name" name="First name" value={user['First name']}
+              type="text" placeholder="First name" name="First name" value={user?.['First name']}
               onChange={e => setUser({...user, ['First name']: e.target.value})}
             />
             <span>Last name:</span>
             <input
-              type="text" placeholder="Last name" name="Last name" value={user['Last name']}
+              type="text" placeholder="Last name" name="Last name" value={user?.['Last name']}
               onChange={e => setUser({...user, ['Last name']: e.target.value})}
             />
             <span>Nickname:</span>
             <input
-              type="text" placeholder="Nickname" name="Nickname" value={user.Nickname}
+              type="text" placeholder="Nickname" name="Nickname" value={user?.Nickname}
               onChange={e => setUser({...user, Nickname: e.target.value})}
             />
             <span>Address:</span>
             <input
-              type="text" placeholder="Address" name="Address" value={user.Address}
+              type="text" placeholder="Address" name="Address" value={user?.Address}
               onChange={e => setUser({...user, Address: e.target.value})}
             />
             <span>Cell number (10 digits):</span>
             <input
-              type="number" placeholder="Cell" name="Cell" value={user.Cell}
+              type="number" placeholder="Cell" name="Cell" value={user?.Cell}
               onChange={e => setUser({...user, Cell: Number(e.target.value)})}
             />
 
@@ -137,10 +137,10 @@ const User = () => {
 
 
         <button color="primary" variant="outlined" type="submit">
-          {user.id ? "Update account" : "Signup"}
+          {user?.id ? "Update account" : "Signup"}
         </button>
         <span style={{color: "red", paddingLeft:"10px"}}>{message}</span>
-        {user.id ? null :
+        {user?.id ? null :
           <span>
             <NavLink className="nav" to="/login" activeClassName="active">
               Login
@@ -148,7 +148,7 @@ const User = () => {
           </span>
         }
       </form>
-      {!user.id ? null :
+      {!user?.id ? null :
         <form className="auth" onSubmit={handleDelete}>
           <button color="primary" variant="outlined" type="submit">
             Delete account

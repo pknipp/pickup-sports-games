@@ -13,7 +13,7 @@ const EditReservation = ({ match }) => {
   const nullReservation =
     {id: 0, userId: 0, eventId: 0, event: {Location: '', dateTime: ''}, boolVals: {genders: 0}};
   const [reservation, setReservation] = useState({
-    ...nullReservation, userId: user.id, id: reservationId, eventId
+    ...nullReservation, userId: user?.id, id: reservationId, eventId
   });
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);

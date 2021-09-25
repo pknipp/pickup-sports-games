@@ -60,7 +60,7 @@ const Home = () => {
             }
             setLoading(false);
         })()
-    }, [user.id]);
+    }, [user?.id]);
 
     useEffect(() => {
         let newEvents = allEvents.filter((event, i) => {
