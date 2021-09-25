@@ -9,7 +9,7 @@ const LogOut = () => {
 
   const logout = async () => {
     const res = await fetch('/api/session', { method: "delete" });
-    if (res.ok) setUser(null);
+    if (res.ok) setUser({});
   }
 
   const handleSubmit = e => {
@@ -17,7 +17,7 @@ const LogOut = () => {
     logout();
   }
 
-  return (!user?.id) ? <Redirect to="/login" /> : (
+  return (!user.id) ? <Redirect to="/login" /> : (
     <form className="simple" onSubmit={handleSubmit}>
       <button color="primary" variant="outlined" type="submit">Logout</button>
     </form>

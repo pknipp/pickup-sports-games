@@ -6,22 +6,22 @@ import Context from '../context';
 const NavBar = () => {
   const { fetchWithCSRF, user } = useContext(Context);
 
-  const head = (
-    <h1>
-        <p align="center">
-            Welcome {user?.Nickname || ""} to pickup sports!
-        </p>
-    </h1>
-);
+//   const head = (
+//     <h1>
+//         <p align="center">
+//             Welcome {(user.id && user.Nickname) || ""} to pickup sports!
+//         </p>
+//     </h1>
+// );
 
   return (
     <>
         <h1>
             <p align="center">
-                Welcome {user?.Nickname || ""} to pickup sports!
+                Welcome {(user.id && user.Nickname) || ""} to pickup sports!
             </p>
         </h1>
-        <p align="center">{!user ? null :
+        <p align="center">{!user.id ? null :
             <>
                 <NavLink
                     exact to="/"

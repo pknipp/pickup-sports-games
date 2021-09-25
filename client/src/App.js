@@ -12,11 +12,11 @@ import EditReservation from "./components/reservations/EditReservation";
 import Home from "./components/events/Home";
 import Context from './context';
 
-const PrivateRoute = ({ component: Component, ...rest }) => (
-  <Route {...rest} render={(props) => (
-    rest.needLogin === true ? <Redirect to='/login' /> : <Component {...props} />   )}
-  />
-)
+// const PrivateRoute = ({ component: Component, ...rest }) => (
+//   <Route {...rest} render={(props) => (
+//     rest.needLogin === true ? <Redirect to='/login' /> : <Component {...props} />   )}
+//   />
+// )
 
 const ProtectedRoute = ({ component: Component, path, exact, ...rest}) => {
   const { user } = useContext(Context)
@@ -25,7 +25,7 @@ const ProtectedRoute = ({ component: Component, path, exact, ...rest}) => {
           {...rest}
           path={path}
           exact={exact}
-          render={props => user
+          render={props => user.id
               ? <Component user={user} {...rest} />
               : <Redirect to="/login" />
           }
@@ -40,7 +40,7 @@ const AuthRoute = ({ component: Component, path, exact, ...rest }) => {
           {...rest}
           path={path}
           exact={exact}
-          render={() => user ? <Redirect to="/" />
+          render={() => user.id ? <Redirect to="/" />
               : <Component {...rest} />
           }
       />
@@ -49,7 +49,7 @@ const AuthRoute = ({ component: Component, path, exact, ...rest }) => {
 
 const App = () => {
   const [fetchWithCSRF] = useState(() => fetch);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
   // const [rerender, setRerender] = useState(0);
   const genders = ["men's", "women's", "gender neutral", "mixed"];

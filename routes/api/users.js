@@ -19,45 +19,36 @@ const password = check('password').not().isEmpty().withMessage('Provide a passwo
 router.post('', [email, password],
   asyncHandler(async (req, res, next) => {
     try {
-    let [user, message, status] = [{}, '', 400];
+    let [user, messages] = [{}, []];
     const errors = validationResult(req).errors;
-    if (errors.length) return res.status(400).json({message: errors[0].msg});
-    let otherUser1 = await User.findOne({ where: { Email: req.body.Email } });
-    let otherUser2 = await User.findOne({ where: { Nickname: req.body.Nickname } });
-    // DRY the following 4 lines.
-    if (otherUser1) {
-      [status, message] = [400, "That email is taken."];
-    } else if (otherUser2) {
-      [status, message] = [400, "That nickname is taken."];
-    } else {
-      // confirm that Google Maps API can find a route between user's address & NYC
-      let checked = await checkLocation(req.body.Address);
-      if (checked.success) {
-        req.body.Address = checked.Location;
-        user = (await User.build(req.body)).setPassword(req.body.password);
-        const { jti, token } = generateToken(user);
-        user.tokenId = jti;
-        res.cookie("token", token);
-        await user.save();
-        sportIds = (await Sport.findAll({})).map(sport => sport.dataValues.id);
-        // Give a new user all minimum values of skill-level. (Now this is done on front, in Favorites component.)
-        // sportIds.forEach(async sportId => await Favorite.create({userId: user.id, sportId, Skill: 0}));
-        user = user.dataValues;
-        delete user.hashedPassword;
-        status = 201;
-      } else {
-        message = `There is something wrong with your address (${req.body.Address}).`
+    if (errors.length) return res.status(400).json({messages: [errors[0].msg]});
+    for (const key of ["Email", "Nickname"]) {
+      let otherUser = await User.findOne({where: {[key]: req.body[key] }});
+      if (otherUser) {
+        messages.push(`That ${key} (${req.body[key]}) is taken.`);
+        delete req.body[key];
       }
     }
-    res.status(status).json({...user, message});
-  }catch(e){console.log(e)}
+    // confirm that Google Maps API can find a route between user's address & NYC
+    let checked = await checkLocation(req.body.Address);
+    if (!checked.success) messages.push(`There is something wrong with your address (${req.body.Address}).`);
+    if (messages.length) return res.status(400).json({messages});
+    req.body.Address = checked.Location;
+    user = (await User.build(req.body)).setPassword(req.body.password);
+    const { jti, token } = generateToken(user);
+    user.tokenId = jti;
+    res.cookie("token", token);
+    await user.save();
+    user = user.dataValues;
+    delete user.hashedPassword;
+    res.status(201).json({...user, messages});
+    }catch(e){console.log(e)}
   }));
 
 // used in putPost handler of User component
 router.put('', [authenticated, email, password],
   asyncHandler(async (req, res, next) => {
     // try{
-    // let [user, message, status] = [req.user, '', 200];
     let user = req.user;
     const errors = validationResult(req).errors;
     if (errors.length) return res.status(400).json({messages: [errors[0].msg]});

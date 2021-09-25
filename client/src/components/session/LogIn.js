@@ -38,7 +38,7 @@ const LogIn = () => {
     if (!message) login(Email, Password);
   }
 
-  return (user?.id) ? <Redirect to="/" /> : (
+  return (user.id) ? <Redirect to="/" /> : (
     <div className="center">
     <div className="simple narrow">
 

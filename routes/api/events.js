@@ -21,6 +21,7 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     // Overwrite User's suggested address with that returned from api.
     req.body.Location = checked.Location;
     event = await Event.create(req.body);
+    // INVESTIGATE THAT THE FOLLOWING IS BEING HANDLED PROPERLY.
     // Augment event POJO with fact that no reservations have yet been made, even by organizer him/herself.
     // event = {...event, count: 0, reservationId: 0};
     res.status(201).json({id: event.id, Location: req.body.Location});
