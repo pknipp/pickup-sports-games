@@ -63,7 +63,7 @@ const User = () => {
     // }
 
     if (user.id || (res.ok && !messages.length)) setUser({...user, ...newUser});
-    if (!user.id && (res.ok && !messages.length)) return history.push('/');
+    // if (!user.id && (res.ok && !messages.length)) return history.push('/');
     setMessage(!res.ok || messages.length ? messages.join(" ") : "Success")
   };
 
