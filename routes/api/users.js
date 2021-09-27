@@ -18,7 +18,7 @@ const password = check('password').not().isEmpty().withMessage('Provide a passwo
 // used in User component
 router.post('', [email, password],
   asyncHandler(async (req, res, next) => {
-    try {
+    // try{
     let [user, messages] = [{}, []];
     const errors = validationResult(req).errors;
     if (errors.length) return res.status(400).json({messages: [errors[0].msg]});
@@ -42,7 +42,7 @@ router.post('', [email, password],
     user = user.dataValues;
     delete user.hashedPassword;
     res.status(201).json({...user, messages});
-    }catch(e){console.log(e)}
+    // }catch(e){console.log(e)}
   }));
 
 // used in putPost handler of User component

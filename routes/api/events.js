@@ -29,12 +29,12 @@ router.post('', [authenticated], asyncHandler(async (req, res, next) => {
     message = `There is something wrong with your event's location (${req.body.Location}). Try a different one.`
     res.status(400).json({message});
   }
-// } catch(e) {console.log(e)}
+// }catch(e){console.log(e)}
 }));
 
 // used by Home component (AKA ViewEvents)
 router.get('', [authenticated], asyncHandler(async(req, res, next) => {
-  try {
+  // try{
   const user = req.user;
   // array of ids of User's favorite sports
   const mySportIds = (await Favorite.findAll({where: {userId: user.id}})).map(fav => fav.sportId);
@@ -82,12 +82,12 @@ router.get('', [authenticated], asyncHandler(async(req, res, next) => {
     nBundle++;
   }
   res.json({events, sportsLength: mySportIds.length});
-  }catch(e) {console.log(e)}
+  // }catch(e){console.log(e)}
 }));
 
 // Used by EditGame and ViewGame components
 router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
-  // try {
+  // try{
   const user = req.user;
   const eventId = Number(req.params.id);
   const event = (await Event.findByPk(eventId)).dataValues;
@@ -115,13 +115,13 @@ router.get('/:id', [authenticated], asyncHandler(async(req, res, next) => {
     players.push(player);
   };
   res.json({event: {...event, owner: user, players, sport, Skills}});
-  // } catch(e) {console.log(e)}
+  // } catch(e){console.log(e)}
 }))
 
 // Used by EditGame component.
 // Do we want to allow an event owner to transfer event-"owner"ship to another user?
 router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
-  try {
+  // try{
   const eventId = Number(req.params.id);
   let event = await Event.findByPk(eventId);
   let favorite = await Favorite.findByPk(event.favoriteId);
@@ -146,7 +146,7 @@ router.put('/:id', [authenticated], asyncHandler(async(req, res) => {
   });
   await event.save();
   res.status(message ? 400 : 200).json({...event.dataValues, message});
-  }catch(e) {console.log(e)}
+  // }catch(e){console.log(e)}
 }));
 
 router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {
@@ -164,7 +164,7 @@ router.delete("/:id", [authenticated], asyncHandler(async(req, res) => {
     res.json({warning: `Note that there ${reservations.length === 1 ? "is" : "are"} ${reservations.length} other ${reservations.length === 1 ? "person" : "people"} who ${reservations.length === 1 ? "has" : "have"} signed up for this event.  Are you sure that you want to cancel it?  If so, re-click "Delete".  If not, click "Cancel".`})
   }
 
-  // } catch(e) {res.status(400).send(e)}
+  // } catch(e){res.status(400).send(e)}
 }));
 
 module.exports = router;
