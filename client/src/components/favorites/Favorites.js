@@ -37,7 +37,7 @@ const Favorites = () => {
 
   return (
     <div className="container narrow">
-      <BootstrapTable keyField='id' columns={columns} data={sports.map(sport => {
+      <BootstrapTable keyField='id' columns={columns} defaultSorted={[{dataField: 'Sport', order: 'asc'}]}data={sports.map(sport => {
         return {...sport, ["Follow?"]: (
           <input
             key={sport.id}

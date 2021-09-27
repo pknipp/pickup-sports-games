@@ -18,7 +18,7 @@
 
 [go to next section ("Tables")](#tables)
 
-Our project (["Pickup sports"](https://pickup-sports-events.herokuapp.com)) facilitates the process by which [informal sporting events](https://en.wikipedia.org/wiki/Pick-up_game) (games, training sessions, etc) are organized.  Rather than relying a myriad of often uncorrelated networks of friends and sports enthusiasts to exchange information/suggestions/commitments via phone, email, postings, and social media, this provides a central location for over twenty sports, nationwide.  Any User may create and organize an Event for any Sport that is one of their Favorites, and any User may signup (aka create a Reservation) in this Event (as long as the Event's Sport is one of their Favorites).  The front-end of our project uses JavaScript, Bootstrap, and React with functional components.  We manage front-end state with hooks and context.  Our back-end uses PostgreSQL, Node, Express, Sequelize, and the Google Maps Distance-Matrix API.
+Our project (["Pickup sports"](https://pickup-sports-events.herokuapp.com)) facilitates the process by which [informal sporting events](https://en.wikipedia.org/wiki/Pick-up_game) (games, training sessions, etc) are organized.  Rather than relying a myriad of often uncorrelated networks of friends and sports enthusiasts to exchange information/suggestions/commitments via phone, email, postings, and social media, this provides a central location for over twenty sports, nationwide.  Any User may create and organize an Event for any Sport that is one of their Favorites, and any User may signup (aka create a Reservation) in this Event (as long as the Event's Sport is one of their Favorites).  In our project's front-end we use JavaScript, Bootstrap, and React with functional components, and we manage the state with hooks and context.  Our back-end uses PostgreSQL, Node, Express, Sequelize, and the Google Maps Distance-Matrix API.
 
 # Tables
 
@@ -44,7 +44,7 @@ Below is a screenshot of the front-end component "User" which allows the User CR
 
 This table has no FKs.
 
-One column ("nGenders") is an integer between 0 and 4 which represents the number of different ways that one may typically arrange teams based on gender: "men's", "women's", "gender-neutral", or "mixed".  The latter designation applies to some sports and/or leagues for which there are generally understood ways for constructing teams heterogeneously by gender.  For most rows, Sport.nGenders equals 4, but some exceptions are provided below:
+One column ("nGenders") is an integer between 0 and 4 (inclusive) which indicates the number of different ways that one may typically arrange teams based on gender.  When Sport.nGenders = 4, this means that our project uses the complete set: "men's", "women's", "gender-neutral", or "mixed".  The latter designation applies to some sports and/or leagues for which there are generally understood ways for constructing teams heterogeneously by gender.  For most rows, Sport.nGenders equals 4, but some exceptions are provided below:
 - 0 (ie, no need for gender classification): Lacrosse (men's), Lacrosse (women's)
 - 3 (ie, no "mixed" category): Biking, Cross-country skiinng, Running
 
@@ -76,7 +76,7 @@ Keys for other boolTypes properties are given below, each followed by the Sports
 Values of both Sport.Skills and Sport.boolTypes are JSON.parsed immediately after querying from the database and are JSON.stringified immediately before committing to the database.
 
 Sports is the only read-only table.  A future expansion of this project would allow users to POST/PUT/DELETE rows of the Sports table.  We envision doing this by adding a boolean column isCommissioner to the Favorites table.
-For any row of the Favorites table with a true value of that boolean, that User will be able to mutate that Sport.  (Note that more than one User could have this privilege, for any given sport.)
+For any row of the Favorites table with a true value of that boolean, that User will be able to mutate that Sport.  (Note that more than one User could have this privilege, for any given sport, and - in fact - any commissioner could "promote" any other user to be a commissioner of that sport.) We would also allow any user the freedom to create any new Sport that they want, in which case would also be created a row in the Favorites table which indicates them to be a commissioner.
 
 ## Favorites:
 
@@ -84,15 +84,19 @@ Because any User is interested in following (aka "organizing" or "participating 
 
 The only non-FK column of this table is "Skill", an integer which represents the User's self assessed skill-level in that Sport, ie would equal an appropriate index of Sport.Skills.  (See "Sports" above for various skill-level scales.)
 
-Below is a screenshot of the front-end component "Favorites" which allows the User CRUD access to this table.  (Note that one of the drop-downs is activated.)
+Below is a screenshot of the front-end component "Favorites" which allows the User CRUD access to this table.
+
+Notes in re table:
+
+-One of the dropdowns is activated.
+
+-Our use of Bootstrap Table2 means that the user may sort any table on any column by clicking on the heading of the particular table.  At this moment the table is sorted on Sport.
 
 ![Favorites](assets/Favorites.png)
 
 ##  Events:
 
   An Event (our name for a game, practice, or training session) may be organized only by a User for whom that Sport is a Favorite, so the Events table depends upon the Favorites table.
-
-  <!-- WRONG! Note that Event.userId is the PK for the event organizer, not for a player in the Event (which is handled by the Reservations table). -->
 
   The "Minimum skill" and "Maximum skill" columns contain integer values, each defining the Event organizer's desired limiting skill-level for the particular event.  As for Favorite.Skill, these two integers acquire their meaning when used as indices for the array Sport.Skills, for that particular sport.
 
@@ -120,7 +124,7 @@ Below is a screenshot of the front-end component "EditReservation" which allows 
 
 [go to next section ("Base-2 encoding and decoding of Reservation willingnesses")](#base-2-encoding-and-decoding-of-reservation-willingnesses)
 
-The API's main purpose in our project is to enable the User to know the travel time between his/her address and that of a particular Event. For instance when the User views all of the Events for which he/she may make a Reservation, that table may be sorted by the values in that column, as is the case in the screenshot of the "Home" component below. (Note that this screenshot also shows an activated "Tooltip" indicating the Nicknames of the 11 Users who have made Reservations for the Garland football game.)
+The API's main purpose in our project is to enable the User to know the travel time between his/her address and that of a particular Event, whether that is an event that he/she is organizing, is registered for, or may want to register for. For instance in the case of the screenshot of the "Home" component below, the table is sorted on the Travel Time column. (Note that this screenshot also shows an activated "Tooltip" indicating the Nicknames of the 11 Users who have made Reservations for the Garland football game.)
 
 ![Home](assets/Home.png)
 
@@ -176,11 +180,11 @@ In this case, there is one origin (the White House) and three destinations (Pitt
 const fetch = require('node-fetch');
 const { mapsConfig: { mapsApiKey } } = require('../../config');
 
-const checkLocation = async LocationIn => {
-    const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins= ${LocationIn}   destinations=New+York+NY&key=${mapsApiKey}`);
+const checkLocation = async Location => {
+    const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins= ${Location}&destinations=New+York+NY&key=${mapsApiKey}`);
     let data = await response.json();
     let success = response.ok && data.status === "OK" && data.rows[0].elements[0].status === "OK";
-    let Location = success ? data.origin_addresses[0] : LocationIn;
+    if (success) Location = data.origin_addresses[0];
     return {Location, success};
 }
 module.exports = checkLocation;

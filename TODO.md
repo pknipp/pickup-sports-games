@@ -9,20 +9,16 @@ DRY up setSkills invocation in EditGame, and ensure that it'll work if gameTypes
 Figure out which time to display: local or zulu.
 
 MVP goals:
-1. Figure out how to reduce the number of fetches, or use joins rather than two or more queries?
-1. When attempting to delete a row in a table of the db, render a warning if rows in other tables are dependent upon this row.  Such dependency-chains include user/reservation, user/(favorite)/event/reservation, favorite/event/reservation, event/reservation (done)
-1. Figure out why Line 105 of ViewEvent yields an error when attempting to access ViewEvent after editing a reservation.
 1. Ensure that event.time changes when viewed by those in other time zones, and get event.dateTime to work properly on heroku.
-1. Other sports to include: golf, archery, cricket
+1. Figure out how to reduce the number of fetches, or use joins rather than two or more queries?
+1. When attempting to delete a row in a table of the db, render a warning if rows in other tables are dependent upon this row.  Such dependency-chains include user/reservation, user/(favorite)/event/reservation, favorite/event/reservation, event/reservation (done).
+1. Other sports to include: golf, archery, cricket, pickle, swimming, wrestling
 1. More drastic things to do if EditEvent changes gameTypeId:
         - cancel reservations?
         - trigger email to players?
 1. Create a 4th column in table appearing in Favorites component, to include any sports-specific links.
-1. Polish README.md, especially by including code snippets which indicate the sanitatizing/checking of User.address and Event.Location, at the time of POST/PUT.
-1. Polish front-end.
 1. DRY index.css
-1. Eliminate bug ("000:000") which appears when destination = origin (or when travel time is an integer number of hours)
-1. Insert isCommissioner column in Favorites table (as discussed in README).
+1. Insert isCommissioner column in Favorites table (as discussed in README), thereby allowing full CRUD for the Sports table.
 
 stretch goals:
     implement photo capability

@@ -36,9 +36,9 @@ const Home = () => {
                     EventTime = EventTime.slice(0, 5);
                     let minutes = Math.round(event.duration.value / 60);
                     let hours = Math.floor(minutes / 60);
-                    hours = (!hours ? "00" : hours < 10 ? "0" : "") + hours;
+                    hours = (hours < 10 ? "0" : "") + hours;
                     minutes -= hours * 60;
-                    minutes = (!minutes ? "00" : minutes < 10 ? "0" : "") + minutes;
+                    minutes = (minutes < 10 ? "0" : "") + minutes;
                     event["Travel time"] = hours + ":" + minutes;
                     event["Event date"] = EventDate;
                     event["Event time"] = EventTime;
