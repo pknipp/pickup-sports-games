@@ -58,8 +58,7 @@ router.put('', [authenticated, email, password],
     let messages = [];
     for (const key of ["Email", "Nickname"]) {
       let otherUser = await User.findOne({where: {[Sequelize.Op.and]: [
-        { [key]: req.body[key] },
-        {[Sequelize.Op.not]: { id: user.id } }
+        { [key]: req.body[key] }, {[Sequelize.Op.not]: { id: user.id } }
       ]}});
       if (otherUser) {
         messages.push(`That ${key} (${req.body[key]}) is taken.`);

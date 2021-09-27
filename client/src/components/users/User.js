@@ -27,7 +27,9 @@ const User = () => {
   const [errors, setErrors] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [sports, setSports] = useState([]);
-  const [Address, setAddress] = useState('');
+  // const [Address, setAddress] = useState('');
+  const [userId, setUserId] = useState(0);
+  // const [needsContinue, setNeedsContinue] = useState(false);
   // const [refetch, setRefetch] = useState(false);
 
   let history = useHistory();
@@ -53,18 +55,20 @@ const User = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({...user, password, password2})
     });
-    let newUser = await res.json();
-    let messages = newUser.messages;
+    let newUser = {...user, ...(await res.json())};
+    message = newUser.messages.join(" ");
+    // newUser = {...user, ...newUser};
 
     // if (newUser.Address !== Address) {
-    //   setNeedsContinue(!newUser.messages.length);
-    //   setMessage(newUser.messages.length || `You specified your address as ${Address}, which the system interpreted as  indicated  above.  If this is acceptable to you, click the "Continue" button, below.  If not, modify the address above and   click "Update account".`);
-    //   setUser({...user, ...newUser});
+    //   setNeedsContinue(!message);
+    //   message = message || `You specified your address as ${Address}, which the system interpreted as  indicated  above.  ${user.id ? 'If this is acceptable to you, click the "Continue" button, below.  If not, modify the address above and click "Update account".' : 'If this is not acceptable to you, click "Manage Account" after clicking "Continue".'}  `;
+    //   if (!user.id) {
+    //     setUserId(newUser.id);
+    //     delete newUser.id;
+    //   }
     // }
-
-    if (user.id || (res.ok && !messages.length)) setUser({...user, ...newUser});
-    // if (!user.id && (res.ok && !messages.length)) return history.push('/');
-    setMessage(!res.ok || messages.length ? messages.join(" ") : "Success")
+    if (res.ok && !message) setUser(newUser);
+    setMessage((!res.ok || message) ? message : "Success")
   };
 
   const handleDelete = async e => {
@@ -77,8 +81,6 @@ const User = () => {
       setUser({});
     }
   }
-
-  const proceed = () => history.push('/');
 
   return (
     <div className="vertical">
@@ -117,8 +119,7 @@ const User = () => {
               type="text" placeholder="Address" name="Address" value={user.Address}
               onChange={e => {
                 let newAddress = e.target.value;
-                setUser({...user, Address: newAddress});
-                setAddress(newAddress);
+                setUser({...user, Address: e.target.value});
               }}
             />
             <span>Cell number (10 digits):</span>
@@ -138,19 +139,21 @@ const User = () => {
               onChange={e => setPassword2(e.target.value)}
             />
 
-
         <button color="primary" variant="outlined" type="submit">
           {user.id ? "Update account" : "Signup"}
         </button>
-        <span style={{color: "red", paddingLeft:"10px"}}>{message}</span>
-        {user.id ? null :
-          <span>
-            <NavLink className="nav" to="/login" activeClassName="active">
-              Login
-            </NavLink>
-          </span>
-        }
       </form>
+
+      <span style={{color: "red", paddingLeft:"10px"}}>{message}</span>
+
+      {user.id ? null :
+        <span>
+          <NavLink className="nav" to="/login" activeClassName="active">
+            Login
+          </NavLink>
+        </span>
+      }
+
       {!user.id ? null :
         <form className="auth" onSubmit={handleDelete}>
           <button color="primary" variant="outlined" type="submit">
