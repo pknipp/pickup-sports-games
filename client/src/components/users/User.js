@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { NavLink, useHistory } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import Context from '../../context';
 
@@ -12,27 +12,14 @@ const User = () => {
     'Nickname',
     'Address',
     'Cell',
-    // 'photo',
-    'password',
-    'password2'
   ];
-  // const [params, setParams] = useState(currentUser ?
-  //   {...currentUser, password: '', password2: '', Skill: 0, index: 0}
-  //     :
-  //   properties.reduce((pojo, prop) => ({[prop]: '', ...pojo}), {id: 0, Skill: 0, index: 0})
-  // );
   const [password, setPassword] = useState('');
   const [password2, setPassword2]=useState('');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [sports, setSports] = useState([]);
-  // const [Address, setAddress] = useState('');
   const [userId, setUserId] = useState(0);
-  // const [needsContinue, setNeedsContinue] = useState(false);
-  // const [refetch, setRefetch] = useState(false);
-
-  let history = useHistory();
 
   useEffect(() => {
     (async() => {
@@ -57,18 +44,8 @@ const User = () => {
     });
     let newUser = {...user, ...(await res.json())};
     message = newUser.messages.join(" ");
-    // newUser = {...user, ...newUser};
-
-    // if (newUser.Address !== Address) {
-    //   setNeedsContinue(!message);
-    //   message = message || `You specified your address as ${Address}, which the system interpreted as  indicated  above.  ${user.id ? 'If this is acceptable to you, click the "Continue" button, below.  If not, modify the address above and click "Update account".' : 'If this is not acceptable to you, click "Manage Account" after clicking "Continue".'}  `;
-    //   if (!user.id) {
-    //     setUserId(newUser.id);
-    //     delete newUser.id;
-    //   }
-    // }
     if (res.ok && !message) setUser(newUser);
-    setMessage((!res.ok || message) ? message : "Success")
+    if (user.id) setMessage((!res.ok || message) ? message : "Success")
   };
 
   const handleDelete = async e => {
@@ -92,41 +69,24 @@ const User = () => {
             "We hope that you will either login or signup."
           }
         </h4>
+            {properties.map(key => (
+              <React.Fragment key={key}>
+                <span>{key}:</span>
+                <input
+                  type={key === "Cell" ? "number" : "text"}
+                  placeholder={key}
+                  name={key}
+                  value={user[key]}
+                  onChange={e => {
+                    setUser({...user, [key]: key === "Cell" ?
+                      Number(e.target.value) : e.target.value
+                    })
+                  }}
+                />
+              </React.Fragment>
+            ))}
 
-            {/* DRY the following code. */}
-            <span>Email address:</span>
-            <input
-              type="text" placeholder="Email" name="Email" value={user.Email}
-              onChange={e => setUser({...user, Email: e.target.value})}
-            />
-            <span>First name:</span>
-            <input
-              type="text" placeholder="First name" name="First name" value={user['First name']}
-              onChange={e => setUser({...user, ['First name']: e.target.value})}
-            />
-            <span>Last name:</span>
-            <input
-              type="text" placeholder="Last name" name="Last name" value={user['Last name']}
-              onChange={e => setUser({...user, ['Last name']: e.target.value})}
-            />
-            <span>Nickname:</span>
-            <input
-              type="text" placeholder="Nickname" name="Nickname" value={user.Nickname}
-              onChange={e => setUser({...user, Nickname: e.target.value})}
-            />
-            <span>Address:</span>
-            <input
-              type="text" placeholder="Address" name="Address" value={user.Address}
-              onChange={e => {
-                let newAddress = e.target.value;
-                setUser({...user, Address: e.target.value});
-              }}
-            />
-            <span>Cell number (10 digits):</span>
-            <input
-              type="number" placeholder="Cell" name="Cell" value={user.Cell}
-              onChange={e => setUser({...user, Cell: Number(e.target.value)})}
-            />
+            {/* DRY the following code? */}
 
             <span>Password:</span>
             <input

@@ -1,5 +1,4 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 import BootstrapTable from 'react-bootstrap-table-next';
 
@@ -58,8 +57,6 @@ const ViewEvent = ({ match }) => {
 
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState([]);
-
-  // let history = useHistory();
 
   // const createMarkup = header => ({__html: `<span>${header}</span>`});
   // const MyComponent = header => <div dangerouslySetInnerHTML={createMarkup(header)} />;

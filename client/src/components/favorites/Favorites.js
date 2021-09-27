@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { NavLink, useHistory } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import BootstrapTable from 'react-bootstrap-table-next';
 
 import Context from '../../context';
@@ -18,8 +18,6 @@ const Favorites = () => {
   const [favorites, setFavorites] = useState([]);
   const [sports, setSports] = useState([]);
   const [refetch, setRefetch] = useState(false);
-
-  // let history = useHistory();
 
   useEffect(() => {
     (async() => {
