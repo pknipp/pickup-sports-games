@@ -45,7 +45,7 @@ Below is a screenshot of the front-end component "User" which allows the User CR
 This table has no FKs.
 
 One column ("nGenders") is an integer between 0 and 4 which represents the number of different ways that one may typically arrange teams based on gender: "men's", "women's", "gender-neutral", or "mixed".  The latter designation applies to some sports and/or leagues for which there are generally understood ways for constructing teams heterogeneously by gender.  For most rows, Sport.nGenders equals 4, but some exceptions are provided below:
-- 0 (ie, no needs to extra gender classification): Lacrosse (men's), Lacrosse (women's)
+- 0 (ie, no need for gender classification): Lacrosse (men's), Lacrosse (women's)
 - 3 (ie, no "mixed" category): Biking, Cross-country skiinng, Running
 
 Two columns ("Skills" and "boolTypes") are JSON.stringifications of non-primitive data types, as indicated below:
@@ -84,7 +84,7 @@ Because any User is interested in following (aka "organizing" or "participating 
 
 The only non-FK column of this table is "Skill", an integer which represents the User's self assessed skill-level in that Sport, ie would equal an appropriate index of Sport.Skills.  (See "Sports" above for various skill-level scales.)
 
-Below is a screenshot of the front-end component "Manage Favorites" which allows the User CRUD access to this table.  (Note that one of the drop-downs is activated.)
+Below is a screenshot of the front-end component "Favorites" which allows the User CRUD access to this table.  (Note that one of the drop-downs is activated.)
 
 ![Favorites](assets/Favorites.png)
 
