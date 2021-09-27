@@ -169,7 +169,9 @@ In this case, there is one origin (the White House) and three destinations (Pitt
 ```
   Note that this API can handle precise addresses (like that of the White House, above), incomplete/vague addresses ("Pittsburgh"), or those of locations to/from which it is impossible to drive ("Honolulu").  Our seeder data for the values of User.Address and Event.Location have been sanitized to include only the names of cities accessible by car from the majority of places in the contiguous United States.
 
-  Our back-end's POST/PUT routes for the Users and Events table allow for the inclusion of new addresses in the database, and we sanitize each of these changes by confirming that the distance-matrix API can find a route between New York City and User.address or Event.location.  We also alert the User to the fact that the API returns the API's version of the address, to allow the User to detect whether or not the API is misinterpreting the address entered by the user.  Below is api/routes/checkLocation.js, which performs both of these tasks:
+  Our back-end's POST/PUT routes for the Users and Events table allow for the inclusion of new addresses in the database, and we sanitize each of these changes by confirming that the distance-matrix API can find a route between New York City and User.address or Event.location.
+  <!-- We also alert the User to the fact that the API returns the API's version of the address, to allow the User to detect whether or not the API is misinterpreting the address entered by the user. -->
+  Below is api/routes/checkLocation.js, which performs this task for the aforementioned routes.:
   ```
 const fetch = require('node-fetch');
 const { mapsConfig: { mapsApiKey } } = require('../../config');
