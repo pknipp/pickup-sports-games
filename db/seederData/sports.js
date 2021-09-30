@@ -26,7 +26,7 @@ module.exports = {
         {
             Name: "Basketball",
             boolTypes: {
-                ["team sizes"]: ["3", "5"],
+                ["team sizes"]: ["3s", "5s"],
                 positions: ["center", "forward", "guard"],
             },
             Skills,
@@ -49,21 +49,21 @@ module.exports = {
         {
             Name: "Flag football",
             boolTypes: {
-                ["team sizes"]: ["4", "7", "8"],
+                ["team sizes"]: ["4s", "7s", "8s"],
                 positions: ["QB", "receiver", "defense", "line", "running back"],
             },
             Skills,
         },
         {
             Name: "Hockey (ice)",
-            boolTypes: {positions: ["center", "wingers", "defense", "goalie"]},
+            boolTypes: {positions: ["center", "winger", "defense", "goalie"]},
             Skills,
         },
         {
             Name: "Hockey (field)",
             boolTypes: {
                 positions: ["forward", "midfield", "defense", "goalie"],
-                ["team sizes"]: ["11", "5"],
+                ["team sizes"]: ["11s", "5s"],
             },
             Skills,
         },
@@ -86,11 +86,11 @@ module.exports = {
         },
         {
             Name: "Ping-pong",
-            boolTypes: {["team sizes"]: ["1", "2"]},
+            boolTypes: {["team sizes"]: ["singles", "doubles"]},
         },
         {
             Name: "Rugby",
-            boolTypes: {positions: ["front row forwards", "second row forwards", "back row forwards", "half backs", "three quarters", "full back"]},
+            boolTypes: {positions: ["front row forward", "second row forward", "back row forward", "half back", "three quarters", "full back"]},
             Skills,
         },
         {
@@ -101,7 +101,7 @@ module.exports = {
         },
         {
             Name: "Sailboat racing",
-            boolTypes: {types: ["laser", "420", "470", "catamaran"]},
+            boolTypes: {types: ["laser", "420", "470", "catamaran", "sunfish"]},
         },
         {
             Name: "Soccer",
@@ -118,7 +118,7 @@ module.exports = {
         },
         {
             Name: "Squash",
-            boolTypes: {["ball color"]: ["blue", "red", "yellow", "double yellow", "orange"]},
+            boolTypes: {["ball"]: ["blue dot", "red dot", "yellow dot", "double yellow dot", "orange dot"]},
             Skills,
         },
         {
@@ -134,7 +134,7 @@ module.exports = {
             Name: "Volleyball",
             boolTypes: {
                 positions: ['setter', 'middle', 'right side', 'outside', 'libero'],
-                ["team size"]: ['2', '4', '6'],
+                ["team size"]: ['2s', '4s', '6s'],
             },
             Skills,
         },

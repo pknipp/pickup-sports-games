@@ -106,12 +106,13 @@ const Home = () => {
             });
             // order of columns to appear in table
             let newColumns = [4,5,7,2,8,9,6,3,0,1,10,11].map(index => headings[index]).filter(col => {
+                // We want to omit one column, depending upon whether or no User "owns" the event.
                 return ![selectedOption ? 'view' : 'Event organizer'].includes(col);
             }).map(col => {
-                // Make clickable columns un-headed, to prevent sort-ability among other reasons.
+                // Make clickable columns un-headed, to prevent sort-ability, among other reasons.
                 let text = ['edit', 'view'].includes(col) ? '' : col
-                // It makes sense to sort neither on clickable columns nor on max/minSkill columns.
-                return {dataField: col, text, sort: !!text && !text.includes("skill")};
+                // It makes no sense to sort on clickable columns.
+                return {dataField: col, text, sort: !!text};// && !text.includes("skill")};
             });
             setColumns(newColumns);
         }
@@ -120,7 +121,7 @@ const Home = () => {
     return (
         <div className="simple wide">
             <div className="welcome">
-                <h4>{!loading ? (sportsLength ? "Below are tabulated the events which may interest you." : "You are presently following no sports.  You should click on  'Manage Favorites' in order to choose some to follow.") : ""}</h4>
+                <h3>{!loading ? (sportsLength ? "Below are tabulated the events which may interest you." : "You are presently following no sports.  You should click on  'Manage Favorites' in order to choose some to follow.") : ""}</h3>
             </div>
             <br/>
             <div>
@@ -146,7 +147,10 @@ const Home = () => {
             }
             {loading ? <h2>Loading data</h2> :
                 !columns.length || !events.length ? <h3>no events in this category</h3> :
-                    <BootstrapTable keyField='id' data={events} columns={columns} defaultSorted={defaultSorted}/>
+                    <>
+                        <h4>Click any column heading in order to sort the table on that column.</h4>
+                        <BootstrapTable keyField='id' data={events} columns={columns} defaultSorted={defaultSorted}/>
+                    </>
             }
         </div>
     )

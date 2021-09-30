@@ -3,7 +3,7 @@ import { Redirect, NavLink } from 'react-router-dom';
 import Context from '../../context';
 
 const LogIn = () => {
-  const [Email, setEmail] = useState("adoe@aol.com"); //"volleyb@aol.com");
+  const [Email, setEmail] = useState("volleyb@aol.com");
   const [Password, setPassword] = useState("password");
   const [message, setMessage] = useState('');
   const [sports, setSports] = useState([]);
