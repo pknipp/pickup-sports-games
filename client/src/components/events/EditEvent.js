@@ -196,6 +196,7 @@ const EditEvent = ({ match }) => {
 
         <span>Extra info (optional):</span>
         <textarea
+          rows="5" cols="34"
           placeholder="Extra Info about event" name="Extra info" value={event['Extra info']}
           onChange={e => setEvent({...event, ['Extra info']: e.target.value})}
         />

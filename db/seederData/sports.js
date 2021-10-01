@@ -26,7 +26,7 @@ module.exports = {
         {
             Name: "Basketball",
             boolTypes: {
-                ["team sizes"]: ["3s", "5s"],
+                ["team sizes"]: ["3 on 3", "5 on 5"],
                 positions: ["center", "forward", "guard"],
             },
             Skills,
@@ -63,7 +63,7 @@ module.exports = {
             Name: "Hockey (field)",
             boolTypes: {
                 positions: ["forward", "midfield", "defense", "goalie"],
-                ["team sizes"]: ["11s", "5s"],
+                ["team sizes"]: ["11 on 11", "5 on 5"],
             },
             Skills,
         },
@@ -101,7 +101,7 @@ module.exports = {
         },
         {
             Name: "Sailboat racing",
-            boolTypes: {types: ["laser", "420", "470", "catamaran", "sunfish"]},
+            boolTypes: {types: ["laser", "420", "470", "cat", "sunfish", "sailboard", "snipe", "thistle", "opti", "I-505"."comet"].sort()},
         },
         {
             Name: "Soccer",

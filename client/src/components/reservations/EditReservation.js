@@ -149,6 +149,7 @@ const EditReservation = ({ match }) => {
         <span><h4>Extra info about your reservation (optional):</h4></span>
 
         <textarea
+          rows="3" cols="90"
           placeholder="Extra info" name="Extra info" value={reservation['Extra info']}
           onChange={e => setReservation({...reservation, ['Extra info']: e.target.value})}
         />
