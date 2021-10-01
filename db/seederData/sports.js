@@ -101,7 +101,7 @@ module.exports = {
         },
         {
             Name: "Sailboat racing",
-            boolTypes: {types: ["laser", "420", "470", "cat", "sunfish", "sailboard", "snipe", "thistle", "opti", "I-505"."comet"].sort()},
+            boolTypes: {types: ["laser", "420", "470", "cat", "snipe", "opti","comet"].sort()},
         },
         {
             Name: "Soccer",
