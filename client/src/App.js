@@ -53,9 +53,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   // const [rerender, setRerender] = useState(0);
   const genders = ["men's", "women's", "gender neutral", "mixed"];
-  const contextValue = {fetchWithCSRF, user, setUser,
-    // rerender, setRerender,
-    genders};
+  const contextValue = {fetchWithCSRF, user, setUser, genders};
 
   const loadUser = () => {
     const authToken = Cookies.get("token");
