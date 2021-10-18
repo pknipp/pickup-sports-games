@@ -9,6 +9,7 @@ DRY up setSkills invocation in EditGame, and ensure that it'll work if gameTypes
 Figure out which time to display: local or zulu.
 
 MVP goals:
+1. Do filtering (as controlled by 3 radio buttons) on back - as queries - rather than on front.
 1. On Homepage enable user to sort on "Player reservations" column.
 1. Filter api/events GET all route with by requiring the eventDates to be in the future.
 1. Insert something into api/events that will query the database for all events in the future.  If the number of events is less than 80 (or some other number), loop over the Favorites table, and - given the number (nNeeded) of additional events needed and the number of rows (nFavorites) in the Favorites table, create new events using the probability nNeeded / nFavorites.  Use faker.date.between to keep Event.dateTime between present and - perhaps - 2 months in the future.  Do something similar with Reservations, but somehow prevent those reservations all from having the exact same createdAt/updatedAt dates.  (Perhaps do this first by randomly deleting reservations, and then adding enough to keep the number of future reservations approximately equal to a certain threshold)
