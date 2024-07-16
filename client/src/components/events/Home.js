@@ -18,7 +18,7 @@ const Home = () => {
     const [events, setEvents] = useState([]);
     const [sportsLength, setSportsLength] = useState(null);
     const [keys, setKeys] = useState([]);
-    const [selectedOption, setSelectedOption] = useState(0);
+    const [selectedOption, setSelectedOption] = useState(1);
     const [columns, setColumns] = useState(keys.map(key => ({dataField: key, text: key, sort: true})));
     const [message, setMessage] = useState('');
 
