@@ -96,7 +96,7 @@ const App = () => {
               &nbsp;and&nbsp;
               <a href="https://acyg2212.github.io/" target="_blank" rel="noopener noreferrer">
                 Aaron Cygnarowicz
-              </a>
+              </a><br/>
             GitHub <a href="https://github.com/pknipp/pickup-sports" target="_blank" rel="noopener noreferrer">&nbsp;repo</a>
           </div>
         </BrowserRouter>
